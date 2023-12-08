@@ -1,0 +1,13 @@
+<.flash_group flash={@flash} />
+<main class="bg-gray-50 dark:bg-gray-900">
+  <div class="flex flex-col items-center justify-center px-6 pt-8 mx-auto pt:mt-0 dark:bg-gray-900">
+    <a
+      href="/"
+      class="flex items-center justify-center mb-8 text-2xl font-semibold lg:mb-10 dark:text-white"
+    >
+      <img src="/images/logo.svg" class="mr-4 h-11" alt="FlowBite Logo" />
+      <span><.app_name/></span>
+    </a>
+    <%= @inner_content %>
+  </div>
+</main>
