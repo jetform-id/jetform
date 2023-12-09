@@ -11,7 +11,7 @@ defmodule App.Repo.Migrations.CreateUsers do
       add :timezone, :string, null: false
       add :username, :string, null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create unique_index(:users, [:email])

@@ -1,6 +1,5 @@
 defmodule App.Utils.ReservedWords do
   @words ~W(
-  paperkit
   admin
   about
   access

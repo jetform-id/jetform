@@ -15,7 +15,9 @@ defmodule App.Users.User do
     field :timezone, :string, default: "Asia/Jakarta"
     field :username, :string
 
-    timestamps()
+    has_one :bank_account, App.Users.BankAccount
+
+    timestamps(type: :utc_datetime)
   end
 
   def changeset(user_or_changeset, attrs) do

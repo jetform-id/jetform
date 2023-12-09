@@ -43,6 +43,9 @@ defmodule AppWeb.Router do
 
     get "/account", AccountController, :edit
     put "/account", AccountController, :update
+    get "/payouts/bank-account", PayoutsController, :edit_bank_account
+    post "/payouts/bank-account", PayoutsController, :create_or_update_bank_account
+    put "/payouts/bank-account", PayoutsController, :create_or_update_bank_account
     get "/", AdminController, :index
   end
 

@@ -27,7 +27,7 @@ defmodule AppWeb.Plug.AdminMenus do
         icon: "hero-cog-6-tooth-solid",
         children: [
           %{title: "Account", path: ~p"/account", icon: nil},
-          %{title: "Payment", path: ~p"/", icon: nil}
+          %{title: "Payouts", path: ~p"/payouts/bank-account", icon: nil}
         ]
       }
     ]
