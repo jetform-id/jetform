@@ -1,12 +1,12 @@
 <.flash_group flash={@flash} />
 <.admin_navbar current_user={assigns[:current_user]} />
 <div class="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-900">
-  <.admin_sidebar />
+  <.admin_sidebar menus={assigns[:admin_menus]} />
   <div
     id="main-content"
     class="relative w-full h-full overflow-y-auto bg-gray-50 lg:ml-64 dark:bg-gray-900"
   >
-    <main>
+    <main class="px-4 pt-6">
       <%= @inner_content %>
     </main>
     <.admin_footer />

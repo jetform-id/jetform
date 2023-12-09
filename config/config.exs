@@ -8,8 +8,8 @@
 import Config
 
 config :app,
-  app_name: "Phoenix Saaskit",
-  app_tagline: "A SaaS starter kit for Phoenix"
+  app_name: "Paperkit",
+  app_tagline: "Dashboard"
 
 config :app,
   ecto_repos: [App.Repo],

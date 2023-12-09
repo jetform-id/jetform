@@ -22,6 +22,8 @@ defmodule AppWeb.Router do
     plug Pow.Plug.RequireAuthenticated,
       error_handler: AppWeb.AuthErrorHandler
 
+    plug AppWeb.Plug.AdminMenus
+
     plug :put_layout, html: {AppWeb.Layouts, :admin}
   end
 
@@ -39,6 +41,8 @@ defmodule AppWeb.Router do
   scope "/", AppWeb do
     pipe_through [:browser, :admin_area]
 
+    get "/account", AccountController, :edit
+    put "/account", AccountController, :update
     get "/", AdminController, :index
   end
 

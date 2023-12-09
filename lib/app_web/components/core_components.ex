@@ -20,14 +20,109 @@ defmodule AppWeb.CoreComponents do
   import AppWeb.Gettext
 
   @doc """
-  The name of the application.
+  Returns app info.
   """
+  def app_info(:name) do
+    Application.fetch_env!(:app, :app_name)
+  end
 
-  def app_name(assigns) do
-    assigns = assigns |> assign(:app_name, Application.get_env(:app, :app_name))
+  def app_info(:tagline) do
+    Application.fetch_env!(:app, :app_tagline)
+  end
+
+  @doc """
+  Renders a Gravatar image.
+
+  ## Examples
+
+      <.gravatar email={"hello@example.com"} size="32" default="404" class="w-8 h-8" />
+  """
+  attr :email, :string, required: true
+  attr :size, :string, default: "64"
+  attr :default, :string, default: "retro"
+  attr :rest, :global
+
+  def gravatar(assigns) do
+    assigns =
+      assigns
+      |> assign(:email, String.downcase(assigns.email))
+      |> assign(
+        :hash,
+        :crypto.hash(:sha256, assigns.email) |> Base.encode16() |> String.downcase()
+      )
 
     ~H"""
-    <%= @app_name %>
+    <img
+      src={"https://gravatar.com/avatar/#{assigns.hash}?s=#{assigns.size}&d=#{assigns.default}"}
+      {@rest}
+    />
+    """
+  end
+
+  @doc """
+  Renders single menu item.
+  """
+  def menu_item(%{menu: %{path: _}} = assigns) do
+    ~H"""
+    <li>
+      <.link
+        navigate={@menu.path}
+        class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 xbg-gray-100 xdark:bg-gray-700"
+      >
+        <.icon
+          :if={@menu.icon}
+          name={@menu.icon}
+          class="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+        />
+        <span class="ml-3" sidebar-toggle-item><%= @menu.title %></span>
+      </.link>
+    </li>
+    """
+  end
+
+  def menu_item(%{menu: %{children: _}} = assigns) do
+    ~H"""
+    <li>
+      <button
+        type="button"
+        class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+        aria-controls="dropdown-playground"
+        data-collapse-toggle="dropdown-playground"
+      >
+        <.icon
+          :if={@menu.icon}
+          name={@menu.icon}
+          class="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+        />
+        <span class="flex-1 ml-3 text-left whitespace-nowrap" sidebar-toggle-item>
+          <%= @menu.title %>
+        </span>
+        <svg
+          sidebar-toggle-item
+          class="w-5 h-5"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+            clip-rule="evenodd"
+          >
+          </path>
+        </svg>
+      </button>
+      <ul id="dropdown-playground" class="space-y-2 py-2 xhidden">
+        <%= for child <- @menu.children do %>
+          <.link
+            navigate={child.path}
+            class="text-base text-gray-900 rounded-lg flex items-center p-2 group hover:bg-gray-100 transition duration-75 pl-11 dark:text-gray-200 dark:hover:bg-gray-700 xbg-gray-100 xdark:bg-gray-700"
+          >
+            <%= child.title %>
+          </.link>
+        <% end %>
+      </ul>
+    </li>
     """
   end
 
@@ -302,6 +397,7 @@ defmodule AppWeb.CoreComponents do
                 multiple pattern placeholder readonly required rows size step)
 
   slot :inner_block
+  slot :help
 
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     assigns
@@ -395,6 +491,7 @@ defmodule AppWeb.CoreComponents do
         ]}
         {@rest}
       />
+      <%= render_slot(@help) %>
       <.error :for={msg <- @errors}><%= msg %></.error>
     </div>
     """

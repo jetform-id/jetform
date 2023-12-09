@@ -41,7 +41,7 @@
         <a href="" class="flex ml-2 md:mr-24">
           <img src="/images/logo.svg" class="h-8 mr-3" alt="FlowBite Logo" />
           <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
-            <.app_name />
+            <%= app_info(:name) %>
           </span>
         </a>
         <%!-- <form action="#" method="GET" class="hidden lg:block lg:pl-3.5">
@@ -339,9 +339,9 @@
               data-dropdown-toggle="dropdown-2"
             >
               <span class="sr-only">Open user menu</span>
-              <img
+              <.gravatar
+                email={@current_user.email}
                 class="w-8 h-8 rounded-full"
-                src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
                 alt="user photo"
               />
             </button>
@@ -359,14 +359,6 @@
               </p>
             </div>
             <ul class="py-1" role="none">
-              <li>
-                <.link
-                  href={~p"/registration/edit"}
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  Account
-                </.link>
-              </li>
               <li>
                 <.link
                   href={~p"/session"}

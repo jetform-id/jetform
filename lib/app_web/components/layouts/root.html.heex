@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title suffix={" · " <> Application.fetch_env!(:app, :app_tagline)}>
-      <%= assigns[:page_title] || Application.fetch_env!(:app, :app_name) %>
+    <.live_title suffix={" · " <> app_info(:tagline)}>
+      <%= assigns[:page_title] || app_info(:name) %>
     </.live_title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
