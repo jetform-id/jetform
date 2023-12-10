@@ -4,6 +4,7 @@ defmodule AppWeb.AdminController do
   plug :unkonfirmed_email_flash
 
   def index(conn, _params) do
+    conn = assign(conn, :show_footer, true)
     render(conn, :index)
   end
 

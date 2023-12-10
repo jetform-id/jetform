@@ -1,12 +1,9 @@
-defmodule AppWeb.PayoutsController do
+defmodule AppWeb.PayoutController do
   use AppWeb, :controller
   alias App.Users
 
-  def edit_bank_account(
-        %{assigns: %{current_user: current_user}} = conn,
-        _params
-      ) do
-    case Users.get_bank_account_by_user_id(current_user.id) do
+  def edit_bank_account(conn, _params) do
+    case Users.get_bank_account_by_user(conn.assigns.current_user) do
       {:ok, bank_account} ->
         changeset = Users.change_bank_account(bank_account, %{})
         render(conn, :edit_bank_account, changeset: changeset, action: ~p"/payouts/bank-account")
@@ -17,16 +14,15 @@ defmodule AppWeb.PayoutsController do
     end
   end
 
-  def create_or_update_bank_account(
-        %{assigns: %{current_user: current_user}} = conn,
-        %{"bank_account" => bank_account_params}
-      ) do
-    case Users.get_bank_account_by_user_id(current_user.id) do
+  def create_or_update_bank_account(conn, %{"bank_account" => bank_account_params}) do
+    user = conn.assigns.current_user
+
+    case Users.get_bank_account_by_user(user) do
       {:ok, bank_account} ->
         update_bank_account(conn, bank_account, bank_account_params)
 
       {:error, :not_found} ->
-        create_bank_account(conn, current_user, bank_account_params)
+        create_bank_account(conn, user, bank_account_params)
     end
   end
 

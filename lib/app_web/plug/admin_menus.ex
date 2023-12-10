@@ -11,7 +11,7 @@ defmodule AppWeb.Plug.AdminMenus do
   def call(conn, _opts) do
     menus = [
       %{title: "Dashboard", path: ~p"/", icon: "hero-chart-pie-solid"},
-      %{title: "Products", path: ~p"/", icon: "hero-squares-2x2-solid"},
+      %{title: "Products", path: ~p"/products", icon: "hero-squares-2x2-solid"},
       %{
         title: "Customers",
         path: ~p"/",

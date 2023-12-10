@@ -2,8 +2,8 @@ defmodule App.Users do
   alias App.Repo
   alias App.Users.BankAccount
 
-  def get_bank_account_by_user_id(user_id) do
-    case Repo.get_by(BankAccount, user_id: user_id) do
+  def get_bank_account_by_user(user) do
+    case Repo.get_by(BankAccount, user_id: user.id) do
       nil -> {:error, :not_found}
       bank_account -> {:ok, bank_account}
     end

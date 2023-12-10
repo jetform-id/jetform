@@ -1,5 +1,7 @@
 defmodule App.Users.User do
   use Ecto.Schema
+  import Ecto.Changeset
+
   use Pow.Ecto.Schema
 
   use Pow.Extension.Ecto.Schema,
@@ -16,6 +18,7 @@ defmodule App.Users.User do
     field :username, :string
 
     has_one :bank_account, App.Users.BankAccount
+    has_many :products, App.Products.Product
 
     timestamps(type: :utc_datetime)
   end
@@ -29,22 +32,22 @@ defmodule App.Users.User do
 
   defp profile_changeset(user_or_changeset, attrs) do
     user_or_changeset
-    |> Ecto.Changeset.cast(attrs, [:timezone, :username])
+    |> cast(attrs, [:timezone, :username])
     |> validate_username()
   end
 
   defp validate_username(changeset) do
     changeset
-    |> Ecto.Changeset.validate_required([:username])
-    |> Ecto.Changeset.validate_length(:username, min: 4, max: 20)
-    |> Ecto.Changeset.validate_format(:username, ~r/^[a-zA-Z0-9_]+$/)
+    |> validate_required([:username])
+    |> validate_length(:username, min: 4, max: 20)
+    |> validate_format(:username, ~r/^[a-zA-Z0-9_]+$/)
     |> validate_reserved_words(:username)
-    |> Ecto.Changeset.unsafe_validate_unique(:username, App.Repo)
-    |> Ecto.Changeset.unique_constraint(:username)
+    |> unsafe_validate_unique(:username, App.Repo)
+    |> unique_constraint(:username)
   end
 
   defp validate_reserved_words(changeset, field) do
-    Ecto.Changeset.validate_change(changeset, field, fn _, value ->
+    validate_change(changeset, field, fn _, value ->
       if ReservedWords.is_reserved?(value) do
         [{field, "is reserved"}]
       else

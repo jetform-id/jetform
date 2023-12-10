@@ -40,12 +40,24 @@ defmodule AppWeb.Router do
 
   scope "/", AppWeb do
     pipe_through [:browser, :admin_area]
-
+    # accounts
     get "/account", AccountController, :edit
     put "/account", AccountController, :update
-    get "/payouts/bank-account", PayoutsController, :edit_bank_account
-    post "/payouts/bank-account", PayoutsController, :create_or_update_bank_account
-    put "/payouts/bank-account", PayoutsController, :create_or_update_bank_account
+
+    # products
+    get "/products", ProductController, :index
+    get "/products/new", ProductController, :new
+    get "/products/:id/edit", ProductController, :edit
+    post "/products", ProductController, :create
+    put "/products/:id", ProductController, :update
+    delete "/products/:id", ProductController, :delete
+
+    # payouts
+    get "/payouts/bank-account", PayoutController, :edit_bank_account
+    post "/payouts/bank-account", PayoutController, :create_or_update_bank_account
+    put "/payouts/bank-account", PayoutController, :create_or_update_bank_account
+
+    # dashboard
     get "/", AdminController, :index
   end
 
