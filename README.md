@@ -14,7 +14,7 @@ Gummy bukanlah ide baru, melainkan penggabungan intisari beberapa produk yang su
 
 - Gummy lahir dengan DNA produk digital. Produk digital bisa dijual dan didistribusikan langsung ke pembeli dengan aman tanpa integrasi dengan sistem pihak ketika. **(v1)**
 - Anda bisa daftar dan langsung jualan tanpa iuran bulanan. Gummy mendapat komisi 10% dari setiap transaksi penjualan produk anda. **(v1)**
-- Tidak ada batasan dalam jumlah produk apapun transaksi. **(v1)**
+- Tidak ada batasan dalam jumlah produk ataupun jumlah transaksi. **(v1)**
 - Berbagai modul untuk membuat penawaran anda lebih menarik, seperti: Scarcity (stok terbatas), Urgency (waktu terbatas), Bonuses (bonus melimpah). **(v1)**
 - Buat produk dengan pilihan variasi berbeda dan dengan harga berbeda. **(v1)**
 - Withdraw hasil penjualan anda kapan saja. **(v1)**
