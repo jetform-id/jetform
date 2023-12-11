@@ -1,0 +1,41 @@
+<.header>
+  Listing Customers
+  <:actions>
+    <.link patch={~p"/customers/new"}>
+      <.button>New Customer</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="customers"
+  rows={@streams.customers}
+  row_click={fn {_id, customer} -> JS.navigate(~p"/customers/#{customer}") end}
+>
+  <:col :let={{_id, customer}} label="Name"><%= customer.name %></:col>
+  <:action :let={{_id, customer}}>
+    <div class="sr-only">
+      <.link navigate={~p"/customers/#{customer}"}>Show</.link>
+    </div>
+    <.link patch={~p"/customers/#{customer}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, customer}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: customer.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="customer-modal" show on_cancel={JS.patch(~p"/customers")}>
+  <.live_component
+    module={AppWeb.CustomerLive.FormComponent}
+    id={@customer.id || :new}
+    title={@page_title}
+    action={@live_action}
+    customer={@customer}
+    patch={~p"/customers"}
+  />
+</.modal>

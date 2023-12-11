@@ -9,7 +9,7 @@ import Config
 
 config :app,
   app_name: "Gummy",
-  app_tagline: "Dashboard"
+  app_tagline: "Gumroad dengan kearifan lokal"
 
 config :app,
   ecto_repos: [App.Repo],

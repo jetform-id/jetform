@@ -5,7 +5,7 @@
         All products
       </h1>
       <.link
-        navigate={~p"/admin/products/new"}
+        patch={~p"/admin/products?action=new"}
         class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
       >
         Add new product
@@ -84,7 +84,10 @@
                 <div class="text-sm font-normal text-gray-400 dark:text-gray-400">
                   https://paperkit.id/p/<%= product.slug %>
                   <.link href="/" target="_blank">
-                    <.icon name="hero-arrow-top-right-on-square" class="w-4 h-4 inline-block text-primary-600" />
+                    <.icon
+                      name="hero-arrow-top-right-on-square"
+                      class="w-4 h-4 inline-block text-primary-600"
+                    />
                   </.link>
                 </div>
               </td>
@@ -100,8 +103,7 @@
 
               <td class="p-4 space-x-2 whitespace-nowrap">
                 <.link
-                  href={~p"/admin/products/#{product.id}"}
-                  method="delete"
+                  phx-click={JS.push("delete", value: %{id: product.id})}
                   data-confirm="Are you sure?"
                   class="inline-flex items-center text-sm font-medium text-center text-red-600 rounded-sm focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
                 >
@@ -201,3 +203,26 @@
   </div>
 </div>
 -->
+<.modal :if={@new_modal} id="product-modal" show on_cancel={JS.patch(~p"/admin/products")}>
+  <.simple_form :let={f} for={@changeset} as={:product} phx-update="replace" phx-submit="create">
+    <div class="mt-8 space-y-6">
+      <.error :if={@changeset.action}>
+        Oops, something went wrong! Please check the errors below.
+      </.error>
+      <.input field={f[:name]} type="text" label="Name" required />
+      <.input field={f[:slug]} type="text" label="Slug" required />
+      <.input field={f[:price]} type="number" label="Price" required />
+    </div>
+
+    <:actions>
+      <div class="mt-8">
+        <.button
+          phx-disable-with="Creating..."
+          class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+        >
+          Create and customize <span aria-hidden="true">→</span>
+        </.button>
+      </div>
+    </:actions>
+  </.simple_form>
+</.modal>

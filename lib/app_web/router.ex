@@ -45,20 +45,18 @@ defmodule AppWeb.Router do
     put "/account", AccountController, :update
 
     # products
-    get "/products", ProductController, :index
-    get "/products/new", ProductController, :new
-    get "/products/:id/edit", ProductController, :edit
-    post "/products", ProductController, :create
-    put "/products/:id", ProductController, :update
-    delete "/products/:id", ProductController, :delete
+    live_session :admin, on_mount: {AppWeb.LiveAuth, :admin}, layout: {AppWeb.Layouts, :admin} do
+      live "/products", ProductLive.Index, :index
+      live "/products/:id/edit", ProductLive.Edit, :edit
+
+      # dashboard
+      live "/", DashboardLive.Index, :index
+    end
 
     # payouts
     get "/payouts/bank-account", PayoutController, :edit_bank_account
     post "/payouts/bank-account", PayoutController, :create_or_update_bank_account
     put "/payouts/bank-account", PayoutController, :create_or_update_bank_account
-
-    # dashboard
-    get "/", AdminController, :index
   end
 
   # Other scopes may use custom stacks.

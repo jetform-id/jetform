@@ -4,14 +4,20 @@
       <div class="flex items-center justify-between mb-4">
         <div class="flex-shrink-0">
           <h3 class="text-xl font-bold leading-none text-gray-900 sm:text-2xl dark:text-white">
-            New Product
+            Edit Product
           </h3>
         </div>
       </div>
       <div id="main-chart">
-        <.simple_form :let={f} for={@changeset} as={:product} action={@action} phx-update="ignore">
+        <.simple_form
+          :let={f}
+          for={@changeset}
+          phx-update="replace"
+          phx-change="validate"
+          phx-submit="save"
+        >
           <div class="mt-8 space-y-6">
-            <.error :if={@changeset.action}>
+            <.error :if={@changeset.action && not @changeset.valid?}>
               Oops, something went wrong! Please check the errors below.
             </.error>
             <.input field={f[:name]} type="text" label="Name" required />
