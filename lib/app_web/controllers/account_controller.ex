@@ -3,7 +3,7 @@ defmodule AppWeb.AccountController do
 
   def edit(conn, _params) do
     changeset = Pow.Plug.change_user(conn)
-    render(conn, :edit, changeset: changeset, action: ~p"/account")
+    render(conn, :edit, changeset: changeset, action: ~p"/admin/account")
   end
 
   def update(conn, %{"user" => user_params}) do
@@ -11,10 +11,10 @@ defmodule AppWeb.AccountController do
       {:ok, _user, conn} ->
         conn
         |> put_flash(:info, "Your account has been updated.")
-        |> redirect(to: ~p"/account")
+        |> redirect(to: ~p"/admin/account")
 
       {:error, changeset, conn} ->
-        render(conn, :edit, changeset: changeset, action: ~p"/account")
+        render(conn, :edit, changeset: changeset, action: ~p"/admin/account")
     end
   end
 end

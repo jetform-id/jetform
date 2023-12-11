@@ -1,4 +1,4 @@
-defmodule AppWeb.AuthErrorHandler do
+defmodule AppWeb.PowAuthErrorHandler do
   use AppWeb, :controller
   alias Plug.Conn
 
@@ -11,6 +11,6 @@ defmodule AppWeb.AuthErrorHandler do
   @spec call(Conn.t(), atom()) :: Conn.t()
   def call(conn, :already_authenticated) do
     conn
-    |> redirect(to: ~p"/")
+    |> redirect(to: ~p"/admin")
   end
 end

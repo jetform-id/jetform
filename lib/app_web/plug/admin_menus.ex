@@ -1,33 +1,29 @@
 defmodule AppWeb.Plug.AdminMenus do
+  use AppWeb, :verified_routes
   import Plug.Conn
-
-  use Phoenix.VerifiedRoutes,
-    endpoint: AppWeb.Endpoint,
-    router: AppWeb.Router,
-    statics: AppWeb.static_paths()
 
   def init(opts), do: opts
 
   def call(conn, _opts) do
     menus = [
-      %{title: "Dashboard", path: ~p"/", icon: "hero-chart-pie-solid"},
-      %{title: "Products", path: ~p"/products", icon: "hero-squares-2x2-solid"},
+      %{title: "Dashboard", path: ~p"/admin", icon: "hero-chart-pie-solid"},
+      %{title: "Products", path: ~p"/admin/products", icon: "hero-squares-2x2-solid"},
       %{
         title: "Customers",
-        path: ~p"/",
+        path: ~p"/admin",
         icon: "hero-users-solid"
       },
       %{
         title: "Transactions",
-        path: ~p"/",
+        path: ~p"/admin",
         icon: "hero-receipt-percent-solid"
       },
       %{
         title: "Settings",
         icon: "hero-cog-6-tooth-solid",
         children: [
-          %{title: "Account", path: ~p"/account", icon: nil},
-          %{title: "Payouts", path: ~p"/payouts/bank-account", icon: nil}
+          %{title: "Account", path: ~p"/admin/account", icon: nil},
+          %{title: "Payouts", path: ~p"/admin/payouts/bank-account", icon: nil}
         ]
       }
     ]

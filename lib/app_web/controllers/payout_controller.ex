@@ -6,11 +6,11 @@ defmodule AppWeb.PayoutController do
     case Users.get_bank_account_by_user(conn.assigns.current_user) do
       {:ok, bank_account} ->
         changeset = Users.change_bank_account(bank_account, %{})
-        render(conn, :edit_bank_account, changeset: changeset, action: ~p"/payouts/bank-account")
+        render(conn, :edit_bank_account, changeset: changeset, action: ~p"/admin/payouts/bank-account")
 
       {:error, :not_found} ->
         changeset = Users.change_bank_account(%Users.BankAccount{}, %{})
-        render(conn, :edit_bank_account, changeset: changeset, action: ~p"/payouts/bank-account")
+        render(conn, :edit_bank_account, changeset: changeset, action: ~p"/admin/payouts/bank-account")
     end
   end
 
@@ -33,10 +33,10 @@ defmodule AppWeb.PayoutController do
       {:ok, _bank_account} ->
         conn
         |> put_flash(:info, "Your bank account detail has been saved.")
-        |> redirect(to: ~p"/payouts/bank-account")
+        |> redirect(to: ~p"/admin/payouts/bank-account")
 
       {:error, changeset} ->
-        render(conn, :edit_bank_account, changeset: changeset, action: ~p"/payouts/bank-account")
+        render(conn, :edit_bank_account, changeset: changeset, action: ~p"/admin/payouts/bank-account")
     end
   end
 
@@ -45,10 +45,10 @@ defmodule AppWeb.PayoutController do
       {:ok, _bank_account} ->
         conn
         |> put_flash(:info, "Your bank account detail has been updated.")
-        |> redirect(to: ~p"/payouts/bank-account")
+        |> redirect(to: ~p"/admin/payouts/bank-account")
 
       {:error, changeset} ->
-        render(conn, :edit_bank_account, changeset: changeset, action: ~p"/payouts/bank-account")
+        render(conn, :edit_bank_account, changeset: changeset, action: ~p"/admin/payouts/bank-account")
     end
   end
 end

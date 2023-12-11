@@ -20,7 +20,7 @@ defmodule AppWeb.Router do
 
   pipeline :admin_area do
     plug Pow.Plug.RequireAuthenticated,
-      error_handler: AppWeb.AuthErrorHandler
+      error_handler: AppWeb.PowAuthErrorHandler
 
     plug AppWeb.Plug.AdminMenus
 
@@ -38,7 +38,7 @@ defmodule AppWeb.Router do
     pow_extension_routes()
   end
 
-  scope "/", AppWeb do
+  scope "/admin", AppWeb do
     pipe_through [:browser, :admin_area]
     # accounts
     get "/account", AccountController, :edit

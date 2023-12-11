@@ -9,7 +9,7 @@ defmodule AppWeb.ProductController do
 
   def new(conn, _params) do
     changeset = Products.change_product(%Products.Product{}, %{})
-    render(conn, :new, changeset: changeset, action: ~p"/products")
+    render(conn, :new, changeset: changeset, action: ~p"/admin/products")
   end
 
   def create(conn, %{"product" => product_params}) do
@@ -20,10 +20,10 @@ defmodule AppWeb.ProductController do
       {:ok, product} ->
         conn
         |> put_flash(:info, "Product created successfully.")
-        |> redirect(to: ~p"/products/#{product.id}/edit")
+        |> redirect(to: ~p"/admin/products/#{product.id}/edit")
 
       {:error, changeset} ->
-        render(conn, :new, changeset: changeset, action: ~p"/products")
+        render(conn, :new, changeset: changeset, action: ~p"/admin/products")
     end
   end
 
@@ -32,11 +32,11 @@ defmodule AppWeb.ProductController do
       nil ->
         conn
         |> put_flash(:error, "Product not found.")
-        |> redirect(to: ~p"/products")
+        |> redirect(to: ~p"/admin/products")
 
       product ->
         changeset = Products.change_product(product, %{})
-        render(conn, :edit, changeset: changeset, action: ~p"/products/#{id}")
+        render(conn, :edit, changeset: changeset, action: ~p"/admin/products/#{id}")
     end
   end
 
@@ -45,17 +45,17 @@ defmodule AppWeb.ProductController do
       nil ->
         conn
         |> put_flash(:error, "Product not found.")
-        |> redirect(to: ~p"/products")
+        |> redirect(to: ~p"/admin/products")
 
       product ->
         case Products.update_product(product, product_params) do
           {:ok, product} ->
             conn
             |> put_flash(:info, "Product updated successfully.")
-            |> redirect(to: ~p"/products/#{product.id}/edit")
+            |> redirect(to: ~p"/admin/products/#{product.id}/edit")
 
           {:error, changeset} ->
-            render(conn, :edit, changeset: changeset, action: ~p"/products/#{product.id}")
+            render(conn, :edit, changeset: changeset, action: ~p"/admin/products/#{product.id}")
         end
     end
   end
@@ -65,14 +65,14 @@ defmodule AppWeb.ProductController do
       nil ->
         conn
         |> put_flash(:error, "Product not found.")
-        |> redirect(to: ~p"/products")
+        |> redirect(to: ~p"/admin/products")
 
       product ->
         Products.delete_product(product)
 
         conn
         |> put_flash(:info, "Product deleted successfully.")
-        |> redirect(to: ~p"/products")
+        |> redirect(to: ~p"/admin/products")
     end
   end
 end

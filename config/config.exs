@@ -8,7 +8,7 @@
 import Config
 
 config :app,
-  app_name: "Paperkit",
+  app_name: "Gummy",
   app_tagline: "Dashboard"
 
 config :app,
@@ -73,6 +73,7 @@ config :app, :pow,
   repo: App.Repo,
   extensions: [PowResetPassword, PowEmailConfirmation],
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks,
+  routes_backend: AppWeb.PowAuthRoutes,
   cache_store_backend: Pow.Store.Backend.MnesiaCache,
   mailer_backend: App.Mailer
 
