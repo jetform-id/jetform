@@ -82,8 +82,8 @@
                   </.link>
                 </div>
                 <div class="text-sm font-normal text-gray-400 dark:text-gray-400">
-                  https://paperkit.id/p/<%= product.slug %>
-                  <.link href="/" target="_blank">
+                  <%= @base_url %>/p/<%= product.slug %>
+                  <.link href={@base_url <> "/p/" <> product.slug} target="_blank">
                     <.icon
                       name="hero-arrow-top-right-on-square"
                       class="w-4 h-4 inline-block text-primary-600"

@@ -13,8 +13,8 @@
           :let={f}
           for={@changeset}
           as={:bank_account}
-          action={@action}
-          phx-update="ignore"
+          phx-update="replace"
+          phx-submit="save"
         >
           <div class="mt-8 space-y-6">
             <.error :if={@changeset.action}>

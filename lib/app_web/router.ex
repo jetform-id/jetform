@@ -12,6 +12,7 @@ defmodule AppWeb.Router do
     plug :put_root_layout, html: {AppWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug AppWeb.Plug.Globals
   end
 
   pipeline :auth_area do
@@ -22,13 +23,17 @@ defmodule AppWeb.Router do
     plug Pow.Plug.RequireAuthenticated,
       error_handler: AppWeb.PowAuthErrorHandler
 
-    plug AppWeb.Plug.AdminMenus
-
     plug :put_layout, html: {AppWeb.Layouts, :admin}
   end
 
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  scope "/", AppWeb do
+    pipe_through [:browser]
+
+    get "/", PageController, :index
   end
 
   scope "/" do
@@ -40,23 +45,22 @@ defmodule AppWeb.Router do
 
   scope "/admin", AppWeb do
     pipe_through [:browser, :admin_area]
+
     # accounts
     get "/account", AccountController, :edit
     put "/account", AccountController, :update
 
-    # products
     live_session :admin, on_mount: {AppWeb.LiveAuth, :admin}, layout: {AppWeb.Layouts, :admin} do
-      live "/products", ProductLive.Index, :index
-      live "/products/:id/edit", ProductLive.Edit, :edit
+      # products
+      live "/products", ProductLive.Index
+      live "/products/:id/edit", ProductLive.Edit
+
+      # bank
+      live "/payouts/bank-account", PayoutsLive.Bank
 
       # dashboard
-      live "/", DashboardLive.Index, :index
+      live "/", DashboardLive.Index
     end
-
-    # payouts
-    get "/payouts/bank-account", PayoutController, :edit_bank_account
-    post "/payouts/bank-account", PayoutController, :create_or_update_bank_account
-    put "/payouts/bank-account", PayoutController, :create_or_update_bank_account
   end
 
   # Other scopes may use custom stacks.

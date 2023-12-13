@@ -9,7 +9,7 @@ defmodule AppWeb.ProductLive.Index do
 
   @impl true
   def handle_params(params, _uri, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+    {:noreply, apply_params(socket, params)}
   end
 
   @impl true
@@ -51,7 +51,7 @@ defmodule AppWeb.ProductLive.Index do
     {:noreply, socket}
   end
 
-  defp apply_action(socket, :index, %{"action" => "new"}) do
+  defp apply_params(socket, %{"action" => "new"}) do
     socket
     |> assign(:new_modal, true)
     |> assign(:page_title, "New Product")
@@ -59,7 +59,7 @@ defmodule AppWeb.ProductLive.Index do
     |> assign(:action, ~p"/admin/products")
   end
 
-  defp apply_action(socket, :index, _params) do
+  defp apply_params(socket, _params) do
     socket
     |> assign(:new_modal, false)
     |> assign(:page_title, "Products")

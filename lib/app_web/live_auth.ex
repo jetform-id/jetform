@@ -6,12 +6,20 @@ defmodule AppWeb.LiveAuth do
   use AppWeb, :verified_routes
   import Phoenix.Component
   import Phoenix.LiveView
+  alias AppWeb.Utils
 
   def on_mount(:admin, _params, session, socket) do
-    socket = mount_current_user(socket, session)
+    socket =
+      socket
+      |> assign(:base_url, Utils.base_url())
+      |> assign(:admin_menus, Utils.admin_menus())
+      |> assign_new(:current_user, fn ->
+        {_conn, user} = conn_user_from_session(session)
+        user
+      end)
 
     if socket.assigns.current_user do
-      {:cont, assign(socket, :admin_menus, admin_menus())}
+      {:cont, socket}
     else
       socket =
         socket
@@ -22,49 +30,19 @@ defmodule AppWeb.LiveAuth do
     end
   end
 
-  defp mount_current_user(socket, session) do
-    assign_new(socket, :current_user, fn ->
-      pow_config = [otp_app: :app]
+  def conn_user_from_session(session) do
+    pow_config = [otp_app: :app]
 
-      {_conn, user} =
-        %Plug.Conn{
-          private: %{
-            plug_session_fetch: :done,
-            plug_session: session,
-            pow_config: pow_config
-          },
-          owner: self(),
-          remote_ip: {0, 0, 0, 0}
-        }
-        |> Map.put(:secret_key_base, AppWeb.Endpoint.config(:secret_key_base))
-        |> Pow.Plug.Session.fetch(pow_config)
-
-      user
-    end)
-  end
-
-  defp admin_menus do
-    [
-      %{title: "Dashboard", path: ~p"/admin", icon: "hero-chart-pie-solid"},
-      %{title: "Products", path: ~p"/admin/products", icon: "hero-squares-2x2-solid"},
-      %{
-        title: "Customers",
-        path: ~p"/admin",
-        icon: "hero-users-solid"
+    %Plug.Conn{
+      private: %{
+        plug_session_fetch: :done,
+        plug_session: session,
+        pow_config: [otp_app: :app]
       },
-      %{
-        title: "Transactions",
-        path: ~p"/admin",
-        icon: "hero-receipt-percent-solid"
-      },
-      %{
-        title: "Settings",
-        icon: "hero-cog-6-tooth-solid",
-        children: [
-          %{title: "Account", path: ~p"/admin/account", icon: nil},
-          %{title: "Payouts", path: ~p"/admin/payouts/bank-account", icon: nil}
-        ]
-      }
-    ]
+      owner: self(),
+      remote_ip: {0, 0, 0, 0}
+    }
+    |> Map.put(:secret_key_base, AppWeb.Endpoint.config(:secret_key_base))
+    |> Pow.Plug.Session.fetch(pow_config)
   end
 end
