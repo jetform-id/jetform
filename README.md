@@ -16,7 +16,7 @@ Gummy bukanlah ide baru, melainkan penggabungan intisari beberapa produk yang su
 - **Fast and secure checkout page**. Pembeli langsung dapat membeli produk yang mereka inginkan dengan proses yang cepat, mudah dan aman. **(v1)**
 - **Flat commision fee. No monthly subscription!** Anda bisa daftar dan langsung jualan tanpa iuran bulanan. Gummy mendapat komisi 10% dari setiap transaksi penjualan produk anda. **(v1)**
 - **No limit**. Tidak ada batasan dalam jumlah produk ataupun jumlah transaksi. **(v1)**
-- **Create great offers!** Berbagai modul untuk membuat penawaran anda lebih menarik, seperti: Scarcity (stok terbatas), Urgency (waktu terbatas), Bonuses (bonus melimpah). **(v1)**
+- **Create great offers!** Berbagai modul untuk membuat penawaran anda lebih menarik, seperti: Scarcity (stok terbatas), Urgency (waktu terbatas), Bonuses (bonus melimpah) atau kode voucher. **(v1)**
 - **Buying options**. Buat produk dengan pilihan variasi berbeda dan dengan harga berbeda. **(v1)**
 - **Withdraw anytime**. Withdraw hasil penjualan anda kapan saja. **(v1)**
 - **Local payment methods**. Pembayaran aman dengan metode pembayaran kekinian. Payment processor kami adalah Midtrans. **(v1)**
