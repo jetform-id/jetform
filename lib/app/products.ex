@@ -33,4 +33,41 @@ defmodule App.Products do
   def delete_product(product) do
     Repo.delete(product)
   end
+
+  def cover_url(product, version, opts \\ []) do
+    App.Products.ProductCover.url({product.cover, product}, version, opts)
+  end
+
+  def add_detail(product, %{changes: changes}) do
+    # try to get details from changes, if not, get from product
+    details =
+      case Map.get(changes, :details) do
+        nil -> product.details
+        details -> details
+      end
+
+    id = DateTime.utc_now() |> DateTime.to_unix() |> Integer.to_string()
+
+    details =
+      Map.put(details, "items", details["items"] ++ [%{"id" => id, "key" => "", "value" => ""}])
+
+    change_product(product, Map.put(changes, :details, details))
+  end
+
+  def delete_detail(product, %{changes: changes}, detail) do
+    # try to get details from changes, if not, get from product
+    details =
+      case Map.get(changes, :details) do
+        nil -> product.details
+        details -> details
+      end
+
+    items =
+      Enum.filter(details["items"], fn item ->
+        item["id"] != detail["id"]
+      end)
+
+    details = Map.put(details, "items", items)
+    change_product(product, Map.put(changes, :details, details))
+  end
 end

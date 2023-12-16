@@ -10,6 +10,10 @@ defmodule App.Repo.Migrations.CreateProducts do
       add :price, :integer, null: false
       add :description, :string
       add :is_live, :boolean, null: false, default: false
+      add :cta, :string, null: false
+      add :cta_text, :string
+      add :details, :jsonb
+      add :cover, :string
 
       timestamps(type: :utc_datetime)
     end

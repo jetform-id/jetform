@@ -13,25 +13,6 @@ defmodule AppWeb.ProductLive.Index do
   end
 
   @impl true
-  def handle_event("create", %{"product" => product_params}, socket) do
-    params = Map.put(product_params, "user", socket.assigns.current_user)
-
-    socket =
-      case Products.create_product(params) do
-        {:ok, product} ->
-          socket
-          |> put_flash(:info, "Product created successfully.")
-          |> push_navigate(to: ~p"/admin/products/#{product.id}/edit")
-
-        {:error, changeset} ->
-          socket
-          |> assign(:changeset, changeset)
-      end
-
-    {:noreply, socket}
-  end
-
-  @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     socket =
       case Products.get_product(id) do
@@ -52,10 +33,12 @@ defmodule AppWeb.ProductLive.Index do
   end
 
   defp apply_params(socket, %{"action" => "new"}) do
+    initial_slug = :crypto.strong_rand_bytes(4) |> Base.encode16(case: :lower)
+
     socket
     |> assign(:new_modal, true)
     |> assign(:page_title, "New Product")
-    |> assign(:changeset, Products.change_product(%Products.Product{}, %{}))
+    |> assign(:changeset, Products.change_product(%Products.Product{}, %{"slug" => initial_slug}))
     |> assign(:action, ~p"/admin/products")
   end
 

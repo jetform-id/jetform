@@ -12,19 +12,58 @@
         <.simple_form
           :let={f}
           for={@changeset}
-          phx-update="replace"
           phx-change="validate"
+          phx-update="replace"
           phx-submit="save"
         >
           <div class="mt-8 space-y-6">
-            <.error :if={@changeset.action && not @changeset.valid?}>
+            <%!-- <.error :if={@changeset.action && not @changeset.valid?}>
               Oops, something went wrong! Please check the errors below.
-            </.error>
-            <.input field={f[:name]} type="text" label="Name" required />
-            <.input field={f[:slug]} type="text" label="Slug" required />
-            <.input field={f[:price]} type="number" label="Price" required />
-            <.input field={f[:description]} type="text" label="Description" required />
+            </.error> --%>
             <.input field={f[:is_live]} type="checkbox" label="Is live?" />
+            <.input field={f[:name]} type="text" label="Name" required />
+            <.input field={f[:slug]} type="text" label="URL" required>
+              <:help>
+                <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  <%= @base_url %>/p/<span id="shop-username" class="font-bold"><%= Map.get(@changeset.changes, :slug, @changeset.data.slug) %></span>
+                </div>
+              </:help>
+            </.input>
+            <.input field={f[:price]} type="number" label="Price" required />
+            <.input field={f[:description]} type="textarea" label="Description" />
+            <img src={@cover_url} />
+            <.live_file_input upload={@uploads[:cover]} />
+            <.input
+              field={f[:cta]}
+              type="select"
+              label="Call To Action (CTA)"
+              options={[
+                {"Beli", :buy},
+                {"Beli Sekarang", :buy_now},
+                {"Custom", :custom}
+              ]}
+              required
+            />
+            <.input
+              :if={Map.get(@changeset.changes, :cta, @changeset.data.cta) != :custom}
+              field={f[:cta_text]}
+              type="text"
+              rest_class="hidden"
+            />
+            <.input
+              :if={Map.get(@changeset.changes, :cta, @changeset.data.cta) == :custom}
+              field={f[:cta_text]}
+              type="text"
+              placeholder="Custom CTA..."
+              required
+            />
+
+            <.live_component
+              id={:details}
+              module={AppWeb.ProductLive.Components.Details}
+              label="Details"
+              details={f[:details]}
+            />
           </div>
 
           <:actions>

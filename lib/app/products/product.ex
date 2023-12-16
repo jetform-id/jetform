@@ -1,10 +1,12 @@
 defmodule App.Products.Product do
   use Ecto.Schema
+  use Waffle.Ecto.Schema
+
   import Ecto.Changeset
   alias App.Utils.ReservedWords
 
-  @required_fields ~w(name slug price)a
-  @optional_fields ~w(is_live description)a
+  @required_fields ~w(name slug price cta)a
+  @optional_fields ~w(is_live description cta_text details)a
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -14,6 +16,10 @@ defmodule App.Products.Product do
     field :price, :integer, default: 0
     field :description, :string
     field :is_live, :boolean, default: false
+    field :cta, Ecto.Enum, values: [:buy, :buy_now, :custom], default: :buy
+    field :cta_text, :string
+    field :details, :map, default: %{"items" => []}
+    field :cover, App.Products.ProductCover.Type
 
     belongs_to :user, App.Users.User
 
@@ -22,10 +28,17 @@ defmodule App.Products.Product do
 
   @doc false
   def changeset(product, attrs) do
-    product
-    |> cast(attrs, @required_fields ++ @optional_fields)
-    |> validate_required(@required_fields)
-    |> validate_slug()
+    IO.inspect(attrs)
+
+    cs =
+      product
+      |> cast(attrs, @required_fields ++ @optional_fields)
+      |> cast_attachments(attrs, [:cover], allow_paths: true)
+      |> validate_required(@required_fields)
+      |> validate_slug()
+
+    IO.inspect(cs)
+    cs
   end
 
   def create_changeset(product, attrs) do

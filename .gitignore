@@ -35,6 +35,8 @@ app-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Ignore dev uploaded files
+/priv/static/uploads/
 .env
 
 /Mnesia.*

@@ -204,25 +204,11 @@
 </div>
 -->
 <.modal :if={@new_modal} id="product-modal" show on_cancel={JS.patch(~p"/admin/products")}>
-  <.simple_form :let={f} for={@changeset} as={:product} phx-update="replace" phx-submit="create">
-    <div class="mt-8 space-y-6">
-      <.error :if={@changeset.action}>
-        Oops, something went wrong! Please check the errors below.
-      </.error>
-      <.input field={f[:name]} type="text" label="Name" required />
-      <.input field={f[:slug]} type="text" label="Slug" required />
-      <.input field={f[:price]} type="number" label="Price" required />
-    </div>
-
-    <:actions>
-      <div class="mt-8">
-        <.button
-          phx-disable-with="Creating..."
-          class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-        >
-          Create and customize <span aria-hidden="true">→</span>
-        </.button>
-      </div>
-    </:actions>
-  </.simple_form>
+  <.live_component
+    module={AppWeb.ProductLive.Components.NewForm}
+    id={:new_product}
+    changeset={@changeset}
+    base_url={@base_url}
+    current_user={@current_user}
+  />
 </.modal>

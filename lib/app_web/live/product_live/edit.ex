@@ -12,12 +12,12 @@ defmodule AppWeb.ProductLive.Edit do
           |> redirect(to: ~p"/admin/products")
 
         product ->
-          changeset = Products.change_product(product, %{})
-
           socket
           |> assign(:page_title, "Edit: #{product.name}")
           |> assign(:product, product)
-          |> assign(:changeset, changeset)
+          |> assign(:changeset, Products.change_product(product, %{}))
+          |> assign(:cover_url, Products.cover_url(product, :thumb))
+          |> allow_upload(:cover, accept: ~w(.jpg .jpeg .png))
           |> assign(:action, ~p"/admin/products")
       end
 
@@ -36,14 +36,33 @@ defmodule AppWeb.ProductLive.Edit do
 
   @impl true
   def handle_event("save", %{"product" => product_params}, socket) do
+    # set details changes
+    # TODO: handle details on client side
+    product_params =
+      case Map.get(socket.assigns.changeset.changes, :details) do
+        nil -> product_params
+        details -> Map.put(product_params, "details", details)
+      end
+
+    # get uploaded cover image
+    product_params =
+      case uploaded_entries(socket, :cover) do
+        {[_ | _], []} ->
+          [cover_path] = uploaded_image_paths(socket, :cover)
+          Map.put(product_params, "cover", cover_path)
+
+        _ ->
+          product_params
+      end
+
     socket =
       case Products.update_product(socket.assigns.product, product_params) do
         {:ok, product} ->
           socket
           |> assign(:product, product)
           |> assign(:changeset, Products.change_product(product, %{}))
+          |> assign(:cover_url, Products.cover_url(product, :thumb))
           |> put_flash(:info, "Product updated successfully.")
-          |> push_navigate(to: ~p"/admin/products")
 
         {:error, changeset} ->
           socket
@@ -51,5 +70,34 @@ defmodule AppWeb.ProductLive.Edit do
       end
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("add_detail", _params, socket) do
+    {:noreply,
+     assign(
+       socket,
+       :changeset,
+       Products.add_detail(socket.assigns.product, socket.assigns.changeset)
+     )}
+  end
+
+  @impl true
+  def handle_event("delete_detail", detail, socket) do
+    {:noreply,
+     assign(
+       socket,
+       :changeset,
+       Products.delete_detail(socket.assigns.product, socket.assigns.changeset, detail)
+     )}
+  end
+
+  defp uploaded_image_paths(socket, field) when is_atom(field) do
+    consume_uploaded_entries(socket, field, fn %{path: path}, entry ->
+      extension = String.replace(entry.client_type, "image/", ".")
+      updated_path = Path.join(Path.dirname(path), "#{entry.uuid}#{extension}")
+      File.cp!(path, updated_path)
+      {:ok, updated_path}
+    end)
   end
 end

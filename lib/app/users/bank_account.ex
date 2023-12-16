@@ -7,10 +7,11 @@ defmodule App.Users.BankAccount do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "bank_accounts" do
-    belongs_to :user, App.Users.User
     field :bank_name, :string
     field :account_name, :string
     field :account_number, :string
+
+    belongs_to :user, App.Users.User
 
     timestamps(type: :utc_datetime)
   end

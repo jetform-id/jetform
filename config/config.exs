@@ -77,6 +77,12 @@ config :app, :pow,
   cache_store_backend: Pow.Store.Backend.MnesiaCache,
   mailer_backend: App.Mailer
 
+config :waffle,
+  storage: Waffle.Storage.Local,
+  storage_dir_prefix: "priv/static",
+  storage_dir: "uploads"
+  # asset_host: "http://localhost:4000"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
