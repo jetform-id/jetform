@@ -30,6 +30,12 @@
                 scope="col"
                 class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
               >
+              Cover
+              </th>
+              <th
+                scope="col"
+                class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
+              >
                 Name
               </th>
               <th
@@ -71,6 +77,9 @@
                   name="hero-x-circle-solid"
                   class="w-8 h-8 text-gray-500 dark:text-gray-400"
                 />
+              </td>
+              <td class="text-base font-medium text-gray-900 dark:text-white">
+                <img src={App.Products.cover_url(product, :thumb)} class="w-24 rounded-md border border-gray-300" />
               </td>
               <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400">
                 <div class="text-base font-semibold">

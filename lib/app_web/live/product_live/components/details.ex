@@ -7,17 +7,25 @@ defmodule AppWeb.ProductLive.Components.Details do
     <div phx-feedback-for="details">
       <.label for={@id}><%= @label %></.label>
       <div
-        :for={%{"key" => key, "value" => value} = detail <- @details.value["items"]}
+        :for={%{"id" => id, "key" => key, "value" => value} = detail <- @details.value["items"]}
         class="flex flex-row gap-2 w-full"
       >
-        <.input name="key" type="text" placeholder="Nama detail" value={key} wrapper_class="flex-1" />
+        <.input
+          name={"detail_key_"  <> id}
+          type="text"
+          placeholder="Nama detail"
+          value={key}
+          wrapper_class="flex-1"
+          phx-change="update_detail"
+        />
         <span class="flex-none inline-flex items-center">=</span>
         <.input
-          name="value"
+          name={"detail_value_"  <> id}
           type="text"
           placeholder="Value detail"
           value={value}
           wrapper_class="flex-1"
+          phx-change="update_detail"
         />
         <.link
           phx-click={JS.push("delete_detail", value: detail)}

@@ -16,7 +16,6 @@ defmodule AppWeb.ProductLive.Edit do
           |> assign(:page_title, "Edit: #{product.name}")
           |> assign(:product, product)
           |> assign(:changeset, Products.change_product(product, %{}))
-          |> assign(:cover_url, Products.cover_url(product, :thumb))
           |> allow_upload(:cover, accept: ~w(.jpg .jpeg .png))
           |> assign(:action, ~p"/admin/products")
       end
@@ -61,7 +60,6 @@ defmodule AppWeb.ProductLive.Edit do
           socket
           |> assign(:product, product)
           |> assign(:changeset, Products.change_product(product, %{}))
-          |> assign(:cover_url, Products.cover_url(product, :thumb))
           |> put_flash(:info, "Product updated successfully.")
 
         {:error, changeset} ->
@@ -90,6 +88,26 @@ defmodule AppWeb.ProductLive.Edit do
        :changeset,
        Products.delete_detail(socket.assigns.product, socket.assigns.changeset, detail)
      )}
+  end
+
+  @impl true
+  def handle_event(
+        "update_detail",
+        %{"_target" => [target]} = params,
+        socket
+      ) do
+    ["detail", type, id] = String.split(target, "_")
+
+    changeset =
+      Products.update_detail(
+        socket.assigns.product,
+        socket.assigns.changeset,
+        id,
+        type,
+        params[target]
+      )
+
+    {:noreply, assign(socket, :changeset, changeset)}
   end
 
   defp uploaded_image_paths(socket, field) when is_atom(field) do

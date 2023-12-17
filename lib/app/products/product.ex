@@ -7,6 +7,11 @@ defmodule App.Products.Product do
 
   @required_fields ~w(name slug price cta)a
   @optional_fields ~w(is_live description cta_text details)a
+  @ctas %{
+    buy: "Beli",
+    buy_now: "Beli Sekarang",
+    custom: "Custom"
+  }
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -26,19 +31,25 @@ defmodule App.Products.Product do
     timestamps(type: :utc_datetime)
   end
 
+  def cta_options() do
+    Enum.map(@ctas, fn {key, value} -> {value, key} end)
+  end
+
+  def cta_text(cta) do
+    Map.get(@ctas, cta)
+  end
+
+  def cta_custom?(cta) do
+    cta == :custom
+  end
+
   @doc false
   def changeset(product, attrs) do
-    IO.inspect(attrs)
-
-    cs =
-      product
-      |> cast(attrs, @required_fields ++ @optional_fields)
-      |> cast_attachments(attrs, [:cover], allow_paths: true)
-      |> validate_required(@required_fields)
-      |> validate_slug()
-
-    IO.inspect(cs)
-    cs
+    product
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast_attachments(attrs, [:cover], allow_paths: true)
+    |> validate_required(@required_fields)
+    |> validate_slug()
   end
 
   def create_changeset(product, attrs) do

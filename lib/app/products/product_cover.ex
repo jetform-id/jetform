@@ -7,7 +7,7 @@ defmodule App.Products.ProductCover do
   # @versions [:original]
 
   # To add a thumbnail version:
-  @versions [:original, :thumb]
+  @versions [:original, :standard, :thumb]
 
   # Override the bucket on a per definition basis:
   # def bucket do
@@ -29,8 +29,12 @@ defmodule App.Products.ProductCover do
   end
 
   # Define a thumbnail transformation:
-  def transform(:thumb, _) do
+  def transform(:standard, _) do
     {:convert, "-strip -thumbnail 640x360^ -gravity center -extent 640x360 -format png", :png}
+  end
+
+  def transform(:thumb, _) do
+    {:convert, "-strip -thumbnail 256x144^ -gravity center -extent 256x144 -format png", :png}
   end
 
   # Override the persisted filenames:
