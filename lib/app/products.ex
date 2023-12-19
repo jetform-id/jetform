@@ -6,6 +6,11 @@ defmodule App.Products do
   defdelegate cta_options, to: Product
   defdelegate cta_text(cta), to: Product
   defdelegate cta_custom?(cta), to: Product
+  defdelegate has_details?(product), to: Product
+
+  def final_price(product) do
+    product.price
+  end
 
   def list_products_by_user(user) do
     query = from(p in Product, where: p.user_id == ^user.id, order_by: [desc: p.inserted_at])

@@ -52,6 +52,7 @@ defmodule App.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:plug_cowboy, "~> 2.5"},
       {:pow, "~> 1.0.34"},
+      {:number, "~> 1.0"},
       {:waffle, "~> 1.1"},
       {:waffle_ecto, "~> 0.0"}
     ]

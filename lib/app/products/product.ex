@@ -43,6 +43,10 @@ defmodule App.Products.Product do
     cta == :custom
   end
 
+  def has_details?(product) do
+    !Enum.empty?(Map.get(product.details, "items", %{}))
+  end
+
   @doc false
   def changeset(product, attrs) do
     product

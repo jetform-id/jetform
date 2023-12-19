@@ -31,6 +31,17 @@ defmodule AppWeb.CoreComponents do
   end
 
   @doc """
+  Renders formatted price.
+  """
+  attr :value, :integer, required: true
+
+  def price(assigns) do
+    ~H"""
+    <%= Number.Delimit.number_to_delimited(@value, precision: 0) %>
+    """
+  end
+
+  @doc """
   Renders a Gravatar image.
 
   ## Examples

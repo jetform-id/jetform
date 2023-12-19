@@ -1,8 +1,21 @@
 defmodule AppWeb.ProductLive.Components.Preview do
-  use AppWeb, :live_component
+  use AppWeb, :html
+  require Integer
+  alias App.Products
 
-  @impl true
+  attr :product, :map, required: true
+  attr :changeset, :map, required: false
+
   def render(assigns) do
+    assigns =
+      case Map.get(assigns, :changeset) do
+        nil ->
+          assigns
+
+        changeset ->
+          assign(assigns, :product, Ecto.Changeset.apply_changes(changeset))
+      end
+
     ~H"""
     <div class="border rounded-lg shadow bg-gray-300 dark:bg-gray-800 dark:border-gray-700">
       <ul
@@ -20,53 +33,41 @@ defmodule AppWeb.ProductLive.Components.Preview do
           </button>
         </li>
       </ul>
-
       <div>
         <%!-- preview --%>
         <div class="p-6">
           <div class="mx-auto max-w-xl rounded-lg border bg-white shadow-md">
-            <img src={App.Products.cover_url(@product, :standard)} class="rounded-t-lg" />
+            <img src={Products.cover_url(@product, :standard)} class="rounded-t-lg" />
 
             <div class="p-6">
-              <h2 class="text-2xl font-semibold"><%= @product.name %></h2>
+              <h2 class="text-2xl font-semibold" id="preview" phx-update="replace">
+                <%= @product.name %>
+              </h2>
               <p class="mt-2 text-sm text-gray-600">
                 <%= @product.description %>
               </p>
 
-              <div class="relative overflow-x-auto rounded-md mt-6">
+              <div
+                :if={Products.has_details?(@product)}
+                class="relative overflow-x-auto rounded-md mt-6"
+              >
                 <table class="w-full text-sm text-left rtl:text-right text-gray-700 dark:text-gray-700">
                   <tbody>
-                    <tr class="bg-primary-200">
+                    <tr
+                      :for={{item, index} <- Enum.with_index(@product.details["items"])}
+                      class={if Integer.is_even(index), do: "bg-primary-100", else: "bg-primary-50"}
+                    >
                       <td
                         scope="row"
                         class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
                       >
-                        Apple MacBook Pro 17"
+                        <%= item["key"] %>
                       </td>
-                      <td class="p-2">
-                        Silver
-                      </td>
-                    </tr>
-                    <tr class="bg-primary-300">
                       <td
                         scope="row"
                         class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
                       >
-                        Microsoft Surface Pro
-                      </td>
-                      <td class="p-2">
-                        White
-                      </td>
-                    </tr>
-                    <tr class="bg-primary-200">
-                      <td
-                        scope="row"
-                        class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
-                      >
-                        Microsoft Surface Pro
-                      </td>
-                      <td class="p-2">
-                        White
+                        : <%= item["value"] %>
                       </td>
                     </tr>
                   </tbody>
@@ -124,17 +125,21 @@ defmodule AppWeb.ProductLive.Components.Preview do
               <div class="mt-6 border-t border-b py-2">
                 <div class="flex items-center justify-between">
                   <p class="text-sm text-gray-400">Subtotal</p>
-                  <p class="text-lg font-semibold text-gray-900">$399.00</p>
+                  <p class="text-lg font-semibold text-gray-900">
+                    <span class="text-xs font-normal text-gray-400">Rp.</span>
+                    <.price value={Products.final_price(@product)} />
+                  </p>
                 </div>
-                <div class="flex items-center justify-between">
+                <%!-- <div class="flex items-center justify-between">
                   <p class="text-sm text-gray-400">Fedex Delivery Enterprise</p>
-                  <p class="text-lg font-semibold text-gray-900">$8.00</p>
-                </div>
+                  <p class="text-lg font-semibold text-gray-900">Rp. 8.00</p>
+                </div> --%>
               </div>
               <div class="mt-6 flex items-center justify-between">
                 <p class="text-sm font-medium text-gray-900">Total</p>
                 <p class="text-2xl font-semibold text-gray-900">
-                  <span class="text-xs font-normal text-gray-400">Rp.</span> 408,000
+                  <span class="text-xs font-normal text-gray-400">Rp.</span>
+                  <.price value={Products.final_price(@product)} />
                 </p>
               </div>
 
@@ -143,21 +148,11 @@ defmodule AppWeb.ProductLive.Components.Preview do
                   type="button"
                   class="group inline-flex w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800"
                 >
-                  <%= if App.Products.cta_custom?(@product.cta) do %>
+                  <%= if Products.cta_custom?(@product.cta) do %>
                     <%= @product.cta_text %>
                   <% else %>
-                    <%= App.Products.cta_text(@product.cta) %>
+                    <%= Products.cta_text(@product.cta) %>
                   <% end %>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="group-hover:ml-8 ml-4 h-6 w-6 transition-all"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
                 </button>
               </div>
             </div>
@@ -168,16 +163,5 @@ defmodule AppWeb.ProductLive.Components.Preview do
       </div>
     </div>
     """
-  end
-
-  @impl true
-  def update(assigns, socket) do
-    # we'll only work with Product schema in the template, so here we `apply_changes`
-    # to the changeset first to make it return a Product schema.
-    if assigns.changeset do
-      {:ok, assign(socket, product: Ecto.Changeset.apply_changes(assigns.changeset))}
-    else
-      {:ok, assign(socket, assigns)}
-    end
   end
 end

@@ -6,48 +6,48 @@
         role="tablist"
       >
         <li>
-          <button
-            id="info-tab"
-            type="button"
-            role="tab"
-            aria-selected="true"
-            class="inline-block p-4 px-6 text-primary-600 rounded-ss-lg bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-500"
+          <.link
+            patch="?tab=info"
+            class={[
+              "inline-block p-4 px-6 rounded-ss-lg hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-500",
+              @tab == "info" && "text-primary-600 bg-gray-100"
+            ]}
           >
             <.icon name="hero-exclamation-circle" /> Info
-          </button>
+          </.link>
         </li>
         <li>
-          <button
-            id="files-tab"
-            type="button"
-            role="tab"
-            aria-selected="false"
-            class="inline-block p-4 px-6 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+          <.link
+            patch="?tab=variations"
+            class={[
+              "inline-block p-4 px-6 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300",
+              @tab == "variations" && "text-primary-600 bg-gray-100"
+            ]}
           >
             <.icon name="hero-square-3-stack-3d" /> Variations
-          </button>
+          </.link>
         </li>
         <li>
-          <button
-            id="files-tab"
-            type="button"
-            role="tab"
-            aria-selected="false"
-            class="inline-block p-4 px-6 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+          <.link
+            patch="?tab=files"
+            class={[
+              "inline-block p-4 px-6 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300",
+              @tab == "files" && "text-primary-600 bg-gray-100"
+            ]}
           >
             <.icon name="hero-paper-clip" /> Files
-          </button>
+          </.link>
         </li>
         <li>
-          <button
-            id="Modules"
-            type="button"
-            role="tab"
-            aria-selected="false"
-            class="inline-block p-4 px-6 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+          <.link
+            patch="?tab=enhance"
+            class={[
+              "inline-block p-4 px-6 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300",
+              @tab == "enhance" && "text-primary-600 bg-gray-100"
+            ]}
           >
-            <.icon name="hero-squares-2x2" /> Modules
-          </button>
+            <.icon name="hero-squares-2x2" /> Enhance offer!
+          </.link>
         </li>
       </ul>
       <div id="defaultTabContent">
@@ -57,78 +57,17 @@
           role="tabpanel"
           aria-labelledby="info-tab"
         >
-          <.simple_form
-            :let={f}
-            for={@changeset}
-            phx-change="validate"
-            phx-update="replace"
-            phx-submit="save"
-          >
-            <div class="space-y-6">
-              <%!-- <.error :if={@changeset.action && not @changeset.valid?}>
-              Oops, something went wrong! Please check the errors below.
-            </.error> --%>
-              <.input field={f[:name]} type="text" label="Name" required />
-              <.input field={f[:is_live]} type="checkbox" label="Is live?" />
-              <.input field={f[:slug]} type="text" label="URL" required>
-                <:help>
-                  <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                    <%= @base_url %>/p/<span id="shop-username" class="font-bold"><%= Map.get(@changeset.changes, :slug, @changeset.data.slug) %></span>
-                  </div>
-                </:help>
-              </.input>
-              <.input field={f[:price]} type="number" label="Price" required />
-              <.input field={f[:description]} type="textarea" label="Description" />
-              <.input
-                field={f[:cta]}
-                type="select"
-                label="Call To Action (CTA)"
-                options={App.Products.cta_options()}
-                required
-              />
-              <.input
-                :if={Map.get(@changeset.changes, :cta, @changeset.data.cta) != :custom}
-                field={f[:cta_text]}
-                type="text"
-                rest_class="hidden"
-              />
-              <.input
-                :if={Map.get(@changeset.changes, :cta, @changeset.data.cta) == :custom}
-                field={f[:cta_text]}
-                type="text"
-                placeholder="Custom CTA..."
-                required
-              />
-              <.live_component
-                id={:details}
-                module={AppWeb.ProductLive.Components.Details}
-                label="Details"
-                details={f[:details]}
-              />
-              <img src={Products.cover_url(@product, :standard)} />
-              <.live_file_input upload={@uploads[:cover]} />
-            </div>
-
-            <:actions>
-              <div class="mt-8">
-                <.button
-                  phx-disable-with="Creating..."
-                  class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                >
-                  Save <span aria-hidden="true">→</span>
-                </.button>
-              </div>
-            </:actions>
-          </.simple_form>
+          <EditForm.render
+            :if={@tab == "info"}
+            on_change="validate"
+            on_submit="save"
+            product={@product}
+            changeset={@changeset}
+            uploads={@uploads}
+          />
         </div>
       </div>
     </div>
-
-    <.live_component
-      id={:preview}
-      module={AppWeb.ProductLive.Components.Preview}
-      product={@product}
-      changeset={@changeset}
-    />
+    <Preview.render product={@product} changeset={@changeset} />
   </div>
 </div>

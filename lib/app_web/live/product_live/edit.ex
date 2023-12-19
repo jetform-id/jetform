@@ -1,6 +1,7 @@
 defmodule AppWeb.ProductLive.Edit do
   use AppWeb, :live_view
   alias App.Products
+  alias AppWeb.ProductLive.Components.{EditForm, Preview}
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
@@ -108,6 +109,38 @@ defmodule AppWeb.ProductLive.Edit do
       )
 
     {:noreply, assign(socket, :changeset, changeset)}
+  end
+
+  @impl true
+  def handle_params(%{"tab" => "variations"}, _uri, socket) do
+    socket =
+      socket |> assign(:tab, "variations")
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_params(%{"tab" => "files"}, _uri, socket) do
+    socket =
+      socket |> assign(:tab, "files")
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_params(%{"tab" => "enhance"}, _uri, socket) do
+    socket =
+      socket |> assign(:tab, "enhance")
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_params(_params, _uri, socket) do
+    socket =
+      socket |> assign(:tab, "info")
+
+    {:noreply, socket}
   end
 
   defp uploaded_image_paths(socket, field) when is_atom(field) do
