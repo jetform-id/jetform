@@ -1,15 +1,19 @@
 defmodule App.Products do
   import Ecto.Query
   alias App.Repo
-  alias App.Products.Product
+  alias App.Products.{Product, Version}
 
+  # --------------- PRODUCT ---------------
   defdelegate cta_options, to: Product
   defdelegate cta_text(cta), to: Product
   defdelegate cta_custom?(cta), to: Product
   defdelegate has_details?(product), to: Product
 
-  def final_price(product) do
-    product.price
+  def total_price(product, version \\ nil) do
+    case version do
+      nil -> product.price
+      _ -> version.price
+    end
   end
 
   def list_products_by_user(user) do
@@ -99,5 +103,43 @@ defmodule App.Products do
 
     details = Map.put(details, "items", items)
     change_product(product, Map.put(changes, :details, details))
+  end
+
+  # --------------- VERSION ---------------
+
+  def list_versions_by_product(product) do
+    query =
+      from(v in Version,
+        where: v.product_id == ^product.id,
+        order_by: [asc: v.inserted_at]
+      )
+
+    query |> Repo.all()
+  end
+
+  def get_version(id) do
+    Version
+    |> Repo.get(id)
+  end
+
+  def change_version(version, attrs) do
+    version
+    |> Version.changeset(attrs)
+  end
+
+  def create_version(attrs) do
+    %Version{}
+    |> Version.create_changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_version(version, attrs) do
+    version
+    |> Version.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_version(version) do
+    Repo.delete(version)
   end
 end

@@ -18,13 +18,13 @@
         </li>
         <li>
           <.link
-            patch="?tab=variations"
+            patch="?tab=versions"
             class={[
               "inline-block p-4 px-6 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300",
-              @tab == "variations" && "text-primary-600 bg-gray-100"
+              @tab == "versions" && "text-primary-600 bg-gray-100"
             ]}
           >
-            <.icon name="hero-square-3-stack-3d" /> Variations
+            <.icon name="hero-square-3-stack-3d" /> Versions
           </.link>
         </li>
         <li>
@@ -65,9 +65,15 @@
             changeset={@changeset}
             uploads={@uploads}
           />
+          <.live_component
+            :if={@tab == "versions"}
+            module={Versions}
+            id={@product.id}
+            product={@product}
+          />
         </div>
       </div>
     </div>
-    <Preview.render product={@product} changeset={@changeset} />
+    <.live_component module={Preview} id={@product.id} product={@product} changeset={@changeset} />
   </div>
 </div>

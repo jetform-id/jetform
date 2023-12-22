@@ -1,21 +1,10 @@
 defmodule AppWeb.ProductLive.Components.Preview do
-  use AppWeb, :html
+  use AppWeb, :live_component
   require Integer
   alias App.Products
 
-  attr :product, :map, required: true
-  attr :changeset, :map, required: false
-
+  @impl true
   def render(assigns) do
-    assigns =
-      case Map.get(assigns, :changeset) do
-        nil ->
-          assigns
-
-        changeset ->
-          assign(assigns, :product, Ecto.Changeset.apply_changes(changeset))
-      end
-
     ~H"""
     <div class="border rounded-lg shadow bg-gray-300 dark:bg-gray-800 dark:border-gray-700">
       <ul
@@ -74,55 +63,37 @@ defmodule AppWeb.ProductLive.Components.Preview do
                 </table>
               </div>
 
-              <form class="mt-10 grid gap-2">
-                <div class="relative">
-                  <input class="peer hidden" id="radio_0" type="radio" name="radio" checked />
+              <div :if={@has_versions} class="mt-10 grid gap-2">
+                <div :for={version <- @product.versions} class="relative">
+                  <input
+                    class="peer hidden"
+                    id={"radio_" <> version.id}
+                    type="radio"
+                    name="radio"
+                    phx-click={
+                      JS.push("select_version", value: %{"id" => version.id}, target: @myself)
+                    }
+                    checked={@selected_version && version.id == @selected_version.id}
+                  />
                   <span class="peer-checked:border-primary-700 absolute right-4 top-8 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white">
                   </span>
                   <label
                     class="peer-checked:border-2 peer-checked:border-primary-700 peer-checked:bg-primary-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4"
-                    for="radio_0"
+                    for={"radio_" <> version.id}
                   >
                     <div>
-                      <span class="mt-2 font-semibold">Basic</span>
-                      <p class="text-slate-600 text-sm text-sm mt-1 pr-10">Delivery: 2-4 Days</p>
-                    </div>
-                  </label>
-                </div>
-
-                <div class="relative">
-                  <input class="peer hidden" id="radio_1" type="radio" name="radio" />
-                  <span class="peer-checked:border-primary-700 absolute right-4 top-8 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white">
-                  </span>
-                  <label
-                    class="peer-checked:border-2 peer-checked:border-primary-700 peer-checked:bg-primary-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4"
-                    for="radio_1"
-                  >
-                    <div>
-                      <span class="mt-2 font-semibold">Fedex Delivery Pro (+$15)</span>
-                      <p class="text-slate-600 text-sm mt-1 pr-10">
-                        Thank you for the workshop, it was very productive meeting. I can't wait to start working on this new project with you guys. But first things first, I'am waiting for the offer and pitch deck from you. It would be great to get it by the end o the month.
+                      <span class="mt-2 font-semibold">
+                        <%= version.name %> (Rp. <.price value={version.price} />)
+                      </span>
+                      <p class="text-slate-600 text-sm text-sm mt-1 pr-10">
+                        <%= version.description %>
                       </p>
                     </div>
                   </label>
                 </div>
-                <div class="relative">
-                  <input class="peer hidden" id="radio_2" type="radio" name="radio" />
-                  <span class="peer-checked:border-primary-700 absolute right-4 top-8 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white">
-                  </span>
-                  <label
-                    class="peer-checked:border-2 peer-checked:border-primary-700 peer-checked:bg-primary-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4"
-                    for="radio_2"
-                  >
-                    <div>
-                      <span class="mt-2 font-semibold">Fedex Delivery Enterprise (+25)</span>
-                      <p class="text-slate-600 text-sm text-sm mt-1 pr-10">Delivery: 2-4 Days</p>
-                    </div>
-                  </label>
-                </div>
-              </form>
+              </div>
 
-              <div class="mt-6 border-t border-b py-2">
+              <%!-- <div class="mt-6 border-t border-b py-2">
                 <div class="flex items-center justify-between">
                   <p class="text-sm text-gray-400">Subtotal</p>
                   <p class="text-lg font-semibold text-gray-900">
@@ -130,21 +101,33 @@ defmodule AppWeb.ProductLive.Components.Preview do
                     <.price value={Products.final_price(@product)} />
                   </p>
                 </div>
-                <%!-- <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between">
                   <p class="text-sm text-gray-400">Fedex Delivery Enterprise</p>
                   <p class="text-lg font-semibold text-gray-900">Rp. 8.00</p>
-                </div> --%>
-              </div>
-              <div class="mt-6 flex items-center justify-between">
+                </div>
+              </div> --%>
+              <div
+                :if={!@has_versions || (@has_versions && @selected_version)}
+                class="mt-6 flex items-center justify-between"
+              >
                 <p class="text-sm font-medium text-gray-900">Total</p>
                 <p class="text-2xl font-semibold text-gray-900">
                   <span class="text-xs font-normal text-gray-400">Rp.</span>
-                  <.price value={Products.final_price(@product)} />
+                  <.price value={@total_price} />
                 </p>
               </div>
 
               <div class="mt-6 text-center">
+                <div
+                  :if={@error}
+                  class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                  role="alert"
+                >
+                  <%= @error %>
+                </div>
+
                 <button
+                  phx-click={JS.push("buy", target: @myself)}
                   type="button"
                   class="group inline-flex w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800"
                 >
@@ -163,5 +146,57 @@ defmodule AppWeb.ProductLive.Components.Preview do
       </div>
     </div>
     """
+  end
+
+  @impl true
+  def update(assigns, socket) do
+    socket =
+      case Map.get(assigns, :changeset) do
+        nil ->
+          socket
+
+        changeset ->
+          versions = assigns.product.versions |> Enum.sort_by(& &1.inserted_at, :asc)
+          product = Ecto.Changeset.apply_changes(changeset) |> Map.put(:versions, versions)
+
+          socket
+          |> assign(:product, product)
+          |> assign(:has_versions, !Enum.empty?(versions))
+          |> assign(:selected_version, nil)
+          |> assign(:error, nil)
+          |> assign(:total_price, product.price)
+      end
+
+    {:ok, socket}
+  end
+
+  @impl true
+  def handle_event("select_version", %{"id" => id}, socket) do
+    version = Enum.find(socket.assigns.product.versions, fn v -> v.id == id end)
+
+    socket =
+      socket
+      |> assign(:selected_version, version)
+      |> assign(:total_price, version.price)
+      |> assign(:error, nil)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("buy", _params, socket) do
+    if socket.assigns.has_versions do
+      case socket.assigns.selected_version do
+        nil ->
+          {:noreply, assign(socket, :error, "Please select a version!")}
+
+        version ->
+          send(self(), {__MODULE__, :buy_version, version})
+          {:noreply, socket}
+      end
+    else
+      send(self(), {__MODULE__, :buy, socket.assigns.product})
+      {:noreply, socket}
+    end
   end
 end

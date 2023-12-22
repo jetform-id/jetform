@@ -1,7 +1,7 @@
 defmodule AppWeb.ProductLive.Edit do
   use AppWeb, :live_view
   alias App.Products
-  alias AppWeb.ProductLive.Components.{EditForm, Preview}
+  alias AppWeb.ProductLive.Components.{EditForm, Preview, Versions}
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
@@ -15,7 +15,7 @@ defmodule AppWeb.ProductLive.Edit do
         product ->
           socket
           |> assign(:page_title, "Edit: #{product.name}")
-          |> assign(:product, product)
+          |> assign(:product, App.Repo.preload(product, :versions))
           |> assign(:changeset, Products.change_product(product, %{}))
           |> allow_upload(:cover, accept: ~w(.jpg .jpeg .png))
           |> assign(:action, ~p"/admin/products")
@@ -112,9 +112,9 @@ defmodule AppWeb.ProductLive.Edit do
   end
 
   @impl true
-  def handle_params(%{"tab" => "variations"}, _uri, socket) do
+  def handle_params(%{"tab" => "versions"}, _uri, socket) do
     socket =
-      socket |> assign(:tab, "variations")
+      socket |> assign(:tab, "versions")
 
     {:noreply, socket}
   end
@@ -141,6 +141,47 @@ defmodule AppWeb.ProductLive.Edit do
       socket |> assign(:tab, "info")
 
     {:noreply, socket}
+  end
+
+  # handle messages from Versions component
+
+  @impl true
+  def handle_info({AppWeb.ProductLive.Components.Versions, event, version}, socket) do
+    product = socket.assigns.product
+
+    case event do
+      :create ->
+        {:noreply, assign(socket, :product, %{product | versions: [version | product.versions]})}
+
+      :update ->
+        versions =
+          product.versions
+          |> Enum.map(fn v ->
+            if v.id == version.id, do: version, else: v
+          end)
+
+        {:noreply, assign(socket, :product, %{product | versions: versions})}
+
+      :delete ->
+        {:noreply,
+         assign(
+           socket,
+           :product,
+           Map.put(product, :versions, Enum.filter(product.versions, &(&1.id != version.id)))
+         )}
+    end
+  end
+
+  # handle messages from Preview component
+
+  @impl true
+  def handle_info({AppWeb.ProductLive.Components.Preview, :buy, _product}, socket) do
+    {:noreply, put_flash(socket, :info, "Anda dalam mode preview.")}
+  end
+
+  @impl true
+  def handle_info({AppWeb.ProductLive.Components.Preview, :buy_version, _version}, socket) do
+    {:noreply, put_flash(socket, :info, "Anda dalam mode preview.")}
   end
 
   defp uploaded_image_paths(socket, field) when is_atom(field) do

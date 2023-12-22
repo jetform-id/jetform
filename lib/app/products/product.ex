@@ -27,6 +27,7 @@ defmodule App.Products.Product do
     field :cover, App.Products.ProductCover.Type
 
     belongs_to :user, App.Users.User
+    has_many :versions, App.Products.Version
 
     timestamps(type: :utc_datetime)
   end
