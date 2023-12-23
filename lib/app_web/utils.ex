@@ -17,21 +17,29 @@ defmodule AppWeb.Utils do
 
   def admin_menus do
     [
-      %{title: "Dashboard", path: ~p"/admin", icon: "hero-chart-pie-solid"},
-      %{title: "Products", path: ~p"/admin/products", icon: "hero-squares-2x2-solid"},
       %{
-        title: "Customers",
+        title: "Penjualan",
         path: ~p"/admin",
-        icon: "hero-users-solid"
+        module: AppWeb.DashboardLive,
+        icon: "hero-receipt-percent-solid"
+      },
+      # %{title: "Dashboard", path: ~p"/admin", icon: "hero-chart-pie-solid"},
+      %{
+        title: "Produk",
+        path: ~p"/admin/products",
+        module: AppWeb.ProductLive,
+        icon: "hero-squares-2x2-solid"
       },
       %{
-        title: "Transactions",
+        title: "Pembeli",
         path: ~p"/admin",
-        icon: "hero-receipt-percent-solid"
+        module: AppWeb.DashboardLive,
+        icon: "hero-users-solid"
       },
       %{
         title: "Payouts",
         path: ~p"/admin/payouts/bank-account",
+        module: AppWeb.PayoutsLive,
         icon: "hero-banknotes-solid"
       },
       %{

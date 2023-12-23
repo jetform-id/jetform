@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "flowbite": "^2.2.0"
+    "flowbite": "^2.2.0",
+    "trix": "^2.0.8"
   }
 }

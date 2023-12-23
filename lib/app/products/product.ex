@@ -27,7 +27,7 @@ defmodule App.Products.Product do
     field :cover, App.Products.ProductCover.Type
 
     belongs_to :user, App.Users.User
-    has_many :versions, App.Products.Version
+    has_many :variants, App.Products.Variant
 
     timestamps(type: :utc_datetime)
   end
@@ -48,12 +48,17 @@ defmodule App.Products.Product do
     !Enum.empty?(Map.get(product.details, "items", %{}))
   end
 
+  def has_variants?(product) do
+    !Enum.empty?(product.variants)
+  end
+
   @doc false
   def changeset(product, attrs) do
     product
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> cast_attachments(attrs, [:cover], allow_paths: true)
     |> validate_required(@required_fields)
+    |> validate_number(:price, greater_than_or_equal_to: 0)
     |> validate_slug()
   end
 

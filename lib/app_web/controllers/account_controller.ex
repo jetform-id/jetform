@@ -3,7 +3,7 @@ defmodule AppWeb.AccountController do
 
   def edit(conn, _params) do
     changeset = Pow.Plug.change_user(conn)
-    render(conn, :edit, changeset: changeset, action: ~p"/admin/account")
+    render(conn, :edit, changeset: changeset, action: ~p"/admin/account", page_title: "Edit Account")
   end
 
   def update(conn, %{"user" => user_params}) do

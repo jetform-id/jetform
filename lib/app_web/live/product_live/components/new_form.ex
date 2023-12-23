@@ -17,9 +17,15 @@ defmodule AppWeb.ProductLive.Components.NewForm do
         phx-target={@myself}
       >
         <div class="mt-8 space-y-6">
-          <.input field={f[:name]} type="text" label="Name" required />
+          <.input field={f[:name]} type="text" label="Nama Produk" required />
           <.input field={f[:slug]} type="hidden" required />
-          <.input field={f[:price]} type="number" label="Price" required />
+          <.input field={f[:price]} type="number" label="Harga" required>
+            <:help>
+              <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                Masukkan 0 untuk membuat varian ini gratis.
+              </div>
+            </:help>
+          </.input>
         </div>
 
         <:actions>

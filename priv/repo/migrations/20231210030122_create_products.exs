@@ -8,7 +8,7 @@ defmodule App.Repo.Migrations.CreateProducts do
       add :name, :string, null: false
       add :slug, :string, null: false
       add :price, :integer, null: false
-      add :description, :string
+      add :description, :text
       add :is_live, :boolean, null: false, default: false
       add :cta, :string, null: false
       add :cta_text, :string

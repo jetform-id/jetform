@@ -1,20 +1,14 @@
 defmodule App.Products do
   import Ecto.Query
   alias App.Repo
-  alias App.Products.{Product, Version}
+  alias App.Products.{Product, Variant}
 
   # --------------- PRODUCT ---------------
   defdelegate cta_options, to: Product
   defdelegate cta_text(cta), to: Product
   defdelegate cta_custom?(cta), to: Product
   defdelegate has_details?(product), to: Product
-
-  def total_price(product, version \\ nil) do
-    case version do
-      nil -> product.price
-      _ -> version.price
-    end
-  end
+  defdelegate has_variants?(product), to: Product
 
   def list_products_by_user(user) do
     query = from(p in Product, where: p.user_id == ^user.id, order_by: [desc: p.inserted_at])
@@ -105,11 +99,11 @@ defmodule App.Products do
     change_product(product, Map.put(changes, :details, details))
   end
 
-  # --------------- VERSION ---------------
+  # --------------- VARIANT ---------------
 
-  def list_versions_by_product(product) do
+  def list_variants_by_product(product) do
     query =
-      from(v in Version,
+      from(v in Variant,
         where: v.product_id == ^product.id,
         order_by: [asc: v.inserted_at]
       )
@@ -117,29 +111,29 @@ defmodule App.Products do
     query |> Repo.all()
   end
 
-  def get_version(id) do
-    Version
+  def get_variant(id) do
+    Variant
     |> Repo.get(id)
   end
 
-  def change_version(version, attrs) do
-    version
-    |> Version.changeset(attrs)
+  def change_variant(variant, attrs) do
+    variant
+    |> Variant.changeset(attrs)
   end
 
-  def create_version(attrs) do
-    %Version{}
-    |> Version.create_changeset(attrs)
+  def create_variant(attrs) do
+    %Variant{}
+    |> Variant.create_changeset(attrs)
     |> Repo.insert()
   end
 
-  def update_version(version, attrs) do
-    version
-    |> Version.changeset(attrs)
+  def update_variant(variant, attrs) do
+    variant
+    |> Variant.changeset(attrs)
     |> Repo.update()
   end
 
-  def delete_version(version) do
-    Repo.delete(version)
+  def delete_variant(variant) do
+    Repo.delete(variant)
   end
 end

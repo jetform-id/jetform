@@ -18,13 +18,13 @@
         </li>
         <li>
           <.link
-            patch="?tab=versions"
+            patch="?tab=variants"
             class={[
               "inline-block p-4 px-6 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300",
-              @tab == "versions" && "text-primary-600 bg-gray-100"
+              @tab == "variants" && "text-primary-600 bg-gray-100"
             ]}
           >
-            <.icon name="hero-square-3-stack-3d" /> Versions
+            <.icon name="hero-square-3-stack-3d" /> Variants
           </.link>
         </li>
         <li>
@@ -38,25 +38,9 @@
             <.icon name="hero-paper-clip" /> Files
           </.link>
         </li>
-        <li>
-          <.link
-            patch="?tab=enhance"
-            class={[
-              "inline-block p-4 px-6 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300",
-              @tab == "enhance" && "text-primary-600 bg-gray-100"
-            ]}
-          >
-            <.icon name="hero-squares-2x2" /> Enhance offer!
-          </.link>
-        </li>
       </ul>
       <div id="defaultTabContent">
-        <div
-          class="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800"
-          id="about"
-          role="tabpanel"
-          aria-labelledby="info-tab"
-        >
+        <div role="tabpanel" aria-labelledby="info-tab">
           <EditForm.render
             :if={@tab == "info"}
             on_change="validate"
@@ -66,8 +50,8 @@
             uploads={@uploads}
           />
           <.live_component
-            :if={@tab == "versions"}
-            module={Versions}
+            :if={@tab == "variants"}
+            module={AppWeb.ProductLive.Components.Variants}
             id={@product.id}
             product={@product}
           />

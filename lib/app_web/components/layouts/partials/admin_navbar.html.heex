@@ -39,9 +39,12 @@
           </svg>
         </button>
         <a href="" class="flex ml-2 md:mr-24">
-          <img src="/images/logo.svg" class="h-8 mr-3" alt="FlowBite Logo" />
-          <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
-            <%= app_info(:name) %>
+          <%!-- <img src="/images/logo.svg" class="h-8 mr-3" alt="FlowBite Logo" /> --%>
+          <span class="self-center text-xl font-medium sm:text-2xl whitespace-nowrap dark:text-white">
+            <%= app_info(:name) |> String.downcase() %>
+            <span class="bg-primary-100 text-primary-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-primary-700 dark:text-primary-300">
+              BETA
+            </span>
           </span>
         </a>
         <%!-- <form action="#" method="GET" class="hidden lg:block lg:pl-3.5">

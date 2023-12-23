@@ -1,7 +1,7 @@
 defmodule AppWeb.ProductLive.Edit do
   use AppWeb, :live_view
   alias App.Products
-  alias AppWeb.ProductLive.Components.{EditForm, Preview, Versions}
+  alias AppWeb.ProductLive.Components.{EditForm, Preview}
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
@@ -15,7 +15,7 @@ defmodule AppWeb.ProductLive.Edit do
         product ->
           socket
           |> assign(:page_title, "Edit: #{product.name}")
-          |> assign(:product, App.Repo.preload(product, :versions))
+          |> assign(:product, App.Repo.preload(product, :variants))
           |> assign(:changeset, Products.change_product(product, %{}))
           |> allow_upload(:cover, accept: ~w(.jpg .jpeg .png))
           |> assign(:action, ~p"/admin/products")
@@ -112,9 +112,9 @@ defmodule AppWeb.ProductLive.Edit do
   end
 
   @impl true
-  def handle_params(%{"tab" => "versions"}, _uri, socket) do
+  def handle_params(%{"tab" => "variants"}, _uri, socket) do
     socket =
-      socket |> assign(:tab, "versions")
+      socket |> assign(:tab, "variants")
 
     {:noreply, socket}
   end
@@ -128,14 +128,6 @@ defmodule AppWeb.ProductLive.Edit do
   end
 
   @impl true
-  def handle_params(%{"tab" => "enhance"}, _uri, socket) do
-    socket =
-      socket |> assign(:tab, "enhance")
-
-    {:noreply, socket}
-  end
-
-  @impl true
   def handle_params(_params, _uri, socket) do
     socket =
       socket |> assign(:tab, "info")
@@ -143,31 +135,31 @@ defmodule AppWeb.ProductLive.Edit do
     {:noreply, socket}
   end
 
-  # handle messages from Versions component
+  # handle messages from Variants component
 
   @impl true
-  def handle_info({AppWeb.ProductLive.Components.Versions, event, version}, socket) do
+  def handle_info({AppWeb.ProductLive.Components.Variants, event, variant}, socket) do
     product = socket.assigns.product
 
     case event do
       :create ->
-        {:noreply, assign(socket, :product, %{product | versions: [version | product.versions]})}
+        {:noreply, assign(socket, :product, %{product | variants: [variant | product.variants]})}
 
       :update ->
-        versions =
-          product.versions
+        variants =
+          product.variants
           |> Enum.map(fn v ->
-            if v.id == version.id, do: version, else: v
+            if v.id == variant.id, do: variant, else: v
           end)
 
-        {:noreply, assign(socket, :product, %{product | versions: versions})}
+        {:noreply, assign(socket, :product, %{product | variants: variants})}
 
       :delete ->
         {:noreply,
          assign(
            socket,
            :product,
-           Map.put(product, :versions, Enum.filter(product.versions, &(&1.id != version.id)))
+           Map.put(product, :variants, Enum.filter(product.variants, &(&1.id != variant.id)))
          )}
     end
   end
@@ -180,7 +172,7 @@ defmodule AppWeb.ProductLive.Edit do
   end
 
   @impl true
-  def handle_info({AppWeb.ProductLive.Components.Preview, :buy_version, _version}, socket) do
+  def handle_info({AppWeb.ProductLive.Components.Preview, :buy_variant, _variant}, socket) do
     {:noreply, put_flash(socket, :info, "Anda dalam mode preview.")}
   end
 

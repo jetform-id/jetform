@@ -27,14 +27,14 @@ defmodule AppWeb.ProductLive.Components.Preview do
         <div class="p-6">
           <div class="mx-auto max-w-xl rounded-lg border bg-white shadow-md">
             <img src={Products.cover_url(@product, :standard)} class="rounded-t-lg" />
-
+            <hr />
             <div class="p-6">
               <h2 class="text-2xl font-semibold" id="preview" phx-update="replace">
                 <%= @product.name %>
               </h2>
-              <p class="mt-2 text-sm text-gray-600">
-                <%= @product.description %>
-              </p>
+              <div class="mt-2 text-sm text-gray-600 trix-content preview">
+                <%= raw(@product.description) %>
+              </div>
 
               <div
                 :if={Products.has_details?(@product)}
@@ -56,38 +56,43 @@ defmodule AppWeb.ProductLive.Components.Preview do
                         scope="row"
                         class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
                       >
-                        : <%= item["value"] %>
+                        <.icon name="hero-chevron-right me-2 w-3 h-3" /> <%= item["value"] %>
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
-              <div :if={@has_versions} class="mt-10 grid gap-2">
-                <div :for={version <- @product.versions} class="relative">
+              <div :if={@has_variants} class="mt-10 grid gap-2">
+                <div :for={variant <- @product.variants} class="relative">
                   <input
                     class="peer hidden"
-                    id={"radio_" <> version.id}
+                    id={"radio_" <> variant.id}
                     type="radio"
                     name="radio"
                     phx-click={
-                      JS.push("select_version", value: %{"id" => version.id}, target: @myself)
+                      JS.push("select_variant", value: %{"id" => variant.id}, target: @myself)
                     }
-                    checked={@selected_version && version.id == @selected_version.id}
+                    checked={@selected_variant && variant.id == @selected_variant.id}
                   />
                   <span class="peer-checked:border-primary-700 absolute right-4 top-8 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white">
                   </span>
                   <label
                     class="peer-checked:border-2 peer-checked:border-primary-700 peer-checked:bg-primary-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4"
-                    for={"radio_" <> version.id}
+                    for={"radio_" <> variant.id}
                   >
                     <div>
                       <span class="mt-2 font-semibold">
-                        <%= version.name %> (Rp. <.price value={version.price} />)
+                        <%= variant.name %> - Rp. <.price value={variant.price} />
                       </span>
                       <p class="text-slate-600 text-sm text-sm mt-1 pr-10">
-                        <%= version.description %>
+                        <%= variant.description %>
                       </p>
+                      <div :if={variant.quantity} class="pt-2">
+                        <span class="bg-yellow-100 text-yellow-800 text-xs font-medium inline-flex items-center px-2 py-0.5 rounded dark:bg-gray-700 dark:text-yellow-400 border border-yellow-400">
+                          <.icon name="hero-clock w-3 h-3 me-1" /> Sisa <%= variant.quantity %>
+                        </span>
+                      </div>
                     </div>
                   </label>
                 </div>
@@ -107,7 +112,7 @@ defmodule AppWeb.ProductLive.Components.Preview do
                 </div>
               </div> --%>
               <div
-                :if={!@has_versions || (@has_versions && @selected_version)}
+                :if={!@has_variants || (@has_variants && @selected_variant)}
                 class="mt-6 flex items-center justify-between"
               >
                 <p class="text-sm font-medium text-gray-900">Total</p>
@@ -129,7 +134,7 @@ defmodule AppWeb.ProductLive.Components.Preview do
                 <button
                   phx-click={JS.push("buy", target: @myself)}
                   type="button"
-                  class="group inline-flex w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800"
+                  class="group inline-flex w-full items-center justify-center rounded-md bg-primary-700 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-800"
                 >
                   <%= if Products.cta_custom?(@product.cta) do %>
                     <%= @product.cta_text %>
@@ -156,13 +161,13 @@ defmodule AppWeb.ProductLive.Components.Preview do
           socket
 
         changeset ->
-          versions = assigns.product.versions |> Enum.sort_by(& &1.inserted_at, :asc)
-          product = Ecto.Changeset.apply_changes(changeset) |> Map.put(:versions, versions)
+          variants = assigns.product.variants |> Enum.sort_by(& &1.inserted_at, :asc)
+          product = Ecto.Changeset.apply_changes(changeset) |> Map.put(:variants, variants)
 
           socket
           |> assign(:product, product)
-          |> assign(:has_versions, !Enum.empty?(versions))
-          |> assign(:selected_version, nil)
+          |> assign(:has_variants, Products.has_variants?(product))
+          |> assign(:selected_variant, nil)
           |> assign(:error, nil)
           |> assign(:total_price, product.price)
       end
@@ -171,13 +176,13 @@ defmodule AppWeb.ProductLive.Components.Preview do
   end
 
   @impl true
-  def handle_event("select_version", %{"id" => id}, socket) do
-    version = Enum.find(socket.assigns.product.versions, fn v -> v.id == id end)
+  def handle_event("select_variant", %{"id" => id}, socket) do
+    variant = Enum.find(socket.assigns.product.variants, fn v -> v.id == id end)
 
     socket =
       socket
-      |> assign(:selected_version, version)
-      |> assign(:total_price, version.price)
+      |> assign(:selected_variant, variant)
+      |> assign(:total_price, variant.price)
       |> assign(:error, nil)
 
     {:noreply, socket}
@@ -185,13 +190,13 @@ defmodule AppWeb.ProductLive.Components.Preview do
 
   @impl true
   def handle_event("buy", _params, socket) do
-    if socket.assigns.has_versions do
-      case socket.assigns.selected_version do
+    if socket.assigns.has_variants do
+      case socket.assigns.selected_variant do
         nil ->
-          {:noreply, assign(socket, :error, "Please select a version!")}
+          {:noreply, assign(socket, :error, "Please select product variant to buy!")}
 
-        version ->
-          send(self(), {__MODULE__, :buy_version, version})
+        variant ->
+          send(self(), {__MODULE__, :buy_variant, variant})
           {:noreply, socket}
       end
     else
