@@ -10,19 +10,19 @@ Gummy bukanlah ide baru, melainkan penggabungan intisari beberapa produk yang su
 - **saweria.co**, fitur terlalu minim buat mereka yang fokus jualan produk digital.
 - **lynk.id**, fitur terlalu minim buat mereka yang fokus jualan produk digital.
 
-## Fitur dan kelebihan Gummy
+## Fitur Gummy
 
-- **Built-in digital product distribution system**. Produk digital bisa dijual dan didistribusikan langsung secara otomatis ke pembeli dengan aman tanpa perlu integrasi dengan sistem pihak ketiga. **(v1)**
-- **Fast and secure checkout page**. Pembeli langsung dapat membeli produk yang mereka inginkan dengan proses yang cepat, mudah dan aman. **(v1)**
-- **Flat commision fee. No monthly subscription!** Anda bisa daftar dan langsung jualan tanpa iuran bulanan. Gummy mendapat komisi 10% dari setiap transaksi penjualan produk anda. **(v1)**
-- **No limit**. Tidak ada batasan dalam jumlah produk ataupun jumlah transaksi. **(v1)**
-- **Create great offers!** Berbagai modul untuk membuat penawaran anda lebih menarik, seperti: Scarcity (stok terbatas), Urgency (waktu terbatas), Bonuses (bonus melimpah) atau kode voucher. **(v1)**
-- **Buying options**. Buat produk dengan pilihan variasi berbeda dan dengan harga berbeda. **(v1)**
-- **Withdraw anytime**. Withdraw hasil penjualan anda kapan saja. **(v1)**
-- **Local payment methods**. Pembayaran aman dengan metode pembayaran kekinian. Payment processor kami adalah Midtrans. **(v1)**
-- **Advance analytics**. Lihat siapa yang mengakses halaman produk anda, siapa yang membeli, lewat apa (mobile atau web), kampanye iklan yang mana dll. **(v2)**
-- **Your product, your data**. Export data product, penjualan dan pembeli untuk keperluan anda. **(v2)**
-- **Open source (kode sumber terbuka)**. Gummy mengedepankan keterbukaan (openess) dan keadilan (fairness), menggunakan produk-produk open source serta ingin didukung dan berkontribusi balik ke komunitas open source. We ❤️ open source.
+- [x] **Built-in digital product distribution system**. Produk digital bisa dijual dan didistribusikan langsung secara otomatis ke pembeli dengan aman tanpa perlu integrasi dengan sistem pihak ketiga.
+- [x] **Fast and secure checkout page**. Pembeli langsung dapat membeli produk yang mereka inginkan dengan proses yang cepat, mudah dan aman.
+- [x] **Flat commision fee. No monthly subscription!** Anda bisa daftar dan langsung jualan tanpa iuran bulanan. Gummy mendapat komisi 10% dari setiap transaksi penjualan produk anda.
+- [x] **No limits**. Tidak ada batasan dalam jumlah produk ataupun jumlah transaksi.
+- [ ] **Create great offers!** Berbagai modul untuk membuat penawaran anda lebih menarik, seperti: Scarcity (stok terbatas), Urgency (waktu terbatas), Bonuses (bonus melimpah) atau kode voucher.
+- [x] **Product Variants**. Buat produk dengan varian berbeda dan dengan harga berbeda.
+- [x] **Withdraw anytime**. Withdraw hasil penjualan anda kapan saja.
+- [x] **Local payment methods**. Pembayaran aman dengan metode pembayaran kekinian. Payment processor kami adalah Midtrans.
+- [ ] **Advance analytics**. Lihat siapa yang mengakses halaman produk anda, siapa yang membeli, lewat apa (mobile atau web), kampanye iklan yang mana dll.
+- [ ] **Your product, your data**. Export data product, penjualan dan pembeli untuk keperluan anda.
+- [x] **Open source (kode sumber terbuka)**. Gummy mengedepankan keterbukaan (openess) dan keadilan (fairness), menggunakan produk-produk open source serta ingin didukung dan berkontribusi balik ke komunitas open source. We ❤️ open source.
 
 Anda punya ide menarik? [lets talk](https://github.com/ekaputra07/gummy.id/discussions).
 
