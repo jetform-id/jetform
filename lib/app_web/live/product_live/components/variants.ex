@@ -34,11 +34,11 @@ defmodule AppWeb.ProductLive.Components.Variants do
         <p class="text-slate-600 text-sm text-sm mt-1 pr-4">
           <%= variant.description %>
         </p>
-        <div :if={variant.quantity} class="pt-2">
+        <%!-- <div :if={variant.quantity} class="pt-2">
           <span class="bg-yellow-100 text-yellow-800 text-xs font-medium inline-flex items-center px-2 py-0.5 rounded dark:bg-gray-700 dark:text-yellow-400 border border-yellow-400">
             <.icon name="hero-clock w-3 h-3 me-1" /> Sisa <%= variant.quantity %>
           </span>
-        </div>
+        </div> --%>
       </div>
 
       <%!-- new variant button --%>

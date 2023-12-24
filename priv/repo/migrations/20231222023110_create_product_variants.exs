@@ -11,7 +11,6 @@ defmodule App.Repo.Migrations.CreateProductVersions do
       add :name, :string, null: false
       add :price, :integer, null: false
       add :description, :text
-      add :quantity, :integer
       add :order, :integer, default: 0
 
       timestamps(type: :utc_datetime)

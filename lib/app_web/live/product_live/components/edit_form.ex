@@ -49,9 +49,9 @@ defmodule AppWeb.ProductLive.Components.EditForm do
             role="alert"
           >
             <span class="font-medium">
-              <.icon name="hero-exclamation-triangle me-1" /> Perhatian!
+              <.icon name="hero-hand-raised" /> Perhatian!
             </span>
-            Harga di atas tidak berlaku karena anda memiliki varian produk. Harga harus diisi pada masing-masing varian produk.
+            Harga di atas tidak berlaku karena anda memiliki varian produk. Harga yang berlaku adalah harga masing-masing varian produk.
           </div>
           <.input
             field={f[:cta]}
@@ -125,7 +125,7 @@ defmodule AppWeb.ProductLive.Components.EditForm do
             class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
             role="alert"
           >
-            <span class="font-medium"><.icon name="hero-exclamation-triangle me-1" />Perhatian!</span>
+            <span class="font-medium"><.icon name="hero-hand-raised" />Perhatian!</span>
             Pengaturan ini tidak berlaku karena anda memiliki varian produk. Pengaturan serupa harus diterapkan pada masing-masing varian produk.
           </div>
 

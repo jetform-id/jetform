@@ -167,12 +167,7 @@ defmodule AppWeb.ProductLive.Edit do
   # handle messages from Preview component
 
   @impl true
-  def handle_info({AppWeb.ProductLive.Components.Preview, :buy, _product}, socket) do
-    {:noreply, put_flash(socket, :info, "Anda dalam mode preview.")}
-  end
-
-  @impl true
-  def handle_info({AppWeb.ProductLive.Components.Preview, :buy_variant, _variant}, socket) do
+  def handle_info({AppWeb.ProductLive.Components.Preview, _order}, socket) do
     {:noreply, put_flash(socket, :info, "Anda dalam mode preview.")}
   end
 

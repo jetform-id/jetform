@@ -3,7 +3,7 @@ defmodule App.Products.Variant do
   import Ecto.Changeset
 
   @required_fields ~w(name price)a
-  @optional_fields ~w(description quantity order)a
+  @optional_fields ~w(description order)a
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -12,9 +12,9 @@ defmodule App.Products.Variant do
     field :description, :string
     field :price, :integer
     field :order, :integer
-    field :quantity, :integer
 
     belongs_to :product, App.Products.Product
+    has_many :orders, App.Orders.Order, foreign_key: :product_variant_id
 
     timestamps(type: :utc_datetime)
   end

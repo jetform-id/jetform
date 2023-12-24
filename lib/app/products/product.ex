@@ -7,11 +7,11 @@ defmodule App.Products.Product do
 
   @required_fields ~w(name slug price cta)a
   @optional_fields ~w(is_live description cta_text details)a
-  @ctas %{
-    buy: "Beli",
-    buy_now: "Beli Sekarang",
-    custom: "Custom"
-  }
+  @ctas [
+    {"Beli", :buy},
+    {"Beli Sekarang", :buy_now},
+    {"Custom...", :custom}
+  ]
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -28,16 +28,17 @@ defmodule App.Products.Product do
 
     belongs_to :user, App.Users.User
     has_many :variants, App.Products.Variant
+    has_many :orders, App.Orders.Order
 
     timestamps(type: :utc_datetime)
   end
 
   def cta_options() do
-    Enum.map(@ctas, fn {key, value} -> {value, key} end)
+    @ctas
   end
 
   def cta_text(cta) do
-    Map.get(@ctas, cta)
+    Enum.find_value(@ctas, fn {_, cta_value} -> cta_value == cta end)
   end
 
   def cta_custom?(cta) do
@@ -49,6 +50,7 @@ defmodule App.Products.Product do
   end
 
   def has_variants?(product) do
+    product = App.Repo.preload(product, :variants)
     !Enum.empty?(product.variants)
   end
 

@@ -20,26 +20,22 @@ defmodule AppWeb.Utils do
       %{
         title: "Penjualan",
         path: ~p"/admin",
-        module: AppWeb.DashboardLive,
         icon: "hero-receipt-percent-solid"
       },
       # %{title: "Dashboard", path: ~p"/admin", icon: "hero-chart-pie-solid"},
       %{
         title: "Produk",
         path: ~p"/admin/products",
-        module: AppWeb.ProductLive,
         icon: "hero-squares-2x2-solid"
       },
-      %{
-        title: "Pembeli",
-        path: ~p"/admin",
-        module: AppWeb.DashboardLive,
-        icon: "hero-users-solid"
-      },
+      # %{
+      #   title: "Pembeli",
+      #   path: ~p"/admin",
+      #   icon: "hero-users-solid"
+      # },
       %{
         title: "Payouts",
         path: ~p"/admin/payouts/bank-account",
-        module: AppWeb.PayoutsLive,
         icon: "hero-banknotes-solid"
       },
       %{

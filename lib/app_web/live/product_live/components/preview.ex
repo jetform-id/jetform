@@ -1,7 +1,10 @@
 defmodule AppWeb.ProductLive.Components.Preview do
   use AppWeb, :live_component
+  use AppWeb, :html
+
   require Integer
-  alias App.Products
+  alias App.{Products, Orders}
+  alias App.Orders.Order
 
   @impl true
   def render(assigns) do
@@ -88,11 +91,11 @@ defmodule AppWeb.ProductLive.Components.Preview do
                       <p class="text-slate-600 text-sm text-sm mt-1 pr-10">
                         <%= variant.description %>
                       </p>
-                      <div :if={variant.quantity} class="pt-2">
+                      <%!-- <div :if={variant.quantity} class="pt-2">
                         <span class="bg-yellow-100 text-yellow-800 text-xs font-medium inline-flex items-center px-2 py-0.5 rounded dark:bg-gray-700 dark:text-yellow-400 border border-yellow-400">
                           <.icon name="hero-clock w-3 h-3 me-1" /> Sisa <%= variant.quantity %>
                         </span>
-                      </div>
+                      </div> --%>
                     </div>
                   </label>
                 </div>
@@ -122,33 +125,122 @@ defmodule AppWeb.ProductLive.Components.Preview do
                 </p>
               </div>
 
-              <div class="mt-6 text-center">
-                <div
-                  :if={@error}
-                  class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-                  role="alert"
-                >
-                  <%= @error %>
-                </div>
+              <.buy_button
+                :if={@step == :cart}
+                product={@product}
+                error={@error}
+                on_click={JS.push("buy", target: @myself)}
+              />
 
-                <button
-                  phx-click={JS.push("buy", target: @myself)}
-                  type="button"
-                  class="group inline-flex w-full items-center justify-center rounded-md bg-primary-700 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-800"
-                >
-                  <%= if Products.cta_custom?(@product.cta) do %>
-                    <%= @product.cta_text %>
-                  <% else %>
-                    <%= Products.cta_text(@product.cta) %>
-                  <% end %>
-                </button>
-              </div>
+              <.checkout_form
+                :if={@step == :checkout}
+                changeset={@checkout_changeset}
+                submit_event={if @preview, do: "fake_order", else: "create_order"}
+                submit_target={@myself}
+                error={@error}
+              />
             </div>
           </div>
         </div>
-
         <%!-- end preview --%>
       </div>
+    </div>
+    """
+  end
+
+  attr :error, :string, default: nil
+  attr :product, :map, required: true
+  attr :on_click, JS, default: %JS{}
+
+  def buy_button(assigns) do
+    ~H"""
+    <div class="mt-6 text-center">
+      <div
+        :if={@error}
+        class="p-4 mb-4 text-sm font-medium text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-dashed border-red-800"
+        role="alert"
+      >
+        <.icon name="hero-exclamation-triangle" /> <%= @error %>
+      </div>
+
+      <button
+        phx-click={@on_click}
+        type="button"
+        class="group inline-flex w-full items-center justify-center rounded-md bg-primary-700 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-800"
+      >
+        <%= if Products.cta_custom?(@product.cta) do %>
+          <%= @product.cta_text %>
+        <% else %>
+          <%= Products.cta_text(@product.cta) %>
+        <% end %>
+      </button>
+    </div>
+    """
+  end
+
+  attr :changeset, :map, required: true
+  attr :submit_event, :string, required: true
+  attr :submit_target, :any, required: true
+  attr :error, :string, default: nil
+
+  def checkout_form(assigns) do
+    ~H"""
+    <div class="mt-6 space-y-4">
+      <hr class="my-4" />
+      <div>
+        <p class="font-normal flex items-center">
+          <.icon name="hero-identification me-1" />Data Pembeli
+        </p>
+      </div>
+      <.simple_form
+        :let={f}
+        for={@changeset}
+        as={:order}
+        phx-update="replace"
+        phx-submit={@submit_event}
+        phx-target={@submit_target}
+      >
+        <div class="space-y-6">
+          <.input field={f[:customer_name]} type="text" label="Nama *" required />
+          <div class="flex gap-4">
+            <.input
+              field={f[:customer_email]}
+              type="email"
+              label="Alamat email *"
+              required
+              wrapper_class="flex-1"
+            />
+            <.input
+              field={f[:customer_phone]}
+              type="text"
+              label="No. HP / WhatsApp"
+              wrapper_class="flex-1"
+            />
+          </div>
+          <.input
+            field={f[:confirm]}
+            type="checkbox"
+            label="Saya menyatakan bahwa di atas sudah benar."
+            required
+          />
+          <div
+            :if={@error}
+            class="p-4 mb-4 text-sm font-medium text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-dashed border-red-800"
+            role="alert"
+          >
+            <.icon name="hero-exclamation-triangle" /> <%= @error %>
+          </div>
+        </div>
+
+        <:actions>
+          <button
+            type="submit"
+            class="mt-6 w-full items-center justify-center rounded-md bg-primary-700 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-800"
+          >
+            Pembayaran <span aria-hidden="true">→</span>
+          </button>
+        </:actions>
+      </.simple_form>
     </div>
     """
   end
@@ -158,19 +250,27 @@ defmodule AppWeb.ProductLive.Components.Preview do
     socket =
       case Map.get(assigns, :changeset) do
         nil ->
+          product = assigns.product
+
           socket
+          |> assign(assigns)
+          |> assign(:preview, false)
+          |> assign(:has_variants, Products.has_variants?(product))
+          |> assign(:total_price, product.price)
 
         changeset ->
           variants = assigns.product.variants |> Enum.sort_by(& &1.inserted_at, :asc)
           product = Ecto.Changeset.apply_changes(changeset) |> Map.put(:variants, variants)
 
           socket
+          |> assign(:preview, true)
           |> assign(:product, product)
           |> assign(:has_variants, Products.has_variants?(product))
-          |> assign(:selected_variant, nil)
-          |> assign(:error, nil)
           |> assign(:total_price, product.price)
       end
+      |> assign(:selected_variant, nil)
+      |> assign(:error, nil)
+      |> assign(:step, :cart)
 
     {:ok, socket}
   end
@@ -190,18 +290,42 @@ defmodule AppWeb.ProductLive.Components.Preview do
 
   @impl true
   def handle_event("buy", _params, socket) do
-    if socket.assigns.has_variants do
-      case socket.assigns.selected_variant do
-        nil ->
-          {:noreply, assign(socket, :error, "Please select product variant to buy!")}
-
-        variant ->
-          send(self(), {__MODULE__, :buy_variant, variant})
-          {:noreply, socket}
-      end
+    with true <- socket.assigns.has_variants,
+         nil <- socket.assigns.selected_variant do
+      {:noreply, assign(socket, :error, "Silahkan pilih varian produk terlebih dahulu.")}
     else
-      send(self(), {__MODULE__, :buy, socket.assigns.product})
-      {:noreply, socket}
+      _ ->
+        socket =
+          socket
+          |> assign(:step, :checkout)
+          |> assign(:checkout_changeset, Orders.change_order(%Orders.Order{}))
+
+        {:noreply, socket}
     end
+  end
+
+  @impl true
+  def handle_event("fake_order", %{"order" => order_params}, socket) do
+    order_params =
+      order_params
+      |> Map.put("product", socket.assigns.product)
+      |> Map.put("product_variant", socket.assigns.selected_variant)
+      |> Map.put("valid_until", Orders.valid_until_hours(1))
+
+    changeset = Order.create_changeset(%Order{}, order_params)
+
+    case Ecto.Changeset.apply_action(changeset, :insert) do
+      {:ok, order} ->
+        send(self(), {__MODULE__, order})
+        {:noreply, assign(socket, :checkout_changeset, changeset)}
+
+      {:error, changeset} ->
+        {:noreply, assign(socket, :checkout_changeset, changeset)}
+    end
+  end
+
+  @impl true
+  def handle_event("create_order", %{"order" => _order_params}, socket) do
+    {:noreply, socket}
   end
 end

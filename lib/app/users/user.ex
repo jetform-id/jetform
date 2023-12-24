@@ -19,6 +19,7 @@ defmodule App.Users.User do
 
     has_one :bank_account, App.Users.BankAccount
     has_many :products, App.Products.Product
+    has_many :orders, App.Orders.Order
 
     timestamps(type: :utc_datetime)
   end
