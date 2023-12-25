@@ -492,6 +492,7 @@ defmodule AppWeb.CoreComponents do
         <option :if={@prompt} value=""><%= @prompt %></option>
         <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
       </select>
+      <%= render_slot(@help) %>
       <.error :for={msg <- @errors}><%= msg %></.error>
     </div>
     """
@@ -513,6 +514,7 @@ defmodule AppWeb.CoreComponents do
         ]}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
+      <%= render_slot(@help) %>
       <.error :for={msg <- @errors}><%= msg %></.error>
     </div>
     """

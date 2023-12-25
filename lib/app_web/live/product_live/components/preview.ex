@@ -220,7 +220,7 @@ defmodule AppWeb.ProductLive.Components.Preview do
           <.input
             field={f[:confirm]}
             type="checkbox"
-            label="Saya menyatakan bahwa di atas sudah benar."
+            label="Saya menyatakan bahwa data di atas sudah benar."
             required
           />
           <div

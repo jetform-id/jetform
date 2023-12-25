@@ -111,9 +111,8 @@ defmodule App.Products do
     query |> Repo.all()
   end
 
-  def get_variant(id) do
-    Variant
-    |> Repo.get(id)
+  def get_variant!(id) do
+    Repo.get!(Variant, id)
   end
 
   def change_variant(variant, attrs) do

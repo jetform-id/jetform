@@ -15,6 +15,7 @@ defmodule App.Products.Variant do
 
     belongs_to :product, App.Products.Product
     has_many :orders, App.Orders.Order, foreign_key: :product_variant_id
+    has_many :contents, App.Contents.Content, foreign_key: :product_variant_id
 
     timestamps(type: :utc_datetime)
   end

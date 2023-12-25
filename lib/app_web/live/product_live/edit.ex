@@ -17,7 +17,7 @@ defmodule AppWeb.ProductLive.Edit do
           |> assign(:page_title, "Edit: #{product.name}")
           |> assign(:product, App.Repo.preload(product, :variants))
           |> assign(:changeset, Products.change_product(product, %{}))
-          |> allow_upload(:cover, accept: ~w(.jpg .jpeg .png))
+          |> allow_upload(:cover, accept: ~w(.jpg .jpeg .png), max_file_size: 1_000_000)
           |> assign(:action, ~p"/admin/products")
       end
 
@@ -45,15 +45,7 @@ defmodule AppWeb.ProductLive.Edit do
       end
 
     # get uploaded cover image
-    product_params =
-      case uploaded_entries(socket, :cover) do
-        {[_ | _], []} ->
-          [cover_path] = uploaded_image_paths(socket, :cover)
-          Map.put(product_params, "cover", cover_path)
-
-        _ ->
-          product_params
-      end
+    product_params = maybe_put_file_params(socket, product_params, :cover)
 
     socket =
       case Products.update_product(socket.assigns.product, product_params) do
@@ -120,9 +112,9 @@ defmodule AppWeb.ProductLive.Edit do
   end
 
   @impl true
-  def handle_params(%{"tab" => "files"}, _uri, socket) do
+  def handle_params(%{"tab" => "content"}, _uri, socket) do
     socket =
-      socket |> assign(:tab, "files")
+      socket |> assign(:tab, "content")
 
     {:noreply, socket}
   end
@@ -138,30 +130,13 @@ defmodule AppWeb.ProductLive.Edit do
   # handle messages from Variants component
 
   @impl true
-  def handle_info({AppWeb.ProductLive.Components.Variants, event, variant}, socket) do
-    product = socket.assigns.product
+  def handle_info({AppWeb.ProductLive.Components.Variants, :variants_updated}, socket) do
+    product =
+      socket.assigns.product
+      |> App.Repo.reload!()
+      |> App.Repo.preload(:variants)
 
-    case event do
-      :create ->
-        {:noreply, assign(socket, :product, %{product | variants: [variant | product.variants]})}
-
-      :update ->
-        variants =
-          product.variants
-          |> Enum.map(fn v ->
-            if v.id == variant.id, do: variant, else: v
-          end)
-
-        {:noreply, assign(socket, :product, %{product | variants: variants})}
-
-      :delete ->
-        {:noreply,
-         assign(
-           socket,
-           :product,
-           Map.put(product, :variants, Enum.filter(product.variants, &(&1.id != variant.id)))
-         )}
-    end
+    {:noreply, assign(socket, :product, product)}
   end
 
   # handle messages from Preview component
@@ -169,6 +144,17 @@ defmodule AppWeb.ProductLive.Edit do
   @impl true
   def handle_info({AppWeb.ProductLive.Components.Preview, _order}, socket) do
     {:noreply, put_flash(socket, :info, "Anda dalam mode preview.")}
+  end
+
+  defp maybe_put_file_params(socket, params, field) when is_atom(field) do
+    case uploaded_entries(socket, field) do
+      {[_ | _], []} ->
+        [file_path] = uploaded_image_paths(socket, field)
+        Map.put(params, Atom.to_string(field), file_path)
+
+      _ ->
+        params
+    end
   end
 
   defp uploaded_image_paths(socket, field) when is_atom(field) do

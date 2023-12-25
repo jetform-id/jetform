@@ -4,8 +4,6 @@ defmodule App.Products.ProductCover do
   # Include ecto support (requires package waffle_ecto installed):
   use Waffle.Ecto.Definition
 
-  # @versions [:original]
-
   # To add a thumbnail version:
   @versions [:original, :standard, :thumb]
 
@@ -48,9 +46,13 @@ defmodule App.Products.ProductCover do
   end
 
   # Provide a default URL if there hasn't been a file uploaded
-  # def default_url(version, scope) do
-  #   "/images/avatars/default_#{version}.png"
-  # end
+  def default_url(:standard, _scope) do
+    "https://via.placeholder.com/640x360"
+  end
+
+  def default_url(:thumb, _scope) do
+    "https://via.placeholder.com/256x14"
+  end
 
   # Specify custom headers for s3 objects
   # Available options are [:cache_control, :content_disposition,

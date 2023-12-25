@@ -2,6 +2,7 @@ defmodule AppWeb.ProductLive.Components.EditForm do
   use AppWeb, :html
   alias App.Products
   alias AppWeb.Utils
+  alias AppWeb.ProductLive.Components.Commons
 
   @doc """
   Renders basic product editor form
@@ -101,12 +102,13 @@ defmodule AppWeb.ProductLive.Components.EditForm do
               <.icon name="hero-photo me-1" />Gambar produk
             </p>
             <p class="pl-6 mt-1 text-xs text-gray-500">
-              Untuk penampilan terbaik silahkan upload file gambar dengan rasio 16:9.
+              Untuk penampilan terbaik silahkan upload file gambar dengan rasio 16:9 dan maksimum ukuran file 1 MB (Megabyte).
             </p>
           </div>
 
           <img src={Products.cover_url(@product, :standard)} class="h-auto max-w-sm" />
-          <.live_file_input upload={@uploads[:cover]} />
+          <Commons.live_file_error upload={@uploads.cover} />
+          <.live_file_input upload={@uploads.cover} />
         </div>
 
         <hr />

@@ -24,18 +24,18 @@
               @tab == "variants" && "text-primary-600 bg-gray-100"
             ]}
           >
-            <.icon name="hero-square-3-stack-3d" /> Variants
+            <.icon name="hero-square-3-stack-3d" /> Varian
           </.link>
         </li>
         <li>
           <.link
-            patch="?tab=files"
+            patch="?tab=content"
             class={[
               "inline-block p-4 px-6 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300",
-              @tab == "files" && "text-primary-600 bg-gray-100"
+              @tab == "content" && "text-primary-600 bg-gray-100"
             ]}
           >
-            <.icon name="hero-paper-clip" /> Files
+            <.icon name="hero-paper-clip" /> Konten
           </.link>
         </li>
       </ul>
@@ -52,6 +52,18 @@
           <.live_component
             :if={@tab == "variants"}
             module={AppWeb.ProductLive.Components.Variants}
+            id={@product.id}
+            product={@product}
+          />
+          <.live_component
+            :if={@tab == "content" && !App.Products.has_variants?(@product)}
+            module={AppWeb.ProductLive.Components.ProductContent}
+            id={@product.id}
+            product={@product}
+          />
+          <.live_component
+            :if={@tab == "content" && App.Products.has_variants?(@product)}
+            module={AppWeb.ProductLive.Components.VariantContent}
             id={@product.id}
             product={@product}
           />

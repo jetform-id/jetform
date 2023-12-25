@@ -29,6 +29,7 @@ defmodule App.Products.Product do
     belongs_to :user, App.Users.User
     has_many :variants, App.Products.Variant
     has_many :orders, App.Orders.Order
+    has_many :contents, App.Contents.Content
 
     timestamps(type: :utc_datetime)
   end
