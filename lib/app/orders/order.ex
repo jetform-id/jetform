@@ -27,6 +27,10 @@ defmodule App.Orders.Order do
     belongs_to :product, App.Products.Product
     belongs_to :product_variant, App.Products.Variant
 
+    many_to_many :contents, App.Contents.Content,
+      join_through: App.Orders.OrderContent,
+      on_replace: :delete
+
     timestamps(type: :utc_datetime)
   end
 
@@ -45,6 +49,10 @@ defmodule App.Orders.Order do
     |> validate_product(attrs)
     # need to be after validate_product
     |> validate_product_variant(attrs)
+  end
+
+  def put_contents(changeset, contents) do
+    put_assoc(changeset, :contents, contents)
   end
 
   defp validate_product(changeset, attrs) do

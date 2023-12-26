@@ -5,8 +5,10 @@ defmodule App.Orders do
 
   import Ecto.Query, warn: false
   alias App.Repo
+  alias Repo
 
   alias App.Orders.Order
+  alias App.Contents
 
   @doc """
   Returns the list of orders.
@@ -50,9 +52,34 @@ defmodule App.Orders do
 
   """
   def create_order(attrs \\ %{}) do
-    %Order{}
-    |> Order.create_changeset(attrs)
-    |> Repo.insert()
+    Ecto.Multi.new()
+    |> Ecto.Multi.insert(:order, Order.create_changeset(%Order{}, attrs))
+    |> Ecto.Multi.run(:contents, fn repo, %{order: order} ->
+      # get contents for order
+      order = repo.preload(order, :product_variant)
+
+      case order.product_variant do
+        nil ->
+          {:ok, Contents.list_contents_by_product(order.product)}
+
+        variant ->
+          {:ok, Contents.list_contents_by_variant(variant)}
+      end
+    end)
+    |> Ecto.Multi.update(:order_contents, fn %{order: order, contents: contents} ->
+      # put contents to order
+      Repo.preload(order, :contents)
+      |> Order.changeset(%{})
+      |> Order.put_contents(contents)
+    end)
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{order_contents: order}} ->
+        {:ok, order}
+
+      {:error, _op, _value, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """

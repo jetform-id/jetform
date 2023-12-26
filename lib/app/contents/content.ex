@@ -20,6 +20,10 @@ defmodule App.Contents.Content do
     belongs_to :product, App.Products.Product
     belongs_to :product_variant, App.Products.Variant
 
+    many_to_many :orders, App.Orders.Order,
+      join_through: App.Orders.OrderContent,
+      on_replace: :delete
+
     timestamps(type: :utc_datetime)
   end
 

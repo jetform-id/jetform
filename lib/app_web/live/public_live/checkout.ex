@@ -25,6 +25,13 @@ defmodule AppWeb.PublicLive.Checkout do
     end
   end
 
+  # handle messages from Preview component
+
+  @impl true
+  def handle_info({AppWeb.ProductLive.Components.Preview, _order}, socket) do
+    {:noreply, put_flash(socket, :info, "Anda dalam mode preview.")}
+  end
+
   defp found(socket, product) do
     socket =
       socket

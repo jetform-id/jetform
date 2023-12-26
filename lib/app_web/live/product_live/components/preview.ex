@@ -304,7 +304,22 @@ defmodule AppWeb.ProductLive.Components.Preview do
   end
 
   @impl true
-  def handle_event("create_order", %{"order" => _order_params}, socket) do
+  def handle_event("create_order", %{"order" => order_params}, socket) do
+    order_params =
+      order_params
+      |> Map.put("product", socket.assigns.product)
+      |> Map.put("product_variant", socket.assigns.selected_variant)
+      |> Map.put("valid_until", Orders.valid_until_hours(2))
+
+    case Orders.create_order(order_params) do
+      {:ok, order} ->
+        send(self(), {__MODULE__, order})
+        {:noreply, assign(socket, :checkout_changeset, Orders.change_order(order, %{}))}
+
+      {:error, changeset} ->
+        {:noreply, assign(socket, :checkout_changeset, changeset)}
+    end
+
     {:noreply, socket}
   end
 end
