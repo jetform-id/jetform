@@ -30,6 +30,18 @@ defmodule AppWeb.LiveAuth do
     end
   end
 
+  def on_mount(:default, _params, session, socket) do
+    socket =
+      socket
+      |> assign(:base_url, Utils.base_url())
+      |> assign_new(:current_user, fn ->
+        {_conn, user} = conn_user_from_session(session)
+        user
+      end)
+
+    {:cont, socket}
+  end
+
   def conn_user_from_session(session) do
     pow_config = [otp_app: :app]
 

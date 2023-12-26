@@ -9,4 +9,11 @@ let Hooks = {}
 //     }
 // }
 
+Hooks.CheckoutPage = {
+    mounted() {
+        document.body.classList.remove("bg-gray-50")
+        document.body.classList.add("bg-gray-300")
+    }
+}
+
 export default Hooks

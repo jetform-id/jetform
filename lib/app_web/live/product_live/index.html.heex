@@ -64,8 +64,17 @@
               </th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-            <tr :for={product <- @products} class="hover:bg-gray-100 dark:hover:bg-gray-700">
+          <tbody
+            id="product-list"
+            class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700"
+            phx-update="stream"
+          >
+            <%!-- product item --%>
+            <tr
+              :for={{dom_id, product} <- @streams.products}
+              id={dom_id}
+              class="hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
               <td class="p-4 text-base font-medium text-gray-600 whitespace-nowrap dark:text-white">
                 <.icon
                   :if={product.is_live}
@@ -127,6 +136,7 @@
                 </.link>
               </td>
             </tr>
+            <%!-- end product item --%>
           </tbody>
         </table>
       </div>

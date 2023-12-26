@@ -39,7 +39,9 @@ defmodule App.Products.Product do
   end
 
   def cta_text(cta) do
-    Enum.find_value(@ctas, fn {_, cta_value} -> cta_value == cta end)
+    @ctas
+    |> Enum.reduce(%{}, fn {value, text}, acc -> Map.put(acc, text, value) end)
+    |> Map.fetch!(cta)
   end
 
   def cta_custom?(cta) do

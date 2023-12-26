@@ -70,6 +70,31 @@
         </div>
       </div>
     </div>
-    <.live_component module={Preview} id={@product.id} product={@product} changeset={@changeset} />
+    
+    <div class="border rounded-lg shadow bg-gray-300 dark:bg-gray-800 dark:border-gray-700">
+      <ul
+        class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 rounded-t-lg bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800"
+        role="tablist"
+      >
+        <li class="me-2">
+          <button
+            type="button"
+            role="tab"
+            aria-selected="true"
+            class="inline-block p-4 rounded-ss-lg dark:bg-gray-800 dark:text-primary-500"
+          >
+            <.icon name="hero-eye" /> Preview
+          </button>
+        </li>
+      </ul>
+      <div>
+        <.live_component
+          module={Preview}
+          id={@product.id}
+          product={@product}
+          changeset={@changeset}
+        />
+      </div>
+    </div>
   </div>
 </div>

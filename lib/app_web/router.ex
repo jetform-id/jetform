@@ -34,6 +34,12 @@ defmodule AppWeb.Router do
     pipe_through [:browser]
 
     get "/", PageController, :index
+
+    live_session :public,
+      on_mount: {AppWeb.LiveAuth, :default},
+      layout: {AppWeb.Layouts, :checkout} do
+      live "/p/:slug", PublicLive.Checkout
+    end
   end
 
   scope "/" do

@@ -12,7 +12,7 @@ defmodule App.Products do
 
   def list_products_by_user(user) do
     query = from(p in Product, where: p.user_id == ^user.id, order_by: [desc: p.inserted_at])
-    query |> Repo.all()
+    Repo.all(query)
   end
 
   def get_product(id) do
@@ -20,9 +20,17 @@ defmodule App.Products do
     |> Repo.get(id)
   end
 
+  def get_product_by_slug(slug) do
+    Repo.get_by(Product, slug: slug)
+  end
+
+  def get_live_product_by_slug(slug) do
+    from(p in Product, where: p.slug == ^slug, where: p.is_live == true)
+    |> Repo.one()
+  end
+
   def change_product(product, attrs) do
-    product
-    |> Product.changeset(attrs)
+    Product.changeset(product, attrs)
   end
 
   def create_product(attrs) do
@@ -108,7 +116,7 @@ defmodule App.Products do
         order_by: [asc: v.inserted_at]
       )
 
-    query |> Repo.all()
+    Repo.all(query)
   end
 
   def get_variant!(id) do
@@ -116,8 +124,7 @@ defmodule App.Products do
   end
 
   def change_variant(variant, attrs) do
-    variant
-    |> Variant.changeset(attrs)
+    Variant.changeset(variant, attrs)
   end
 
   def create_variant(attrs) do

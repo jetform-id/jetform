@@ -8,8 +8,8 @@
 import Config
 
 config :app,
-  app_name: "Janger",
-  app_tagline: "Digital goods marketplace"
+  app_name: "Snappy",
+  app_tagline: "Digital products marketplace"
 
 config :app,
   ecto_repos: [App.Repo],

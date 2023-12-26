@@ -4,7 +4,7 @@ defmodule AppWeb.ProductLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :products, Products.list_products_by_user(socket.assigns.current_user))}
+    {:ok, stream(socket, :products, Products.list_products_by_user(socket.assigns.current_user))}
   end
 
   @impl true
@@ -19,14 +19,13 @@ defmodule AppWeb.ProductLive.Index do
         nil ->
           socket
           |> put_flash(:error, "Product not found.")
-          |> redirect(to: ~p"/admin/products")
 
         product ->
           Products.delete_product(product)
 
           socket
+          |> stream_delete(:products, product)
           |> put_flash(:info, "Product deleted successfully.")
-          |> redirect(to: ~p"/admin/products")
       end
 
     {:noreply, socket}

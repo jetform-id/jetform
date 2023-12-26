@@ -51,7 +51,7 @@ defmodule App.Products.ProductCover do
   end
 
   def default_url(:thumb, _scope) do
-    "https://via.placeholder.com/256x14"
+    "https://via.placeholder.com/256x144"
   end
 
   # Specify custom headers for s3 objects

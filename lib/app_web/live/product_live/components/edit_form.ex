@@ -33,7 +33,16 @@ defmodule AppWeb.ProductLive.Components.EditForm do
           <.input field={f[:slug]} type="text" label="URL" required>
             <:help>
               <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                <%= Utils.base_url() %>/p/<span id="shop-username" class="font-bold"><%= Map.get(@changeset.changes, :slug, @changeset.data.slug) %></span>
+                <.link
+                  href={Utils.base_url() <> "/p/" <> Map.get(@changeset.changes, :slug, @changeset.data.slug)}
+                  target="_blank"
+                >
+                  <%= Utils.base_url() %>/p/<span id="shop-username" class="font-bold"><%= Map.get(@changeset.changes, :slug, @changeset.data.slug) %></span>
+                  <.icon
+                    name="hero-arrow-top-right-on-square"
+                    class="w-4 h-4 inline-block text-primary-600"
+                  />
+                </.link>
               </div>
             </:help>
           </.input>
