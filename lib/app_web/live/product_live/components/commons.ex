@@ -127,9 +127,10 @@ defmodule AppWeb.ProductLive.Components.Commons do
     <div id={@id} class="w-full bg-gray-50 shadow-sm rounded-lg border border-gray-300 p-4">
       <div class="flex mb-4 items-center">
         <span class="flex-1 font-semibold">
-          <%= @variant.name %> - Rp. <.price value={@variant.price} />
+          <%= @variant.name %>
         </span>
         <span class="flex-none items-center">
+          <span class="font-semibold me-4">Rp. <.price value={@variant.price} /></span>
           <.button
             phx-click={JS.push(@on_edit, value: %{id: @variant.id}, target: @target)}
             type="button"
@@ -280,31 +281,74 @@ defmodule AppWeb.ProductLive.Components.Commons do
           </.button>
         </span>
       </div>
-      <p class="text-slate-600 text-sm text-sm mt-1 pr-4">
-        <%= if @content.type == :text do %>
-          <span :if={App.Contents.is_empty?(@content)} class="text-red-600">
-            <.icon name="hero-exclamation-triangle-solid" /> Teks masih kosong!
-          </span>
-          <%= @content.text %>
-        <% end %>
-
-        <%= if @content.type == :file do %>
-          <%= if !App.Contents.is_empty?(@content) do %>
-            <%= @content.file.file_name %>
-            <.link href={App.Contents.file_url(@content)} target="_blank">
-              <.icon
-                name="hero-arrow-top-right-on-square"
-                class="w-4 h-4 inline-block text-primary-600 font-bold"
-              />
-            </.link>
-          <% else %>
-            <span class="text-red-600">
-              <.icon name="hero-exclamation-triangle-solid" /> File masih kosong!
-            </span>
-          <% end %>
-        <% end %>
-      </p>
+      <.content_display content={@content} />
     </div>
+    """
+  end
+
+  @doc """
+  To be used in variant content.
+  """
+  attr :id, :string, required: true
+  attr :content, :map, required: true
+  attr :target, :any, required: true
+  attr :on_edit, :string, required: true
+  attr :on_delete, :string, required: true
+
+  def content_item_mini(assigns) do
+    ~H"""
+    <div id={@id} class="bg-white py-2 px-3 border rounded shadow-sm">
+      <div class="flex items-center">
+        <p class="flex-1 text-sm font-medium"><%= @content.name %></p>
+        <.button
+          phx-click={JS.push(@on_edit, value: %{id: @content.id}, target: @target)}
+          type="button"
+          class="p-1 text-primary-600 text-sm text-center"
+        >
+          Edit
+        </.button>
+        <.button
+          phx-click={JS.push(@on_delete, value: %{id: @content.id}, target: @target)}
+          type="button"
+          class="p-1 text-red-600 text-sm text-center"
+        >
+          Hapus
+        </.button>
+      </div>
+      <.content_display content={@content} text_size="text-sm" />
+    </div>
+    """
+  end
+
+  attr :content, :map, required: true
+  attr :text_size, :string, default: "text-sm"
+
+  def content_display(assigns) do
+    ~H"""
+    <p class={["text-gray-500 mt-1 pr-4", @text_size]}>
+      <%= if @content.type == :text do %>
+        <span :if={App.Contents.is_empty?(@content)} class="text-red-600">
+          <.icon name="hero-exclamation-triangle" /> Teks masih kosong!
+        </span>
+        <%= @content.text %>
+      <% end %>
+
+      <%= if @content.type == :file do %>
+        <%= if !App.Contents.is_empty?(@content) do %>
+          <%= @content.file.file_name %>
+          <.link href={App.Contents.file_url(@content)} target="_blank">
+            <.icon
+              name="hero-arrow-top-right-on-square"
+              class="w-4 h-4 inline-block text-primary-600 font-bold"
+            />
+          </.link>
+        <% else %>
+          <span class="text-red-600">
+            <.icon name="hero-exclamation-triangle" /> File masih kosong!
+          </span>
+        <% end %>
+      <% end %>
+    </p>
     """
   end
 end

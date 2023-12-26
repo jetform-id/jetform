@@ -8,7 +8,7 @@
 import Config
 
 config :app,
-  app_name: "Stomp",
+  app_name: "Janger",
   app_tagline: "Digital goods marketplace"
 
 config :app,

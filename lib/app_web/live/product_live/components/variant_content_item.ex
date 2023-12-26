@@ -1,4 +1,4 @@
-defmodule AppWeb.ProductLive.Components.ProductContent do
+defmodule AppWeb.ProductLive.Components.VariantContentItem do
   use AppWeb, :live_component
   use AppWeb, :html
 
@@ -8,10 +8,33 @@ defmodule AppWeb.ProductLive.Components.ProductContent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div id={"content-for-product-" <> @id} class="p-4 md:p-8 dark:bg-gray-800 space-y-4">
+    <div
+      id={"content-for-variant-" <> @id}
+      class="w-full bg-gray-50 shadow-sm rounded-lg border border-gray-300 p-4"
+    >
+      <div class="flex mb-4 items-center">
+        <span class="flex-1 font-semibold">
+          <span class="text-gray-500 font-normal">Konten</span> <%= @variant.name %>
+        </span>
+        <span class="flex-none items-center">
+          <.button
+            phx-click={JS.push("new", target: @myself)}
+            type="button"
+            class="px-2 py-1 bg-primary-700 hover:bg-primary-800 rounded-lg text-white text-sm text-center"
+          >
+            + Tambah konten
+          </.button>
+        </span>
+      </div>
+
+      <%!-- <div>
+          <hr />
+          <p class="text-gray-500 text-sm py-2">Belum ada konten.</p>
+        </div> --%>
+
       <%!-- content list --%>
-      <div id="content-list-for-product" phx-update="stream" class="space-y-4">
-        <Commons.content_item
+      <div id="content-list-for-variant" phx-update="stream" class="space-y-2">
+        <Commons.content_item_mini
           :for={{dom_id, item} <- @streams.content}
           id={dom_id}
           content={item}
@@ -21,17 +44,13 @@ defmodule AppWeb.ProductLive.Components.ProductContent do
         />
       </div>
 
-      <%!-- new content button --%>
-      <.button
-        phx-click={JS.push("new", target: @myself)}
-        type="button"
-        class="mt-2 w-full bg-primary-700 hover:bg-primary-800 text-white border focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-3 text-center me-2 mb-2"
-      >
-        <.icon name="hero-plus-small w-4 h-4" />Tambah Konten
-      </.button>
-
       <%!-- new and edit modal --%>
-      <.modal :if={@show_modal} id="content-modal" show on_cancel={JS.push("cancel", target: @myself)}>
+      <.modal
+        :if={@show_modal}
+        id={"variant-content-modal" <> @id}
+        show
+        on_cancel={JS.push("cancel", target: @myself)}
+      >
         <Commons.content_form
           changeset={@changeset}
           uploads={@uploads}
@@ -50,7 +69,7 @@ defmodule AppWeb.ProductLive.Components.ProductContent do
     socket =
       socket
       |> assign(assigns)
-      |> stream(:content, Contents.list_contents_by_product(assigns.product))
+      |> stream(:content, Contents.list_contents_by_variant(assigns.variant))
       |> assign(:show_modal, false)
       |> allow_upload(:file, accept: :any, max_file_size: 50_000_000)
 
@@ -131,7 +150,10 @@ defmodule AppWeb.ProductLive.Components.ProductContent do
   end
 
   defp create_content(socket, params) do
-    params = Map.put(params, "product", socket.assigns.product)
+    params =
+      params
+      |> Map.put("product", socket.assigns.product)
+      |> Map.put("product_variant", socket.assigns.variant)
 
     case Contents.create_content(params) do
       {:ok, content} ->

@@ -10,7 +10,7 @@ defmodule AppWeb.ProductLive.Components.Variants do
     ~H"""
     <div id={"variant-for-product-" <> @id} class="p-4 md:p-8 dark:bg-gray-800 space-y-4">
       <%!-- variant list --%>
-      <div id="variant-list" class="space-y-4" phx-update="stream">
+      <div id="variant-list-for-product" class="space-y-4" phx-update="stream">
         <Commons.variant_item
           :for={{dom_id, variant} <- @streams.variants}
           id={dom_id}

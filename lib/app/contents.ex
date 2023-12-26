@@ -32,6 +32,15 @@ defmodule App.Contents do
     )
   end
 
+  def list_contents_by_variant(variant, is_deleted \\ false) do
+    Repo.all(
+      from c in Content,
+        where: c.product_variant_id == ^variant.id,
+        where: c.is_deleted == ^is_deleted,
+        order_by: [asc: c.inserted_at]
+    )
+  end
+
   @doc """
   Gets a single content.
 

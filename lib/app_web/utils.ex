@@ -37,14 +37,14 @@ defmodule AppWeb.Utils do
         title: "Payouts",
         path: ~p"/admin/payouts/bank-account",
         icon: "hero-banknotes-solid"
-      },
-      %{
-        title: "Settings",
-        icon: "hero-cog-6-tooth-solid",
-        children: [
-          %{title: "Account", path: ~p"/admin/account", icon: nil}
-        ]
       }
+      # %{
+      #   title: "Settings",
+      #   icon: "hero-cog-6-tooth-solid",
+      #   children: [
+      #     %{title: "Account", path: ~p"/admin/account", icon: nil}
+      #   ]
+      # }
     ]
   end
 end
