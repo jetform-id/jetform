@@ -8,8 +8,8 @@
 import Config
 
 config :app,
-  app_name: "Gummy",
-  app_tagline: "Gumroad dengan kearifan lokal"
+  app_name: "Stomp",
+  app_tagline: "Digital goods marketplace"
 
 config :app,
   ecto_repos: [App.Repo],
@@ -81,7 +81,8 @@ config :waffle,
   storage: Waffle.Storage.Local,
   storage_dir_prefix: "priv/static",
   storage_dir: "uploads"
-  # asset_host: "http://localhost:4000"
+
+# asset_host: "http://localhost:4000"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
