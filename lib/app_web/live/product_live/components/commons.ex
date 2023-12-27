@@ -1,6 +1,37 @@
 defmodule AppWeb.ProductLive.Components.Commons do
   use AppWeb, :html
 
+  attr :status, :atom, required: true
+
+  def order_status_badge(assigns) do
+    ~H"""
+    <span
+      :if={@status == :pending}
+      class="bg-yellow-100 text-yellow-800 text-xs font-medium px-3 py-1 rounded dark:bg-gray-700 dark:text-yellow-300 border border-yellow-300"
+    >
+      MENUNGGU PEMBAYARAN
+    </span>
+    <span
+      :if={@status == :paid}
+      class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400"
+    >
+      LUNAS
+    </span>
+    <span
+      :if={@status == :expired}
+      class="bg-red-100 text-red-800 text-xs font-medium px-3 py-1 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400"
+    >
+      KADALUARSA
+    </span>
+    <span
+      :if={@status == :cancelled}
+      class="bg-red-100 text-red-800 text-xs font-medium px-3 py-1 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400"
+    >
+      DIBATALKAN
+    </span>
+    """
+  end
+
   attr :upload, :map, required: true
 
   def live_file_error(assigns) do

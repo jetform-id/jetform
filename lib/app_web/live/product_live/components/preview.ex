@@ -11,7 +11,7 @@ defmodule AppWeb.ProductLive.Components.Preview do
     ~H"""
     <%!-- preview --%>
     <div class="p-6">
-      <div class="mx-auto max-w-xl rounded-lg border bg-white shadow-md">
+      <div class="mx-auto max-w-xl rounded-lg bg-white shadow-md">
         <img src={Products.cover_url(@product, :standard)} class="rounded-t-lg" />
         <hr />
         <div class="p-6">
@@ -194,12 +194,22 @@ defmodule AppWeb.ProductLive.Components.Preview do
               wrapper_class="flex-1"
             />
           </div>
+
+          <div class="border border-yellow-300 bg-yellow-100 rounded p-2 text-center">
+            <p class="pl-6 mt-1 text-xs text-yellow-600">
+              <.icon name="hero-exclamation-triangle" />
+              Harap pastikan data di atas sudah benar. Pihak penjual dan Snappy tidak bertanggung jawab atas kesalahan data yang dimasukan.
+            </p>
+          </div>
+
           <.input
             field={f[:confirm]}
             type="checkbox"
             label="Saya menyatakan bahwa data di atas sudah benar."
+            wrapper_class="mx-auto"
             required
           />
+
           <div
             :if={@error}
             class="p-4 mb-4 text-sm font-medium text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-dashed border-red-800"
@@ -304,12 +314,24 @@ defmodule AppWeb.ProductLive.Components.Preview do
   end
 
   @impl true
+  def handle_event(
+        "create_order",
+        _params,
+        %{assigns: %{product: %{is_live: false}}} = socket
+      ) do
+    {:noreply, assign(socket, :error, "Produk ini belum aktif.")}
+  end
+
+  @impl true
   def handle_event("create_order", %{"order" => order_params}, socket) do
     order_params =
       order_params
       |> Map.put("product", socket.assigns.product)
       |> Map.put("product_variant", socket.assigns.selected_variant)
-      |> Map.put("valid_until", Orders.valid_until_hours(2))
+      |> Map.put(
+        "valid_until",
+        Orders.valid_until_hours(Application.fetch_env!(:app, :order_validity_hours))
+      )
 
     case Orders.create_order(order_params) do
       {:ok, order} ->

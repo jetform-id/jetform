@@ -10,6 +10,9 @@ defmodule App.Orders do
   alias App.Orders.Order
   alias App.Contents
 
+  defdelegate status(order), to: Order
+  defdelegate time_before_expired(order), to: Order
+
   @doc """
   Returns the list of orders.
 

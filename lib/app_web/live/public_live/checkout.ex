@@ -7,45 +7,46 @@ defmodule AppWeb.PublicLive.Checkout do
   def mount(%{"slug" => slug}, _session, socket) do
     case socket.assigns.current_user do
       nil ->
-        case Products.get_live_product_by_slug(slug) do
-          nil -> not_found(socket)
-          product -> found(socket, product)
-        end
+        return_product(socket, Products.get_live_product_by_slug!(slug))
 
       user ->
-        case Products.get_product_by_slug(slug) do
-          nil ->
-            not_found(socket)
+        product = Products.get_product_by_slug!(slug)
 
-          product ->
-            if product.is_live || product.user_id == user.id,
-              do: found(socket, product),
-              else: not_found(socket)
-        end
+        if product.is_live || product.user_id == user.id,
+          do: return_product(socket, product),
+          else: raise(Ecto.NoResultsError, queryable: Products.Product)
     end
+  end
+
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <.live_component
+      :if={@product}
+      module={AppWeb.ProductLive.Components.Preview}
+      id={@product.id}
+      product={@product}
+    />
+    """
   end
 
   # handle messages from Preview component
 
   @impl true
-  def handle_info({AppWeb.ProductLive.Components.Preview, _order}, socket) do
-    {:noreply, put_flash(socket, :info, "Anda dalam mode preview.")}
+  def handle_info({AppWeb.ProductLive.Components.Preview, order}, socket) do
+    socket =
+      socket
+      |> put_flash(:info, "Order telah dibuat! silahkan lanjutkan dengan pembayaran.")
+      |> push_navigate(to: ~p"/invoice/#{order.id}")
+
+    {:noreply, socket}
   end
 
-  defp found(socket, product) do
+  defp return_product(socket, product) do
     socket =
       socket
       |> assign(:page_title, product.name)
       |> assign(:product, App.Repo.preload(product, :variants))
-
-    {:ok, socket}
-  end
-
-  defp not_found(socket) do
-    socket =
-      socket
-      |> assign(:page_title, "Halaman tidak ditemukan!")
-      |> assign(:product, nil)
 
     {:ok, socket}
   end

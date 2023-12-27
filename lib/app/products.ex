@@ -24,9 +24,18 @@ defmodule App.Products do
     Repo.get_by(Product, slug: slug)
   end
 
+  def get_product_by_slug!(slug) do
+    Repo.get_by!(Product, slug: slug)
+  end
+
   def get_live_product_by_slug(slug) do
     from(p in Product, where: p.slug == ^slug, where: p.is_live == true)
     |> Repo.one()
+  end
+
+  def get_live_product_by_slug!(slug) do
+    from(p in Product, where: p.slug == ^slug, where: p.is_live == true)
+    |> Repo.one!()
   end
 
   def change_product(product, attrs) do

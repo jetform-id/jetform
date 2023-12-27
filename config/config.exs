@@ -9,7 +9,10 @@ import Config
 
 config :app,
   app_name: "Snappy",
-  app_tagline: "Digital products marketplace"
+  app_tagline: "Digital products marketplace",
+  default_tz: "Asia/Jakarta",
+  default_tz_label: "WIB",
+  order_validity_hours: 2
 
 config :app,
   ecto_repos: [App.Repo],

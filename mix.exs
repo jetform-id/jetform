@@ -54,7 +54,8 @@ defmodule App.MixProject do
       {:pow, "~> 1.0.34"},
       {:number, "~> 1.0"},
       {:waffle, "~> 1.1"},
-      {:waffle_ecto, "~> 0.0"}
+      {:waffle_ecto, "~> 0.0"},
+      {:timex, "~> 3.7"}
     ]
   end
 

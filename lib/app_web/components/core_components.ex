@@ -42,6 +42,37 @@ defmodule AppWeb.CoreComponents do
   end
 
   @doc """
+  Renders datetime on specific Indonesian timezones.
+  """
+  attr :value, :any, required: true
+  attr :tz, :string, default: "Asia/Jakarta"
+  attr :tz_label, :string, default: "WIB"
+
+  def indo_datetime(assigns) do
+    value =
+      Timex.to_datetime(assigns.value, assigns.tz)
+      |> Timex.format!("%d/%m/%Y %H:%M " <> assigns.tz_label, :strftime)
+
+    assigns = assign(assigns, :value, value)
+
+    ~H"""
+    <%= @value %>
+    """
+  end
+
+  @doc """
+  Renders time from given seconds.
+  """
+  attr :value, :integer, required: true
+
+  def seconds_to_time(assigns) do
+    # assigns =  assign(assigns, :time, Timex.Duration.from_seconds(assigns.value))
+    ~H"""
+    <%= Timex.Duration.from_seconds(@value) |> Timex.Duration.to_time!() %>
+    """
+  end
+
+  @doc """
   Renders a Gravatar image.
 
   ## Examples
@@ -235,9 +266,9 @@ defmodule AppWeb.CoreComponents do
       role="alert"
       class={[
         "fixed top-2 right-2 mr-2 w-80 sm:w-96 z-50 rounded-lg p-3 ring-1",
-        @kind == :info && "bg-emerald-50 text-emerald-800 ring-emerald-500 fill-cyan-900",
-        @kind == :warning && "bg-yellow-50 text-yellow-900 shadow-md ring-yellow-500 fill-yellow-900",
-        @kind == :error && "bg-rose-50 text-rose-900 shadow-md ring-rose-500 fill-rose-900"
+        @kind == :info && "bg-green-50 text-green-800 ring-emerald-500 fill-cyan-900",
+        @kind == :warning && "bg-yellow-50 text-yellow-800 shadow-md ring-yellow-500 fill-yellow-900",
+        @kind == :error && "bg-red-50 text-red-900 shadow-md ring-red-500 fill-red-900"
       ]}
       {@rest}
     >
@@ -268,8 +299,8 @@ defmodule AppWeb.CoreComponents do
   def flash_group(assigns) do
     ~H"""
     <div id={@id}>
-      <.flash kind={:info} title="Success!" flash={@flash} />
-      <.flash kind={:warning} title="Warning!" flash={@flash} />
+      <.flash kind={:info} title="Sukses!" flash={@flash} />
+      <.flash kind={:warning} title="Peringatan!" flash={@flash} />
       <.flash kind={:error} title="Error!" flash={@flash} />
       <.flash
         id="client-error"

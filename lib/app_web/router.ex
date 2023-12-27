@@ -39,6 +39,7 @@ defmodule AppWeb.Router do
       on_mount: {AppWeb.LiveAuth, :default},
       layout: {AppWeb.Layouts, :checkout} do
       live "/p/:slug", PublicLive.Checkout
+      live "/invoice/:id", PublicLive.Invoice
     end
   end
 
