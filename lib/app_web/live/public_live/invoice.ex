@@ -11,7 +11,7 @@ defmodule AppWeb.PublicLive.Invoice do
 
     socket =
       socket
-      |> assign(:page_title, "Nota Pembelian")
+      |> assign(:page_title, "Invoice #" <> order.invoice_number)
       |> assign(:order, order)
       |> assign(:status, Orders.status(order))
 

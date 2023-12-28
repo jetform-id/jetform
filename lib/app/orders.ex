@@ -13,6 +13,12 @@ defmodule App.Orders do
   defdelegate status(order), to: Order
   defdelegate time_before_expired(order), to: Order
 
+  def generate_invoice_number() do
+    month = Timex.now() |> Timex.format!("%y%m%d", :strftime)
+    random = :crypto.strong_rand_bytes(2) |> :crypto.bytes_to_integer()
+    "#{month}-#{random}"
+  end
+
   @doc """
   Returns the list of orders.
 

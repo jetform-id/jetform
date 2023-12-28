@@ -328,6 +328,7 @@ defmodule AppWeb.ProductLive.Components.Preview do
       order_params
       |> Map.put("product", socket.assigns.product)
       |> Map.put("product_variant", socket.assigns.selected_variant)
+      |> Map.put("invoice_number", Orders.generate_invoice_number())
       |> Map.put(
         "valid_until",
         Orders.valid_until_hours(Application.fetch_env!(:app, :order_validity_hours))

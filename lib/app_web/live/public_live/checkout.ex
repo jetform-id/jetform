@@ -36,7 +36,7 @@ defmodule AppWeb.PublicLive.Checkout do
   def handle_info({AppWeb.ProductLive.Components.Preview, order}, socket) do
     socket =
       socket
-      |> put_flash(:info, "Order telah dibuat! silahkan lanjutkan dengan pembayaran.")
+      |> put_flash(:info, "Pesanan telah dibuat! silahkan lanjutkan dengan pembayaran.")
       |> push_navigate(to: ~p"/invoice/#{order.id}")
 
     {:noreply, socket}

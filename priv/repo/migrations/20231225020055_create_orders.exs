@@ -17,11 +17,13 @@ defmodule App.Repo.Migrations.CreateOrders do
       add :sub_total, :integer, default: 0
       add :total, :integer, default: 0
       add :valid_until, :utc_datetime
+      add :invoice_number, :string, null: false
       add :status, :string, null: false
 
       timestamps(type: :utc_datetime)
     end
 
+    create unique_index(:orders, [:invoice_number])
     create index(:orders, [:customer_email])
     create index(:orders, [:user_id, :product_id, :product_variant_id])
   end
