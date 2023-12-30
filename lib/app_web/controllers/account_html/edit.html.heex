@@ -44,11 +44,7 @@
             <.input
               field={f[:timezone]}
               type="select"
-              options={[
-                {"(WIB) Waktu Indonesia Barat", "Asia/Jakarta"},
-                {"(WITA) Waktu Indonesia Tengah", "Asia/Makassar"},
-                {"(WIT) Waktu Indonesia Timur", "Asia/Jayapura"}
-              ]}
+              options={App.Users.tz_select_options()}
               label="Timezone"
             />
             <hr />

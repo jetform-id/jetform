@@ -85,6 +85,9 @@ config :waffle,
   storage_dir_prefix: "priv/static",
   storage_dir: "uploads"
 
+config :flop,
+  repo: App.Repo
+
 # asset_host: "http://localhost:4000"
 
 # Import environment specific config. This must remain at the bottom

@@ -33,6 +33,15 @@ defmodule App.Orders do
   end
 
   @doc """
+  Returns the list of orders for a given user.
+  """
+  def list_orders!(user, params) do
+    Order
+    |> where(user_id: ^user.id)
+    |> Flop.validate_and_run!(params)
+  end
+
+  @doc """
   Gets a single order.
 
   Raises `Ecto.NoResultsError` if the Order does not exist.

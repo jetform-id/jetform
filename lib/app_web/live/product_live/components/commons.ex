@@ -7,27 +7,27 @@ defmodule AppWeb.ProductLive.Components.Commons do
     ~H"""
     <span
       :if={@status == :pending}
-      class="bg-yellow-100 text-yellow-800 text-xs font-medium px-3 py-1 rounded dark:bg-gray-700 dark:text-yellow-300 border border-yellow-300"
+      class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded dark:bg-gray-700 dark:text-yellow-300 border border-yellow-300"
     >
-      MENUNGGU PEMBAYARAN
+      PENDING
     </span>
     <span
       :if={@status == :paid}
-      class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400"
+      class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400"
     >
-      LUNAS
+      PAID
     </span>
     <span
       :if={@status == :expired}
-      class="bg-red-100 text-red-800 text-xs font-medium px-3 py-1 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400"
+      class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400"
     >
-      KADALUARSA
+      EXPIRED
     </span>
     <span
       :if={@status == :cancelled}
-      class="bg-red-100 text-red-800 text-xs font-medium px-3 py-1 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400"
+      class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400"
     >
-      DIBATALKAN
+      CANCELLED
     </span>
     """
   end

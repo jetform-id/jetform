@@ -2,8 +2,12 @@ defmodule App.Orders.Order do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @mail_regex ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/
+  @derive {
+    Flop.Schema,
+    filterable: [:status], sortable: [:inserted_at]
+  }
 
+  @mail_regex ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/
   @required_fields ~w(invoice_number valid_until customer_name customer_email)a
   @optional_fields ~w(customer_phone status)a
 

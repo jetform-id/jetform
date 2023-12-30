@@ -46,12 +46,14 @@ defmodule AppWeb.CoreComponents do
   """
   attr :value, :any, required: true
   attr :tz, :string, default: "Asia/Jakarta"
-  attr :tz_label, :string, default: "WIB"
+  attr :show_label, :boolean, default: false
 
   def indo_datetime(assigns) do
+    label = if assigns.show_label, do: " " <> App.Users.tz_label(assigns.tz), else: ""
+
     value =
       Timex.to_datetime(assigns.value, assigns.tz)
-      |> Timex.format!("%d/%m/%Y %H:%M " <> assigns.tz_label, :strftime)
+      |> Timex.format!("%d-%m-%Y %H:%M" <> label, :strftime)
 
     assigns = assign(assigns, :value, value)
 
@@ -166,6 +168,82 @@ defmodule AppWeb.CoreComponents do
         <% end %>
       </ul>
     </li>
+    """
+  end
+
+  def chevron_left(assigns) do
+    ~H"""
+    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <path
+        fill-rule="evenodd"
+        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+        clip-rule="evenodd"
+      >
+      </path>
+    </svg>
+    """
+  end
+
+  def chevron_right(assigns) do
+    ~H"""
+    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <path
+        fill-rule="evenodd"
+        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+        clip-rule="evenodd"
+      >
+      </path>
+    </svg>
+    """
+  end
+
+  attr :meta, :map, required: true
+  attr :on_click, :string, default: "change_page"
+
+  def pagination(assigns) do
+    ~H"""
+    <div :if={@meta} class="flex items-center mb-4 sm:mb-0">
+      <%!-- prev --%>
+      <button
+        :if={@meta.has_previous_page?}
+        phx-click={JS.push(@on_click, value: %{page: @meta.previous_page})}
+        class="inline-flex justify-center p-1 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+      >
+        <.chevron_left />
+      </button>
+      <span
+        :if={!@meta.has_previous_page?}
+        class="inline-flex justify-center p-1 text-gray-300 rounded cursor-pointer dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+      >
+        <.chevron_left />
+      </span>
+      <%!-- next --%>
+      <button
+        :if={@meta.has_next_page?}
+        phx-click={JS.push(@on_click, value: %{page: @meta.next_page})}
+        class="inline-flex justify-center p-1 mr-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+      >
+        <.chevron_right />
+      </button>
+      <span
+        :if={!@meta.has_next_page?}
+        class="inline-flex justify-center p-1 text-gray-300 rounded cursor-pointer dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+      >
+        <.chevron_right />
+      </span>
+
+      <%!-- page info --%>
+      <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+        Halaman
+        <span class="font-semibold text-gray-900 dark:text-white">
+          <%= @meta.current_page %>
+        </span>
+        dari
+        <span class="font-semibold text-gray-900 dark:text-white">
+          <%= @meta.total_pages %>
+        </span>
+      </span>
+    </div>
     """
   end
 

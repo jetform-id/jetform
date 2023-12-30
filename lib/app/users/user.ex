@@ -9,6 +9,12 @@ defmodule App.Users.User do
 
   alias App.Utils.ReservedWords
 
+  @tz_labels [
+    {"Asia/Jakarta", "WIB", "Waktu Indonesia Barat"},
+    {"Asia/Makassar", "WITA", "Waktu Indonesia Tengah"},
+    {"Asia/Jayapura", "WIT", "Waktu Indonesia Timur"}
+  ]
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "users" do
@@ -22,6 +28,16 @@ defmodule App.Users.User do
     has_many :orders, App.Orders.Order
 
     timestamps(type: :utc_datetime)
+  end
+
+  def tz_select_options() do
+    Enum.map(@tz_labels, fn {tz, label, desc} ->
+      {"#{desc} (#{label})", tz}
+    end)
+  end
+
+  def tz_label(tz) do
+    Enum.find(@tz_labels, fn {tz_, _, _} -> tz_ == tz end) |> elem(1)
   end
 
   def changeset(user_or_changeset, attrs) do

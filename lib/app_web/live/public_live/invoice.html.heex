@@ -46,7 +46,7 @@
                 Dibuat pada:
               </dt>
               <dd class="col-span-2 text-gray-500">
-                <.indo_datetime value={@order.inserted_at} />
+                <.indo_datetime value={@order.inserted_at} show_label={true}/>
               </dd>
             </dl>
             <dl class="gap-x-3">
@@ -54,7 +54,7 @@
                 Berlaku hingga:
               </dt>
               <dd class="col-span-2 text-gray-500">
-                <.indo_datetime value={@order.valid_until} />
+                <.indo_datetime value={@order.valid_until} show_label={true}/>
               </dd>
             </dl>
           </div>

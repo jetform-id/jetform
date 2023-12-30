@@ -1,6 +1,9 @@
 defmodule App.Users do
   alias App.Repo
-  alias App.Users.BankAccount
+  alias App.Users.{User, BankAccount}
+
+  defdelegate tz_select_options(), to: User
+  defdelegate tz_label(tz), to: User
 
   def get_bank_account_by_user(user) do
     case Repo.get_by(BankAccount, user_id: user.id) do
