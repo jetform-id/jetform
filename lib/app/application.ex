@@ -15,6 +15,7 @@ defmodule App.Application do
       # Start the Finch HTTP client for sending emails
       {Finch, name: App.Finch},
       Pow.Store.Backend.MnesiaCache,
+      {Oban, Application.fetch_env!(:app, Oban)},
       # Start a worker by calling: App.Worker.start_link(arg)
       # {App.Worker, arg},
       # Start to serve requests, typically the last entry

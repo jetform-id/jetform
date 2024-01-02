@@ -19,7 +19,7 @@
             #<%= @order.invoice_number %>
           </h2>
           <span class="mt-1 block text-gray-500">
-            <Commons.order_status_badge status={@status} />
+            <Commons.order_status_badge status={@order.status} />
           </span>
         </div>
         <!-- Col -->
@@ -46,7 +46,7 @@
                 Dibuat pada:
               </dt>
               <dd class="col-span-2 text-gray-500">
-                <.indo_datetime value={@order.inserted_at} show_label={true}/>
+                <.indo_datetime value={@order.inserted_at} show_label={true} />
               </dd>
             </dl>
             <dl class="gap-x-3">
@@ -54,7 +54,7 @@
                 Berlaku hingga:
               </dt>
               <dd class="col-span-2 text-gray-500">
-                <.indo_datetime value={@order.valid_until} show_label={true}/>
+                <.indo_datetime value={@order.valid_until} show_label={true} />
               </dd>
             </dl>
           </div>
@@ -64,7 +64,7 @@
       </div>
       <!-- End Grid -->
       <span
-        :if={@status == :pending}
+        :if={@order.status == :pending}
         class="mt-4 bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-2 rounded dark:bg-gray-700 dark:text-yellow-300 border border-dashed border-yellow-300"
       >
         <.icon name="hero-hand-raised" />

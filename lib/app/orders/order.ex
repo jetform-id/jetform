@@ -39,14 +39,6 @@ defmodule App.Orders.Order do
     timestamps(type: :utc_datetime)
   end
 
-  def status(order) do
-    case Timex.compare(Timex.now(), order.valid_until, :second) do
-      -1 -> order.status
-      0 -> order.status
-      1 -> if order.status == :pending, do: :expired, else: order.status
-    end
-  end
-
   def time_before_expired(order) do
     case Timex.compare(Timex.now(), order.valid_until, :second) do
       -1 -> Timex.diff(order.valid_until, Timex.now(), :second)

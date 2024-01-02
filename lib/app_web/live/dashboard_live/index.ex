@@ -4,7 +4,7 @@ defmodule AppWeb.DashboardLive.Index do
   alias App.Orders
   alias AppWeb.ProductLive.Components.Commons
 
-  @result_limit 1
+  @result_limit 5
 
   @impl true
   def mount(

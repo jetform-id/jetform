@@ -88,6 +88,11 @@ config :waffle,
 config :flop,
   repo: App.Repo
 
+config :app, Oban,
+  repo: App.Repo,
+  plugins: [Oban.Plugins.Pruner],
+  queues: [default: 10]
+
 # asset_host: "http://localhost:4000"
 
 # Import environment specific config. This must remain at the bottom

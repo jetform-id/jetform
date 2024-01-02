@@ -10,7 +10,6 @@ defmodule App.Orders do
   alias App.Orders.Order
   alias App.Contents
 
-  defdelegate status(order), to: Order
   defdelegate time_before_expired(order), to: Order
 
   def generate_invoice_number() do
@@ -56,6 +55,7 @@ defmodule App.Orders do
 
   """
   def get_order!(id), do: Repo.get!(Order, id)
+  def get_order(id), do: Repo.get(Order, id)
 
   @doc """
   Creates a order.
@@ -90,6 +90,10 @@ defmodule App.Orders do
       |> Order.changeset(%{})
       |> Order.put_contents(contents)
     end)
+    |> Ecto.Multi.run(:schedule_invalidation, fn _repo, %{order: order} ->
+      # Schedule an Oban job to invalidate the order after it expires
+      App.Workers.InvalidateOrder.create(order)
+    end)
     |> Repo.transaction()
     |> case do
       {:ok, %{order_contents: order}} ->
@@ -116,6 +120,20 @@ defmodule App.Orders do
     order
     |> Order.changeset(attrs)
     |> Repo.update()
+    |> case do
+      {:ok, order} ->
+        # notify all subscribers (e.g. invoice page) that this order has been updated.
+        Phoenix.PubSub.broadcast(
+          App.PubSub,
+          "order:#{order.id}",
+          "order:updated"
+        )
+
+        {:ok, order}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """
@@ -148,6 +166,6 @@ defmodule App.Orders do
   end
 
   def valid_until_hours(hour \\ 1) do
-    DateTime.utc_now() |> DateTime.add(hour, :hour)
+    DateTime.utc_now() |> DateTime.add(hour, :minute)
   end
 end
