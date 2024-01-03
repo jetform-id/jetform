@@ -30,6 +30,13 @@ defmodule AppWeb.Router do
     plug :accepts, ["json"]
   end
 
+  scope "/api", AppWeb do
+    pipe_through :api
+
+    get "/payment/redirect", PaymentController, :midtrans_redirect
+    post "/payment/notification", PaymentController, :midtrans_notification
+  end
+
   scope "/", AppWeb do
     pipe_through [:browser]
 
@@ -39,6 +46,7 @@ defmodule AppWeb.Router do
       on_mount: {AppWeb.LiveAuth, :default},
       layout: {AppWeb.Layouts, :checkout} do
       live "/p/:slug", PublicLive.Checkout
+
       live "/invoice/:id", PublicLive.Invoice
     end
   end

@@ -20,6 +20,12 @@ if System.get_env("PHX_SERVER") do
   config :app, AppWeb.Endpoint, server: true
 end
 
+config :app,
+  midtrans_server_key: System.get_env("MIDTRANS_SERVER_KEY"),
+  midtrans_client_key: System.get_env("MIDTRANS_CLIENT_KEY"),
+  midtrans_merchant_id: System.get_env("MIDTRANS_MERCHANT_ID"),
+  midtrans_mode: System.get_env("MIDTRANS_MODE", "sandbox")
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||

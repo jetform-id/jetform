@@ -31,6 +31,7 @@ defmodule App.Orders.Order do
     belongs_to :user, App.Users.User
     belongs_to :product, App.Products.Product
     belongs_to :product_variant, App.Products.Variant
+    has_many :payments, App.Orders.Payment
 
     many_to_many :contents, App.Contents.Content,
       join_through: App.Orders.OrderContent,

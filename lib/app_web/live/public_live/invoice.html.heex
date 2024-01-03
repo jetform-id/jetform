@@ -46,7 +46,13 @@
                 Dibuat pada:
               </dt>
               <dd class="col-span-2 text-gray-500">
-                <.indo_datetime value={@order.inserted_at} show_label={true} />
+                <.indo_datetime
+                  :if={@current_user}
+                  value={@order.inserted_at}
+                  tz={@current_user.timezone}
+                  show_label={true}
+                />
+                <.indo_datetime :if={!@current_user} value={@order.inserted_at} show_label={true} />
               </dd>
             </dl>
             <dl class="gap-x-3">
@@ -54,7 +60,13 @@
                 Berlaku hingga:
               </dt>
               <dd class="col-span-2 text-gray-500">
-                <.indo_datetime value={@order.valid_until} show_label={true} />
+                <.indo_datetime
+                  :if={@current_user}
+                  value={@order.valid_until}
+                  tz={@current_user.timezone}
+                  show_label={true}
+                />
+                <.indo_datetime :if={!@current_user} value={@order.valid_until} show_label={true} />
               </dd>
             </dl>
           </div>
@@ -134,8 +146,15 @@
         </div>
       </div>
       <!-- End Flex -->
-      <%!-- <div class="mt-8 sm:mt-12">
-        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Thank you!</h4>
+      <div :if={@order.status == :pending} class="mt-8 sm:mt-12">
+        <button
+          phx-click="create_payment"
+          type="submit"
+          class="w-full items-center justify-center rounded-md bg-primary-700 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-800"
+        >
+          BAYAR <span aria-hidden="true">→</span>
+        </button>
+        <%!-- <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Thank you!</h4>
         <p class="text-gray-500">
           If you have any questions concerning this invoice, use the following contact information:
         </p>
@@ -146,8 +165,8 @@
           <p class="block text-sm font-medium text-gray-800 dark:text-gray-200">
             +1 (062) 109-9222
           </p>
-        </div>
-      </div> --%>
+        </div> --%>
+      </div>
 
       <p class="mt-5 text-sm text-gray-500">
         &copy; <%= Date.utc_today().year %> <a href="/" class="hover:underline" target="_blank"><%= app_info(:name) %></a>. All rights reserved.

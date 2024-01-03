@@ -93,6 +93,8 @@ config :app, Oban,
   plugins: [Oban.Plugins.Pruner],
   queues: [default: 10]
 
+config :tesla, :adapter, {Tesla.Adapter.Finch, name: App.Finch, receive_timeout: 30_000}
+
 # asset_host: "http://localhost:4000"
 
 # Import environment specific config. This must remain at the bottom

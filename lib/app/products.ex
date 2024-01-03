@@ -119,13 +119,12 @@ defmodule App.Products do
   # --------------- VARIANT ---------------
 
   def list_variants_by_product(product) do
-    query =
-      from(v in Variant,
-        where: v.product_id == ^product.id,
-        order_by: [asc: v.inserted_at]
-      )
-
-    Repo.all(query)
+    from(
+      v in Variant,
+      where: v.product_id == ^product.id,
+      order_by: [asc: v.inserted_at]
+    )
+    |> Repo.all()
   end
 
   def get_variant!(id) do

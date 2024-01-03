@@ -9,8 +9,12 @@ defmodule App.Workers.InvalidateOrder do
          {:ok, _order} <- Orders.update_order(order, %{status: :expired}) do
       :ok
     else
-      # do nothing! order was already updated (not in pending state)
+      # order not found
       nil ->
+        :ok
+
+      # order not in pending state
+      %{status: _} ->
         :ok
 
       err ->

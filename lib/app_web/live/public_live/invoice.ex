@@ -23,6 +23,50 @@ defmodule AppWeb.PublicLive.Invoice do
     {:ok, socket}
   end
 
+  @impl true
+  def handle_params(%{"payment_id" => payment_id}, _uri, socket) do
+    case Orders.get_payment(payment_id) do
+      %{trx_status: "pending"} = payment ->
+        Orders.refresh_payment(payment)
+        {:noreply, socket}
+
+      _ ->
+        {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_params(_, _uri, socket) do
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("create_payment", _params, socket) do
+    # check if there's already an empty payment for this order
+    # if there is, redirect to its `redirect_url`, otherwise create a new one
+    case Orders.get_empty_payment(socket.assigns.order) do
+      nil ->
+        case Orders.create_payment(socket.assigns.order) do
+          {:ok, _payment, redirect_url} ->
+            {:noreply, redirect(socket, external: redirect_url)}
+
+          {:error, :order_about_to_expire, _} ->
+            {:noreply,
+             put_flash(
+               socket,
+               :warning,
+               "Maaf, order ini hampir kadaluarsa! Silahkan membuat order demi kelancaran proses pembayaran."
+             )}
+
+          {:error, _, _} ->
+            {:noreply, put_flash(socket, :error, "Maaf! Terjadi kesalahan.")}
+        end
+
+      payment ->
+        {:noreply, redirect(socket, external: payment.redirect_url)}
+    end
+  end
+
   @doc """
   Handle order changes event received from PubSub.
   """
