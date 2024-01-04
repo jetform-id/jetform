@@ -5,6 +5,7 @@ defmodule AppWeb.Router do
   use Pow.Extension.Phoenix.Router,
     extensions: [PowResetPassword, PowEmailConfirmation]
 
+  # -------------------- Pipelines --------------------
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -30,6 +31,7 @@ defmodule AppWeb.Router do
     plug :accepts, ["json"]
   end
 
+  # -------------------- Scopes --------------------
   scope "/api", AppWeb do
     pipe_through :api
 
@@ -40,13 +42,14 @@ defmodule AppWeb.Router do
   scope "/", AppWeb do
     pipe_through [:browser]
 
+    # public pages
     get "/", PageController, :index
 
+    # public live-pages
     live_session :public,
       on_mount: {AppWeb.LiveAuth, :default},
       layout: {AppWeb.Layouts, :checkout} do
       live "/p/:slug", PublicLive.Checkout
-
       live "/invoice/:id", PublicLive.Invoice
     end
   end
@@ -54,6 +57,7 @@ defmodule AppWeb.Router do
   scope "/" do
     pipe_through [:browser, :auth_area]
 
+    # authentication
     pow_routes()
     pow_extension_routes()
   end
