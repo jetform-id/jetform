@@ -231,7 +231,7 @@
 -->
 <.modal :if={@new_modal} id="product-modal" show on_cancel={JS.patch(~p"/admin/products")}>
   <.live_component
-    module={AppWeb.ProductLive.Components.NewForm}
+    module={AppWeb.AdminLive.Product.Components.NewForm}
     id={:new_product}
     changeset={@changeset}
     base_url={@base_url}

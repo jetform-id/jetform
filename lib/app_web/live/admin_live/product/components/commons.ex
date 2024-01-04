@@ -1,4 +1,4 @@
-defmodule AppWeb.ProductLive.Components.Commons do
+defmodule AppWeb.AdminLive.Product.Components.Commons do
   use AppWeb, :html
 
   attr :status, :atom, required: true

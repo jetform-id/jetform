@@ -1,7 +1,7 @@
-defmodule AppWeb.ProductLive.Edit do
+defmodule AppWeb.AdminLive.Product.Edit do
   use AppWeb, :live_view
   alias App.Products
-  alias AppWeb.ProductLive.Components.{EditForm, Preview}
+  alias AppWeb.AdminLive.Product.Components.{EditForm, Preview}
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
@@ -130,7 +130,7 @@ defmodule AppWeb.ProductLive.Edit do
   # handle messages from Variants component
 
   @impl true
-  def handle_info({AppWeb.ProductLive.Components.Variants, :variants_updated}, socket) do
+  def handle_info({AppWeb.AdminLive.Product.Components.Variants, :variants_updated}, socket) do
     product =
       socket.assigns.product
       |> App.Repo.reload!()
@@ -142,7 +142,7 @@ defmodule AppWeb.ProductLive.Edit do
   # handle messages from Preview component
 
   @impl true
-  def handle_info({AppWeb.ProductLive.Components.Preview, _order}, socket) do
+  def handle_info({AppWeb.AdminLive.Product.Components.Preview, _order}, socket) do
     {:noreply, put_flash(socket, :info, "Anda dalam mode preview.")}
   end
 

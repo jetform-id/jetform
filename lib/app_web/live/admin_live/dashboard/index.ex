@@ -1,8 +1,8 @@
-defmodule AppWeb.DashboardLive.Index do
+defmodule AppWeb.AdminLive.Dashboard.Index do
   use AppWeb, :live_view
 
   alias App.Orders
-  alias AppWeb.ProductLive.Components.Commons
+  alias AppWeb.AdminLive.Product.Components.Commons
 
   @result_limit 5
 

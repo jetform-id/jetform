@@ -1,7 +1,7 @@
 defmodule AppWeb.PublicLive.Invoice do
   use AppWeb, :live_view
   alias App.Orders
-  alias AppWeb.ProductLive.Components.Commons
+  alias AppWeb.AdminLive.Product.Components.Commons
 
   @tick_every 5_000
 

@@ -67,14 +67,14 @@ defmodule AppWeb.Router do
 
     live_session :admin, on_mount: {AppWeb.LiveAuth, :admin}, layout: {AppWeb.Layouts, :admin} do
       # products
-      live "/products", ProductLive.Index
-      live "/products/:id/edit", ProductLive.Edit
+      live "/products", AdminLive.Product.Index
+      live "/products/:id/edit", AdminLive.Product.Edit
 
       # bank
-      live "/payouts/bank-account", PayoutsLive.Bank
+      live "/payouts/bank-account", AdminLive.Payout.Bank
 
       # dashboard
-      live "/", DashboardLive.Index
+      live "/", AdminLive.Dashboard.Index
     end
   end
 

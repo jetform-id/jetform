@@ -1,4 +1,4 @@
-defmodule AppWeb.ProductLive.Components.NewForm do
+defmodule AppWeb.AdminLive.Product.Components.NewForm do
   use AppWeb, :live_component
 
   alias App.Products

@@ -1,4 +1,4 @@
-defmodule AppWeb.PayoutsLive.Bank do
+defmodule AppWeb.AdminLive.Payout.Bank do
   use AppWeb, :live_view
   alias App.Users
 

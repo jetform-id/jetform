@@ -1,4 +1,4 @@
-defmodule AppWeb.ProductLive.Index do
+defmodule AppWeb.AdminLive.Product.Index do
   use AppWeb, :live_view
   alias App.Products
 

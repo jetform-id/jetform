@@ -1,9 +1,9 @@
-defmodule AppWeb.ProductLive.Components.Variants do
+defmodule AppWeb.AdminLive.Product.Components.Variants do
   use AppWeb, :live_component
   use AppWeb, :html
 
   alias App.Products
-  alias AppWeb.ProductLive.Components.Commons
+  alias AppWeb.AdminLive.Product.Components.Commons
 
   @impl true
   def render(assigns) do

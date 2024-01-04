@@ -1,8 +1,8 @@
-defmodule AppWeb.ProductLive.Components.EditForm do
+defmodule AppWeb.AdminLive.Product.Components.EditForm do
   use AppWeb, :html
   alias App.Products
   alias AppWeb.Utils
-  alias AppWeb.ProductLive.Components.Commons
+  alias AppWeb.AdminLive.Product.Components.Commons
 
   @doc """
   Renders basic product editor form

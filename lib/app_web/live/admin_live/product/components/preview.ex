@@ -1,4 +1,4 @@
-defmodule AppWeb.ProductLive.Components.Preview do
+defmodule AppWeb.AdminLive.Product.Components.Preview do
   use AppWeb, :live_component
   use AppWeb, :html
 

@@ -23,7 +23,7 @@ defmodule AppWeb.PublicLive.Checkout do
     ~H"""
     <.live_component
       :if={@product}
-      module={AppWeb.ProductLive.Components.Preview}
+      module={AppWeb.AdminLive.Product.Components.Preview}
       id={@product.id}
       product={@product}
     />
@@ -33,7 +33,7 @@ defmodule AppWeb.PublicLive.Checkout do
   # handle messages from Preview component
 
   @impl true
-  def handle_info({AppWeb.ProductLive.Components.Preview, order}, socket) do
+  def handle_info({AppWeb.AdminLive.Product.Components.Preview, order}, socket) do
     socket =
       socket
       |> put_flash(:info, "Pesanan telah dibuat! silahkan lanjutkan dengan pembayaran.")
