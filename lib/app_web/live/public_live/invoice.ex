@@ -3,7 +3,7 @@ defmodule AppWeb.PublicLive.Invoice do
   alias App.Orders
   alias AppWeb.AdminLive.Product.Components.Commons
 
-  @tick_every 5_000
+  @tick_every 1_000
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
@@ -55,7 +55,7 @@ defmodule AppWeb.PublicLive.Invoice do
              put_flash(
                socket,
                :warning,
-               "Maaf, order ini hampir kadaluarsa! Silahkan membuat order demi kelancaran proses pembayaran."
+               "Maaf, order ini hampir kadaluarsa! Silahkan membuat order baru demi kelancaran proses pembayaran."
              )}
 
           {:error, _, _} ->

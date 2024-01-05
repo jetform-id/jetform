@@ -20,6 +20,13 @@ defmodule App.Orders do
     "#{month}-#{random}"
   end
 
+  def product_fullname(%Order{} = order) do
+    case order.product_variant_name do
+      nil -> order.product_name
+      variant_name -> "#{order.product_name} (#{variant_name})"
+    end
+  end
+
   @doc """
   Returns the list of orders.
 
@@ -209,16 +216,9 @@ defmodule App.Orders do
   To simplify payment time management, we strictly enforce te payment page expiry time as
   well as the transaction expiry time to be the same as Order `valid_until` time.
   """
-  def midtrans_payload(order, payment, minimum_expiry_mins \\ 1) do
+  def midtrans_payload(order, payment, minimum_expiry_mins \\ 5) do
     # calculate the expiry time in minutes
     expiry_mins = Integer.floor_div(time_before_expired(order), 60)
-
-    # create transaction in Midtrans
-    item_details_name =
-      case order.product_variant_name do
-        nil -> order.product_name
-        variant_name -> "#{order.product_name} - #{variant_name}"
-      end
 
     payload = %{
       "transaction_details" => %{
@@ -230,7 +230,7 @@ defmodule App.Orders do
           "id" => order.product_id,
           "price" => order.total,
           "quantity" => 1,
-          "name" => item_details_name
+          "name" => product_fullname(order)
         }
       ],
       "customer_details" => %{
@@ -238,7 +238,10 @@ defmodule App.Orders do
         "email" => order.customer_email
       },
       "expiry" => %{
-        "start_time" => order.inserted_at |> Timex.format!("%F %T %z", :strftime),
+        "start_time" =>
+          order.inserted_at
+          |> Timex.to_datetime("Asia/Jakarta")
+          |> Timex.format!("%F %T %z", :strftime),
         "unit" => "minutes",
         "duration" => expiry_mins
       },
@@ -372,6 +375,11 @@ defmodule App.Orders do
   end
 
   def cancel_payment(%Payment{} = payment) do
-    App.Midtrans.cancel_transaction(payment.id)
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:payment, change_payment(payment, %{"trx_status" => "cancel"}))
+    |> Ecto.Multi.run(:cancel, fn _repo, %{payment: payment} ->
+      App.Midtrans.cancel_transaction(payment.id)
+    end)
+    |> Repo.transaction()
   end
 end
