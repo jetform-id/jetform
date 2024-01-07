@@ -89,7 +89,7 @@ defmodule Workers.NotifyNewAccess do
     """
 
     %{
-      user: %{email: order.customer_email},
+      user: %{name: order.customer_name, email: order.customer_email},
       subject: "Akses #{App.Orders.product_fullname(order)}",
       text: text,
       html: html

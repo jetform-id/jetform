@@ -53,12 +53,17 @@ defmodule App.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:pow, "~> 1.0.34"},
       {:number, "~> 1.0"},
+      # waffle
       {:waffle, "~> 1.1"},
       {:waffle_ecto, "~> 0.0"},
+      {:ex_aws, "~> 2.1.2"},
+      {:ex_aws_s3, "~> 2.0"},
+      {:sweet_xml, "~> 0.6"},
+      # end waffle
       {:timex, "~> 3.7"},
       {:flop, "~> 0.24.1"},
       {:oban, "~> 2.16"},
-      {:tesla, "~> 1.4.0"},
+      {:tesla, "~> 1.4.0"}
     ]
   end
 

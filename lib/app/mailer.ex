@@ -1,17 +1,18 @@
 defmodule App.Mailer do
   use Pow.Phoenix.Mailer
   use Swoosh.Mailer, otp_app: :app
+
   import Swoosh.Email
   require Logger
 
-  @from_name "Snappy ID"
-  @from_email "hello@snappy.id"
-
   @impl true
   def cast(%{user: user, subject: subject, text: text, html: html}) do
+    from_name = Application.fetch_env!(:app, :mailer_from_name)
+    from_email = Application.fetch_env!(:app, :mailer_from_email)
+
     %Swoosh.Email{}
-    |> to({"", user.email})
-    |> from({@from_name, @from_email})
+    |> to({Map.get(user, :name, ""), user.email})
+    |> from({from_name, from_email})
     |> subject(subject)
     |> html_body(html)
     |> text_body(text)

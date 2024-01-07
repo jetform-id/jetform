@@ -16,6 +16,9 @@ defmodule App.Products.ProductCover do
   #   scope.bucket || bucket()
   # end
 
+  def acl(:standard, _), do: :public_read
+  def acl(:thumb, _), do: :public_read
+
   # Whitelist file extensions:
   def validate({file, _}) do
     file_extension = file.file_name |> Path.extname() |> String.downcase()

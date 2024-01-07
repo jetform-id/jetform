@@ -58,7 +58,7 @@ defmodule Workers.NotifyNewOrder do
     """
 
     %{
-      user: %{email: order.customer_email},
+      user: %{name: order.customer_name, email: order.customer_email},
       subject: "Detail pembelian anda ##{order.invoice_number}",
       text: text,
       html: html

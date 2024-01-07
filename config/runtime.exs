@@ -24,7 +24,24 @@ config :app,
   midtrans_server_key: System.get_env("MIDTRANS_SERVER_KEY"),
   midtrans_client_key: System.get_env("MIDTRANS_CLIENT_KEY"),
   midtrans_merchant_id: System.get_env("MIDTRANS_MERCHANT_ID"),
-  midtrans_mode: System.get_env("MIDTRANS_MODE", "sandbox")
+  midtrans_mode: System.get_env("MIDTRANS_MODE", "sandbox"),
+  mailer_from_name: System.get_env("MAILER_FROM_NAME", "Snappy"),
+  mailer_from_email: System.get_env("MAILER_FROM_EMAIL", "hello@snappy.id")
+
+if System.get_env("WAFFLE_AWS_S3_BUCKET") do
+  config :waffle,
+    storage: Waffle.Storage.S3,
+    bucket: System.get_env("WAFFLE_AWS_S3_BUCKET"),
+    asset_host: System.get_env("WAFFLE_ASSET_HOST")
+
+  config :ex_aws,
+    json_codec: Jason,
+    s3: [
+      scheme: "https://",
+      host: "is3.cloudhost.id"
+    ],
+    debug_requests: true
+end
 
 if config_env() == :prod do
   database_url =

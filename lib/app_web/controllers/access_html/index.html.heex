@@ -2,10 +2,10 @@
   <div class="mx-auto max-w-xl rounded-lg bg-white shadow-md">
     <div class="py-6">
       <div class="px-6 pb-6 border-b">
-        <p class="text-gray-500 font-semibold">#<%= @order.invoice_number %></p>
         <h2 class="text-2xl font-semibold" id="preview" phx-update="replace">
           <%= App.Orders.product_fullname(@order) %>
         </h2>
+        <p class="text-gray-400 font-semibold">INVOICE #<%= @order.invoice_number %></p>
       </div>
 
       <%!-- contents --%>

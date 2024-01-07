@@ -139,7 +139,7 @@ defmodule App.Contents do
     Content.changeset(content, attrs)
   end
 
-  def file_url(content, opts \\ []) do
+  def file_url(content, opts \\ [signed: true]) do
     App.Contents.ContentFile.url({content.file, content}, :original, opts)
   end
 
