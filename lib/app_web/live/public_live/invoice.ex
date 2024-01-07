@@ -47,10 +47,10 @@ defmodule AppWeb.PublicLive.Invoice do
     case Orders.get_empty_payment(socket.assigns.order) do
       nil ->
         case Orders.create_payment(socket.assigns.order) do
-          {:ok, _payment, redirect_url} ->
-            {:noreply, redirect(socket, external: redirect_url)}
+          {:ok, payment} ->
+            {:noreply, redirect(socket, external: payment.redirect_url)}
 
-          {:error, :order_about_to_expire, _} ->
+          {:error, :expire_soon, _} ->
             {:noreply,
              put_flash(
                socket,
@@ -77,7 +77,12 @@ defmodule AppWeb.PublicLive.Invoice do
 
     case order.status do
       :paid ->
-        {:noreply, put_flash(socket, :info, "Order telah lunas!")}
+        {:noreply,
+         put_flash(
+           socket,
+           :info,
+           "Pembayaran berhasil! Link untuk mengakses produk telah dikirim ke email anda: #{order.customer_email}"
+         )}
 
       :expired ->
         {:noreply, put_flash(socket, :error, "Order telah kadaluarsa!")}

@@ -38,7 +38,6 @@ defmodule App.Contents.Content do
   def changeset(content, attrs) do
     content
     |> cast(attrs, @required_fields ++ @optional_fields)
-    |> cast_attachments(attrs, @attachment_fields, allow_paths: true)
     |> validate_required(@required_fields)
   end
 
@@ -47,6 +46,10 @@ defmodule App.Contents.Content do
     |> changeset(attrs)
     |> validate_product(attrs)
     |> validate_product_variant(attrs)
+  end
+
+  def attachment_changeset(content, attrs) do
+    cast_attachments(content, attrs, @attachment_fields, allow_paths: true)
   end
 
   defp validate_product(changeset, attrs) do

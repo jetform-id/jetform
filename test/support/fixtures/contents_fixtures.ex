@@ -17,4 +17,18 @@ defmodule App.ContentsFixtures do
 
     content
   end
+
+  @doc """
+  Generate a access.
+  """
+  def access_fixture(attrs \\ %{}) do
+    {:ok, access} =
+      attrs
+      |> Enum.into(%{
+        valid_until: ~U[2024-01-05 05:59:00Z]
+      })
+      |> App.Contents.create_access()
+
+    access
+  end
 end

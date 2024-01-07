@@ -44,6 +44,7 @@ defmodule AppWeb.Router do
 
     # public pages
     get "/", PageController, :index
+    get "/access/:id", AccessController, :index
 
     # public live-pages
     live_session :public,

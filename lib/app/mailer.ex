@@ -1,16 +1,17 @@
 defmodule App.Mailer do
   use Pow.Phoenix.Mailer
   use Swoosh.Mailer, otp_app: :app
-
   import Swoosh.Email
-
   require Logger
+
+  @from_name "Snappy ID"
+  @from_email "hello@snappy.id"
 
   @impl true
   def cast(%{user: user, subject: subject, text: text, html: html}) do
     %Swoosh.Email{}
     |> to({"", user.email})
-    |> from({"My App", "myapp@example.com"})
+    |> from({@from_name, @from_email})
     |> subject(subject)
     |> html_body(html)
     |> text_body(text)
@@ -29,6 +30,10 @@ defmodule App.Mailer do
     end)
 
     :ok
+  end
+
+  def process_sync(email) do
+    email |> deliver()
   end
 
   defp log_warnings({:error, reason}) do

@@ -1,7 +1,20 @@
-defmodule App.Workers.InvalidateOrder do
+defmodule Workers.InvalidateOrder do
   use Oban.Worker, queue: :default, max_attempts: 1
   require Logger
   alias App.Orders
+
+  @doc """
+  Create a new job to invalidate an order if it's still in pending state.
+  """
+  def create(%{status: :pending} = order) do
+    %{order_id: order.id}
+    |> __MODULE__.new(scheduled_at: order.valid_until)
+    |> Oban.insert()
+  end
+
+  def create(_order) do
+    {:ok, :noop}
+  end
 
   @impl true
   def perform(%{args: %{"order_id" => order_id}}) do
@@ -24,11 +37,5 @@ defmodule App.Workers.InvalidateOrder do
 
         :ok
     end
-  end
-
-  def create(order) do
-    %{order_id: order.id}
-    |> __MODULE__.new(scheduled_at: order.valid_until)
-    |> Oban.insert()
   end
 end

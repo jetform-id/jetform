@@ -32,6 +32,7 @@ defmodule App.Orders.Order do
     belongs_to :product, App.Products.Product
     belongs_to :product_variant, App.Products.Variant
     has_many :payments, App.Orders.Payment
+    has_one :access, App.Contents.Access
 
     many_to_many :contents, App.Contents.Content,
       join_through: App.Orders.OrderContent,
@@ -63,6 +64,7 @@ defmodule App.Orders.Order do
     |> validate_product(attrs)
     # need to be after validate_product
     |> validate_product_variant(attrs)
+    |> put_status()
   end
 
   def put_contents(changeset, contents) do
@@ -97,6 +99,17 @@ defmodule App.Orders.Order do
         |> put_change(:product_variant_name, variant.name)
         |> put_change(:sub_total, variant.price)
         |> put_change(:total, variant.price)
+    end
+  end
+
+  defp put_status(changeset) do
+    # if price is 0, then set status to :paid
+    case fetch_change(changeset, :total) do
+      {:ok, 0} ->
+        put_change(changeset, :status, :paid)
+
+      _ ->
+        changeset
     end
   end
 end

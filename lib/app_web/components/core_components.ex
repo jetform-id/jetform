@@ -47,19 +47,24 @@ defmodule AppWeb.CoreComponents do
   attr :value, :any, required: true
   attr :tz, :string, default: "Asia/Jakarta"
   attr :show_label, :boolean, default: false
+  attr :mode, :string, values: ["compact", "verbose"], default: "compact"
 
   def indo_datetime(assigns) do
     label = if assigns.show_label, do: " " <> App.Users.tz_label(assigns.tz), else: ""
 
+    format =
+      case assigns.mode do
+        "compact" -> "%d-%m-%Y %H:%M" <> label
+        "verbose" -> "%d %B %Y %H:%M" <> label
+      end
+
     value =
       Timex.to_datetime(assigns.value, assigns.tz)
-      |> Timex.format!("%d-%m-%Y %H:%M" <> label, :strftime)
+      |> Timex.format!(format, :strftime)
 
     assigns = assign(assigns, :value, value)
 
-    ~H"""
-    <%= @value %>
-    """
+    ~H"<%= @value %>"
   end
 
   @doc """
@@ -206,7 +211,7 @@ defmodule AppWeb.CoreComponents do
       <%!-- prev --%>
       <button
         :if={@meta.has_previous_page?}
-        phx-click={JS.push(@on_click, value: %{page: @meta.previous_page})}
+        phx-click={JS.push(@on_click, value: %{page: @meta.previous_page}, page_loading: true)}
         class="inline-flex justify-center p-1 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
       >
         <.chevron_left />
@@ -220,7 +225,7 @@ defmodule AppWeb.CoreComponents do
       <%!-- next --%>
       <button
         :if={@meta.has_next_page?}
-        phx-click={JS.push(@on_click, value: %{page: @meta.next_page})}
+        phx-click={JS.push(@on_click, value: %{page: @meta.next_page}, page_loading: true)}
         class="inline-flex justify-center p-1 mr-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
       >
         <.chevron_right />

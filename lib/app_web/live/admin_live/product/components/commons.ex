@@ -361,7 +361,7 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
         <span :if={App.Contents.is_empty?(@content)} class="text-red-600">
           <.icon name="hero-exclamation-triangle" /> Teks masih kosong!
         </span>
-        <%= @content.text %>
+        <pre class="text-gray-500 text-xs whitespace-pre-line bg-white p-2 rounded border"><%= @content.text %></pre>
       <% end %>
 
       <%= if @content.type == :file do %>

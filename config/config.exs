@@ -12,7 +12,8 @@ config :app,
   app_tagline: "Digital products marketplace",
   default_tz: "Asia/Jakarta",
   default_tz_label: "WIB",
-  order_validity_hours: 2
+  order_validity_hours: 2,
+  access_validity_days: 7
 
 config :app,
   ecto_repos: [App.Repo],

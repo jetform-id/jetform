@@ -342,7 +342,5 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
       {:error, changeset} ->
         {:noreply, assign(socket, :checkout_changeset, changeset)}
     end
-
-    {:noreply, socket}
   end
 end

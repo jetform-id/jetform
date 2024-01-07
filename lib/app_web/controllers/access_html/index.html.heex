@@ -1,0 +1,77 @@
+<div class="p-6">
+  <div class="mx-auto max-w-xl rounded-lg bg-white shadow-md">
+    <div class="py-6">
+      <div class="px-6 pb-6 border-b">
+        <p class="text-gray-500 font-semibold">#<%= @order.invoice_number %></p>
+        <h2 class="text-2xl font-semibold" id="preview" phx-update="replace">
+          <%= App.Orders.product_fullname(@order) %>
+        </h2>
+      </div>
+
+      <%!-- contents --%>
+      <div :for={content <- @contents} id={content.id} class="w-full bg-gray-50 border-b p-6">
+        <div class="flex mb-4 items-center">
+          <span class="flex-1 text-lg font-semibold flex items-center">
+            <%= if content.type == :text do %>
+              <.icon name="hero-document-text me-2 flex-none" />
+              <span class="flex-1"><%= content.name %></span>
+              <button
+                class="clipboard flex-none text-sm font-normal text-white bg-primary-600 px-2 py-1 rounded-md hover:bg-primary-800 border border-primary-600"
+                data-clipboard-text={content.text}
+                data-tooltip-target="tooltip-copied"
+                data-tooltip-trigger="click"
+              >
+                <.icon name="hero-clipboard-document" /> Copy
+              </button>
+            <% else %>
+              <.icon name="hero-paper-clip me-2" />
+              <span class="flex-1"><%= content.name %></span>
+              <.link
+                href={App.Contents.file_url(content)}
+                target="_blank"
+                class="flex-none text-sm font-normal text-white bg-primary-600 px-2 py-1 rounded-md hover:bg-primary-800 border border-primary-600"
+              >
+                <.icon name="hero-cloud-arrow-down" /> Download
+              </.link>
+            <% end %>
+          </span>
+        </div>
+
+        <div
+          id="tooltip-copied"
+          role="tooltip"
+          class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
+        >
+          Copied!
+          <div class="tooltip-arrow" data-popper-arrow></div>
+        </div>
+
+        <p class="text-gray-500 mt-1 pr-4">
+          <%= if content.type == :text do %>
+            <pre class="text-gray-500 text-sm whitespace-pre-line bg-white p-4 rounded border shadow"><%= content.text %></pre>
+          <% end %>
+
+          <%= if content.type == :file do %>
+            <%= content.file.file_name %>
+          <% end %>
+        </p>
+      </div>
+      <%!-- end contents --%>
+    </div>
+    <div class="px-6 pb-2">
+      <div
+        class="flex items-center p-4 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 dark:border-yellow-800"
+        role="alert"
+      >
+        <div>
+          Halaman ini hanya bisa diakses sampai <strong><.indo_datetime
+              value={@access.valid_until}
+              mode="verbose"
+              show_label
+            /></strong>.
+          Silahkan download atau copy semua file di atas dan simpan di tempat yang aman.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

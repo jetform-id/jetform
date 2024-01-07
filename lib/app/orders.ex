@@ -93,19 +93,27 @@ defmodule App.Orders do
           {:ok, Contents.list_contents_by_variant(variant)}
       end
     end)
-    |> Ecto.Multi.update(:order_contents, fn %{order: order, contents: contents} ->
+    |> Ecto.Multi.update(:order_with_contents, fn %{order: order, contents: contents} ->
       # put contents to order
       Repo.preload(order, :contents)
       |> Order.changeset(%{})
       |> Order.put_contents(contents)
     end)
-    |> Ecto.Multi.run(:schedule_invalidation, fn _repo, %{order: order} ->
-      # Schedule an Oban job to invalidate the order after it expires
-      App.Workers.InvalidateOrder.create(order)
+    |> Ecto.Multi.run(:workers, fn _repo, %{order: order} ->
+      # - (if: pending) schedule a job to invalidate the order after it expires
+      # - (always) notify user about the order
+      # - (if: paid) notify user about their access to the product
+      with {:ok, _} <- Workers.InvalidateOrder.create(order),
+           {:ok, _} <- Workers.NotifyNewOrder.create(order),
+           {:ok, _} <- Workers.NotifyNewAccess.create(order) do
+        {:ok, true}
+      else
+        err -> err
+      end
     end)
     |> Repo.transaction()
     |> case do
-      {:ok, %{order_contents: order}} ->
+      {:ok, %{order_with_contents: order}} ->
         {:ok, order}
 
       {:error, _op, _value, changeset} ->
@@ -210,17 +218,13 @@ defmodule App.Orders do
   end
 
   @doc """
-  Generate payload for Midtrans transactions API but only return the payload
-  if the order is not about to expire (larger or equal to `minimum_expiry_mins`)
+  Generate payload for Midtrans transactions API.
 
   To simplify payment time management, we strictly enforce te payment page expiry time as
-  well as the transaction expiry time to be the same as Order `valid_until` time.
+  well as the transaction expiry time to the value of `expiry_in_minutes`.
   """
-  def midtrans_payload(order, payment, minimum_expiry_mins \\ 5) do
-    # calculate the expiry time in minutes
-    expiry_mins = Integer.floor_div(time_before_expired(order), 60)
-
-    payload = %{
+  def midtrans_payload(order, payment, expiry_in_minutes) do
+    %{
       "transaction_details" => %{
         "order_id" => payment.id,
         "gross_amount" => order.total
@@ -238,54 +242,53 @@ defmodule App.Orders do
         "email" => order.customer_email
       },
       "expiry" => %{
-        "start_time" =>
-          order.inserted_at
-          |> Timex.to_datetime("Asia/Jakarta")
-          |> Timex.format!("%F %T %z", :strftime),
         "unit" => "minutes",
-        "duration" => expiry_mins
+        "duration" => expiry_in_minutes
       },
       "page_expiry" => %{
-        "duration" => expiry_mins,
+        "duration" => expiry_in_minutes,
         "unit" => "minutes"
       }
     }
-
-    if expiry_mins <= minimum_expiry_mins do
-      Logger.error(
-        "#{__MODULE__}.midtrans_payload/2 error: Order #{order.id} is about to expire in #{expiry_mins} minutes"
-      )
-
-      {:error, :order_about_to_expire}
-    else
-      {:ok, payload}
-    end
   end
 
   @doc """
   Create a payment for an order and generate Midtrans payment URL.
-    0. delete all pending payments for this order before creating new one
-    1. create payment record
-    2. create midtrans transaction and get `redirect_url`
-    3. update payment record with `redirect_url`
+    0. cancel all pending payments for this order before creating new one
+    1. calculate the expiry time in minutes
+    2. create payment record
+    3. create midtrans transaction and get `redirect_url`
+    4. update payment record with `redirect_url`
   """
-  def create_payment(%Order{} = order) do
+  def create_payment(%Order{} = order, minimum_expiry_minutes \\ 5) do
     fetch_pending_payments(order)
     |> Task.async_stream(&cancel_payment/1)
     |> Stream.run()
 
     Ecto.Multi.new()
+    |> Ecto.Multi.run(:expiry_in_minutes, fn _repo, _ ->
+      # calculate the expiry time in minutes
+      expiry_min = Integer.floor_div(time_before_expired(order), 60)
+
+      cond do
+        expiry_min <= minimum_expiry_minutes -> {:error, :expire_soon}
+        true -> {:ok, expiry_min}
+      end
+    end)
     |> Ecto.Multi.insert(:new_payment, Payment.create_changeset(%Payment{}, %{"order" => order}))
-    |> Ecto.Multi.run(:redirect_url, fn _repo, %{new_payment: payment} ->
-      with {:ok, payload} <- midtrans_payload(order, payment),
-           {:ok, %{"redirect_url" => redirect_url}} <- App.Midtrans.create_transaction(payload) do
-        {:ok, redirect_url}
-      else
-        {:error, :order_about_to_expire} ->
-          {:error, :order_about_to_expire}
+    |> Ecto.Multi.run(:redirect_url, fn _repo,
+                                        %{
+                                          expiry_in_minutes: expiry,
+                                          new_payment: payment
+                                        } ->
+      payload = midtrans_payload(order, payment, expiry)
+
+      case App.Midtrans.create_transaction(payload) do
+        {:ok, %{"redirect_url" => redirect_url}} ->
+          {:ok, redirect_url}
 
         {:error, err} ->
-          Logger.error("#{__MODULE__}.create_payment/1 error: #{inspect(err)}")
+          Logger.error("App.Midtrans.create_transaction/1 error: #{inspect(err)}")
           {:error, :midtrans_error}
       end
     end)
@@ -294,8 +297,8 @@ defmodule App.Orders do
     end)
     |> Repo.transaction()
     |> case do
-      {:ok, %{updated_payment: payment, redirect_url: redirect_url}} ->
-        {:ok, payment, redirect_url}
+      {:ok, %{updated_payment: payment}} ->
+        {:ok, payment}
 
       {:error, _op, value, changeset} ->
         {:error, value, changeset}
@@ -340,6 +343,10 @@ defmodule App.Orders do
     Ecto.Multi.new()
     |> Ecto.Multi.update(:payment, change_payment_from_status(payment, status))
     |> Ecto.Multi.update(:order, change_order(payment.order, %{"status" => "paid"}))
+    |> Ecto.Multi.run(:workers, fn _repo, %{order: order} ->
+      # create a job to deliver (create content access, send email to buyer) content
+      Workers.NotifyNewAccess.create(order)
+    end)
     |> Repo.transaction()
     |> case do
       {:ok, %{payment: payment, order: order}} ->
@@ -349,9 +356,6 @@ defmodule App.Orders do
           "order:#{order.id}",
           "order:updated"
         )
-
-        # create Oban job to deliver content
-        # App.Workers.DeliverContent.create(order)
 
         {:ok, %{payment | order: order}}
 
