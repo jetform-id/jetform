@@ -12,7 +12,18 @@ Snappy bukanlah ide baru, melainkan penggabungan intisari beberapa produk yang s
 - **saweria.co**, fitur terlalu minim buat mereka yang fokus jualan produk digital.
 - **lynk.id**, fitur terlalu minim buat mereka yang fokus jualan produk digital.
 
+> 👉 Snappy ingin menjadi 'sweet spot' diantara produk-produk diatas, dimana menyediakan fitur yang **cukup** (tidak minim, juga tidak _over_). Fokus pada _happy seller and buyer experience_ yang simpel, to-the-point, dan pastinya _snappy!_ alias cepat.
+
 ## Fitur Snappy
+
+**Versi pertama hanya fokus pada fitur inti** (fitur yang anda perlukan untuk mulai jualan):
+1. Penjual buat produk dengan mudah
+1. Penjual terima pembayaran dengan mudah
+1. Pembeli mendapatkan produk dengan cepat 
+1. Penjual withdraw keuntungan dengan mudah
+
+---
+Dan berikut detailnya:
 
 - [x] **Open source (kode sumber terbuka)**. Snappy mengedepankan transparansi, keterbukaan (openess) dan keadilan (fairness). Dikembangkan menggunakan tools open source dan ingin berkontribusi balik ke komunitas open source. We ❤️ open source.
 - [x] **Built-in digital product distribution system**. Produk digital bisa dijual dan didistribusikan langsung secara otomatis ke pembeli dengan aman tanpa perlu integrasi dengan sistem pihak ketiga.
