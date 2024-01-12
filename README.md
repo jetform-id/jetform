@@ -15,10 +15,10 @@ Snappy bukanlah ide baru, melainkan penggabungan intisari beberapa produk yang s
 - [x] **Open source (kode sumber terbuka)**. Snappy mengedepankan transparansi, keterbukaan (openess) dan keadilan (fairness). Dikembangkan menggunakan tools open source dan ingin berkontribusi balik ke komunitas open source. We ❤️ open source.
 - [x] **Built-in digital product distribution system**. Produk digital bisa dijual dan didistribusikan langsung secara otomatis ke pembeli dengan aman tanpa perlu integrasi dengan sistem pihak ketiga.
 - [x] **Fast and secure checkout page**. Pembeli langsung dapat membeli produk yang mereka inginkan dengan proses yang cepat, mudah dan aman.
-- [x] **Flat commision fee. No monthly subscription!** Anda bisa daftar dan langsung jualan tanpa iuran bulanan. Snappy mendapat komisi 10% dari setiap transaksi penjualan produk atau komisi Rp. 5,000 apabila harga produk anda kurang dari Rp. 50,000. _Komisi ini digunakan untuk pengembangan, biaya payment processor, dan insfrastruktur sistem Snappy_.
+- [x] **Flat commision fee. No monthly subscription!** Anda bisa daftar dan langsung jualan tanpa iuran bulanan. Snappy mendapat komisi 5-10% dari setiap transaksi penjualan produk atau komisi Rp. 5,000 apabila harga produk anda kurang dari Rp. 50,000. _Komisi ini digunakan untuk pengembangan, biaya payment processor, dan insfrastruktur sistem Snappy_.
 - [x] **No limits**. Tidak ada batasan dalam jumlah produk ataupun jumlah transaksi.
 - [x] **Product Variants**. Buat produk dengan varian berbeda dan harga berbeda.
-- [x] **Withdraw anytime**. Withdraw hasil penjualan anda kapan saja.
+- [x] **Withdraw anytime**. Withdraw hasil penjualan anda kapan saja (bebas biaya).
 - [x] **Local payment methods**. Pembayaran aman dengan metode pembayaran kekinian (Virtual Account, QRIS, dll.). Payment processor kami adalah Midtrans.
 - [ ] **Create great offers!** Berbagai modul untuk membuat penawaran anda lebih menarik, seperti: Scarcity (stok terbatas), Urgency (waktu terbatas), Bonuses (bonus melimpah) atau kode voucher.
 - [ ] **Advance analytics**. Lihat siapa yang mengakses halaman produk anda, siapa yang membeli, lewat apa (mobile atau web), kampanye iklan yang mana dll.
