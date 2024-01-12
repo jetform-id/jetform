@@ -1,5 +1,7 @@
 # Snappy
 
+> 🚧 Under heavy development... 🚧
+
 Snappy dibuat dari nol dengan fokus 100% memudahkan para penjual/creator produk digital seperti ebook, online course dll. **No bloated unnecessary bells and whistels!**
 
 Snappy bukanlah ide baru, melainkan penggabungan intisari beberapa produk yang sudah ada di pasaran namun dengan keunggulan tersendiri, produk-produk tersebut misalnya:
