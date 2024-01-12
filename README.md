@@ -24,7 +24,7 @@ Snappy bukanlah ide baru, melainkan penggabungan intisari beberapa produk yang s
 - [ ] **Advance analytics**. Lihat siapa yang mengakses halaman produk anda, siapa yang membeli, lewat apa (mobile atau web), kampanye iklan yang mana dll.
 - [ ] **Your product, your data**. Export data product, penjualan dan pembeli untuk keperluan anda.
 
-Anda punya ide menarik? [lets talk](https://github.com/janger-labs/snappy/discussions).
+Anda punya ide menarik? [lets talk](https://github.com/upkoding/snappy/discussions).
 
 ## Detail Teknis
 
@@ -61,4 +61,4 @@ Yang artinya:
 Siapa saja boleh mempergunakan, memodifikasi dan mendistribusikan proyek ini tetapi harus tetap menggunakan lisensi yang sama dan kode sumber harus selalu dibuka secara penuh.
 ```
 
-Lebih detail mengenai lisensi ini bisa dibaca [disini](https://github.com/janger-labs/snappy/blob/main/LICENSE).
+Lebih detail mengenai lisensi ini bisa dibaca [disini](https://github.com/upkoding/snappy/blob/main/LICENSE).
