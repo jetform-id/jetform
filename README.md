@@ -12,15 +12,20 @@ Snappy bukanlah ide baru, melainkan penggabungan intisari beberapa produk yang s
 - **saweria.co**, fitur terlalu minim buat mereka yang fokus jualan produk digital.
 - **lynk.id**, fitur terlalu minim buat mereka yang fokus jualan produk digital.
 
-> 👉 Snappy ingin menjadi 'sweet spot' diantara produk-produk diatas, dimana menyediakan fitur yang **cukup** (tidak minim, juga tidak _over_). Fokus pada _happy seller and buyer experience_ yang simpel, to-the-point, dan pastinya _snappy!_ alias cepat.
+## Snappy Manifesto
+> 👉 Snappy fokus pada _happy seller and buyer experience_ yang simpel, to-the-point, dan pastinya _snappy!_ alias cepat.
+
+> 👉 Snappy bukan hanya sekedar nama, tetapi juga _personality_. Snappy tidak takut mengambil inspirasi dari produk yang disebutkan diatas, namun juga tidak takut berbeda dengan mereka.
 
 ## Fitur Snappy
 
 **Versi pertama hanya fokus pada fitur inti** (fitur yang anda perlukan untuk mulai jualan):
+```
 1. Penjual buat produk dengan mudah
-1. Penjual terima pembayaran dengan mudah
-1. Pembeli mendapatkan produk dengan cepat 
-1. Penjual withdraw keuntungan dengan mudah
+2. Penjual terima pembayaran dengan mudah
+3. Pembeli mendapatkan produk dengan cepat 
+4. Penjual withdraw keuntungan dengan mudah
+```
 
 ---
 Dan berikut detailnya:
