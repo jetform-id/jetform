@@ -228,6 +228,9 @@
                   </td>
                   <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-white">
                     Rp. <.price value={order.total} />
+                    <p class="text-xs text-gray-400 font-normal">
+                      Snappy fee Rp. <.price value={order.service_fee} />
+                    </p>
                   </td>
                   <td class="p-4 text-sm font-normal text-primary-600 whitespace-nowrap dark:text-gray-400">
                     <.link href={~p"/invoice/#{order.id}"} target="_blank">

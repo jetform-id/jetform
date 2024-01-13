@@ -1,9 +1,17 @@
 defmodule AppWeb.AccountController do
   use AppWeb, :controller
+  alias App.Plans
 
   def edit(conn, _params) do
     changeset = Pow.Plug.change_user(conn)
-    render(conn, :edit, changeset: changeset, action: ~p"/admin/account", page_title: "Edit Account")
+    plan = Plans.get(conn.assigns.current_user.plan)
+
+    render(conn, :edit,
+      page_title: "Edit Account",
+      changeset: changeset,
+      action: ~p"/admin/account",
+      plan: plan
+    )
   end
 
   def update(conn, %{"user" => user_params}) do

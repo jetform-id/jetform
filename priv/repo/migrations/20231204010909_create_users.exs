@@ -9,12 +9,14 @@ defmodule App.Repo.Migrations.CreateUsers do
       add :password_hash, :string
       # extra fields
       add :timezone, :string, null: false
-      add :username, :string, null: false
+      # add :username, :string, null: false
+      add :plan, :string, null: false
+      add :plan_valid_until, :utc_datetime, null: false
 
       timestamps(type: :utc_datetime)
     end
 
     create unique_index(:users, [:email])
-    create unique_index(:users, [:username])
+    # create unique_index(:users, [:username])
   end
 end

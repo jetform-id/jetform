@@ -19,6 +19,9 @@ defmodule App.Repo.Migrations.CreateOrders do
       add :valid_until, :utc_datetime
       add :invoice_number, :string, null: false
       add :status, :string, null: false
+      add :payment_type, :string
+      add :paid_at, :utc_datetime
+      add :service_fee, :integer, default: 0
 
       timestamps(type: :utc_datetime)
     end

@@ -26,7 +26,7 @@
         label={Phoenix.Naming.humanize(Pow.Ecto.Schema.user_id_field(@changeset))}
         required
       />
-      <.input
+      <%!-- <.input
         field={f[:username]}
         type="text"
         label="Username"
@@ -35,18 +35,14 @@
       >
         <:help>
           <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-            Your shop URL: https://paperkit.id/<span id="shop-username" class="font-bold"><%= Map.get(@changeset.changes, :username, @changeset.data.username) %></span>
+            Your shop URL: <%= @base_url %>/<span id="shop-username" class="font-bold"><%= Map.get(@changeset.changes, :username, @changeset.data.username) %></span>
           </div>
         </:help>
-      </.input>
+      </.input> --%>
       <.input
         field={f[:timezone]}
         type="select"
-        options={[
-          {"(WIB) Waktu Indonesia Barat", "Asia/Jakarta"},
-          {"(WITA) Waktu Indonesia Tengah", "Asia/Makassar"},
-          {"(WIT) Waktu Indonesia Timur", "Asia/Jayapura"}
-        ]}
+        options={App.Users.tz_select_options()}
         label="Timezone"
       />
       <hr />

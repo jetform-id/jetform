@@ -328,7 +328,8 @@ defmodule App.Orders do
         %{
           "transaction_status" => new_status,
           "status_code" => status_code,
-          "fraud_status" => fraud_status
+          "fraud_status" => fraud_status,
+          "payment_type" => payment_type
         } = status
       )
       when not is_paid(old_status) and is_paid(new_status) and is_ok(status_code) and
@@ -342,7 +343,14 @@ defmodule App.Orders do
     # - create Oban job to deliver (create content access, send email to buyer) content
     Ecto.Multi.new()
     |> Ecto.Multi.update(:payment, change_payment_from_status(payment, status))
-    |> Ecto.Multi.update(:order, change_order(payment.order, %{"status" => "paid"}))
+    |> Ecto.Multi.update(
+      :order,
+      change_order(payment.order, %{
+        "status" => "paid",
+        "payment_type" => payment_type,
+        "paid_at" => Timex.now()
+      })
+    )
     |> Ecto.Multi.run(:workers, fn _repo, %{order: order} ->
       # create a job to deliver (create content access, send email to buyer) content
       Workers.NotifyNewAccess.create(order)

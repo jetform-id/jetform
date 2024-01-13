@@ -9,7 +9,7 @@ defmodule App.Orders.Order do
 
   @mail_regex ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/
   @required_fields ~w(invoice_number valid_until customer_name customer_email)a
-  @optional_fields ~w(customer_phone status)a
+  @optional_fields ~w(customer_phone status payment_type paid_at confirm)a
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -26,7 +26,12 @@ defmodule App.Orders.Order do
     field :discount_value, :integer
     field :sub_total, :integer
     field :total, :integer
+    field :payment_type, :string
+    field :paid_at, :utc_datetime
+    field :service_fee, :integer
+
     field :confirm, :boolean, virtual: true
+    field :plan, :map, virtual: true
 
     belongs_to :user, App.Users.User
     belongs_to :product, App.Products.Product
@@ -78,13 +83,17 @@ defmodule App.Orders.Order do
 
       product ->
         product = product |> App.Repo.preload(:user)
+        user = product.user
+        user_plan = App.Plans.get(user.plan)
 
         changeset
-        |> put_assoc(:user, product.user)
+        |> put_assoc(:user, user)
         |> put_assoc(:product, product)
         |> put_change(:product_name, product.name)
         |> put_change(:sub_total, product.price)
         |> put_change(:total, product.price)
+        |> put_change(:service_fee, user_plan.commission(product.price))
+        |> put_change(:plan, user_plan)
     end
   end
 
@@ -94,11 +103,14 @@ defmodule App.Orders.Order do
         changeset
 
       variant ->
+        user_plan = fetch_change!(changeset, :plan)
+
         changeset
         |> put_assoc(:product_variant, variant)
         |> put_change(:product_variant_name, variant.name)
         |> put_change(:sub_total, variant.price)
         |> put_change(:total, variant.price)
+        |> put_change(:service_fee, user_plan.commission(variant.price))
     end
   end
 
@@ -106,7 +118,8 @@ defmodule App.Orders.Order do
     # if price is 0, then set status to :paid
     case fetch_change(changeset, :total) do
       {:ok, 0} ->
-        put_change(changeset, :status, :paid)
+        params = %{"status" => "paid", "paid_at" => Timex.now()}
+        cast(changeset, params, [:status, :paid_at])
 
       _ ->
         changeset

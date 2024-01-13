@@ -9,6 +9,23 @@
         </div>
       </div>
       <div id="main-chart">
+        <div
+          id="alert-additional-content-1"
+          class="p-4 mb-4 text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800"
+          role="alert"
+        >
+          <div class="flex items-center">
+            <.icon name="hero-exclamation-circle-solid me-1" />
+            <span class="sr-only">Info</span>
+            <h3 class="font-medium">
+              Akun dalam paket harga: <strong><%= @plan.name() %></strong>
+            </h3>
+          </div>
+          <div class="mt-2 mb-4 text-sm">
+            <%= @plan.description() %>
+          </div>
+        </div>
+
         <.simple_form :let={f} for={@changeset} as={:user} action={@action} phx-update="ignore">
           <div class="mt-8 space-y-6">
             <.error :if={
@@ -22,13 +39,14 @@
             <.error :if={@changeset.action}>
               Oops, something went wrong! Please check the errors below.
             </.error>
+            <.input field={f[:action]} type="hidden" value="update" required />
             <.input
               field={f[Pow.Ecto.Schema.user_id_field(@changeset)]}
               type={(Pow.Ecto.Schema.user_id_field(@changeset) == :email && "email") || "text"}
               label={Phoenix.Naming.humanize(Pow.Ecto.Schema.user_id_field(@changeset))}
               required
             />
-            <.input
+            <%!-- <.input
               field={f[:username]}
               type="text"
               label="Username"
@@ -40,7 +58,7 @@
                   Your shop URL: <%= @base_url %>/<span id="shop-username" class="font-bold"><%= Map.get(@changeset.changes, :username, @changeset.data.username) %></span>
                 </div>
               </:help>
-            </.input>
+            </.input> --%>
             <.input
               field={f[:timezone]}
               type="select"

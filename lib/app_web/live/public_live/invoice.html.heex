@@ -55,7 +55,7 @@
                 <.indo_datetime :if={!@current_user} value={@order.inserted_at} show_label={true} />
               </dd>
             </dl>
-            <dl class="gap-x-3">
+            <dl :if={@order.status != :paid} class="gap-x-3">
               <dt class="col-span-3 font-semibold text-gray-800 dark:text-gray-200">
                 Berlaku hingga:
               </dt>
@@ -67,6 +67,21 @@
                   show_label={true}
                 />
                 <.indo_datetime :if={!@current_user} value={@order.valid_until} show_label={true} />
+              </dd>
+            </dl>
+
+            <dl :if={@order.status == :paid} class="gap-x-3">
+              <dt class="col-span-3 font-semibold text-gray-800 dark:text-gray-200">
+                Dibayar pada:
+              </dt>
+              <dd class="col-span-2 text-gray-500">
+                <.indo_datetime
+                  :if={@current_user}
+                  value={@order.paid_at}
+                  tz={@current_user.timezone}
+                  show_label={true}
+                />
+                <.indo_datetime :if={!@current_user} value={@order.paid_at} show_label={true} />
               </dd>
             </dl>
           </div>

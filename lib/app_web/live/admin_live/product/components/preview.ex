@@ -18,7 +18,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           <h2 class="text-2xl font-semibold" id="preview" phx-update="replace">
             <%= @product.name %>
           </h2>
-          <div class="mt-2 text-sm text-gray-600 trix-content preview">
+          <div class="mt-2 trix-content preview text-gray-600">
             <%= raw(@product.description) %>
           </div>
 
@@ -67,7 +67,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
                     <span class="flex-1"><%= variant.name %></span>
                     Rp. <.price value={variant.price} />
                   </div>
-                  <p class="text-slate-600 text-sm text-sm mt-1 pr-10">
+                  <p class="text-slate-600 text-sm mt-1 pr-10">
                     <%= variant.description %>
                   </p>
                   <%!-- <div :if={variant.quantity} class="pt-2">
@@ -299,16 +299,19 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
       order_params
       |> Map.put("product", socket.assigns.product)
       |> Map.put("product_variant", socket.assigns.selected_variant)
+      |> Map.put("invoice_number", Orders.generate_invoice_number())
       |> Map.put("valid_until", Orders.valid_until_hours(1))
 
     changeset = Order.create_changeset(%Order{}, order_params)
 
     case Ecto.Changeset.apply_action(changeset, :insert) do
       {:ok, order} ->
+        IO.inspect(order)
         send(self(), {__MODULE__, order})
         {:noreply, assign(socket, :checkout_changeset, changeset)}
 
       {:error, changeset} ->
+        IO.inspect(changeset)
         {:noreply, assign(socket, :checkout_changeset, changeset)}
     end
   end

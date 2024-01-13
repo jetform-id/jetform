@@ -13,7 +13,8 @@ config :app,
   default_tz: "Asia/Jakarta",
   default_tz_label: "WIB",
   order_validity_hours: 2,
-  access_validity_days: 7
+  access_validity_days: 7,
+  default_plan: App.Plans.Commission5
 
 config :app,
   ecto_repos: [App.Repo],

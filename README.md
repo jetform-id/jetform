@@ -8,14 +8,13 @@ Snappy bukanlah ide baru, melainkan penggabungan intisari beberapa produk yang s
 
 - **gumroad.com**, inspirasi utama dari Snappy adalah Gumroad, tetapi Gumroad tidak mendukung sistem pembayaran lokal yang kadang menyulitkan content creator yang mentargetkan pasar lokal.
 - **orderonline.id**, inspirasi berikutnya, tetapi platform ini *overkill* dan *relatif mahal* bagi mereka yang hanya menjual produk digital dengan penjualan yang tidak pasti setiap bulannya.
-- **karyakarsa.com**, fitur terlalu minim buat mereka yang fokus jualan produk digital.
-- **saweria.co**, fitur terlalu minim buat mereka yang fokus jualan produk digital.
+- **karyakarsa.com**, fitur tidak fokus buat mereka yang jualan produk digital.
 - **lynk.id**, fitur terlalu minim buat mereka yang fokus jualan produk digital.
 
-## Snappy Manifesto
-> 👉 Snappy fokus pada _happy seller and buyer experience_ yang simpel, to-the-point, dan pastinya _snappy!_ alias cepat.
 
-> 👉 Snappy bukan hanya sekedar nama, tetapi juga _personality_. Snappy tidak takut mengambil inspirasi dari produk yang disebutkan diatas, namun juga tidak takut berbeda dengan mereka.
+> 👉 Snappy fokus pada _happy seller and buyer experience_ yang simple, to-the-point, dan _snappy!_ alias cepat.
+
+> 👉 Snappy bukan hanya sekedar nama, tetapi juga _personality_. Snappy tidak takut mengakui bahwa dia lahir karena terinspirasi oleh produk yang disebutkan diatas, namun juga tidak takut berbeda dengan mereka.
 
 ## Fitur Snappy
 
