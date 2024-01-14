@@ -306,12 +306,10 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
 
     case Ecto.Changeset.apply_action(changeset, :insert) do
       {:ok, order} ->
-        IO.inspect(order)
         send(self(), {__MODULE__, order})
         {:noreply, assign(socket, :checkout_changeset, changeset)}
 
       {:error, changeset} ->
-        IO.inspect(changeset)
         {:noreply, assign(socket, :checkout_changeset, changeset)}
     end
   end

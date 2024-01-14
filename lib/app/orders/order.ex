@@ -37,6 +37,7 @@ defmodule App.Orders.Order do
     belongs_to :product, App.Products.Product
     belongs_to :product_variant, App.Products.Variant
     has_many :payments, App.Orders.Payment
+    has_many :credits, App.Credits.Credit
     has_one :access, App.Contents.Access
 
     many_to_many :contents, App.Contents.Content,

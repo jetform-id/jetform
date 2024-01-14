@@ -7,29 +7,12 @@ defmodule Workers.NotifyNewAccess do
   @doc """
   Create a new job to notify user about their access to a product.
   """
-  def create(%{status: :paid} = order) do
-    access_validity_days = Application.fetch_env!(:app, :access_validity_days)
+  def create(nil), do: {:ok, :noop}
 
-    params = %{
-      "order" => order,
-      "valid_until" => Timex.shift(Timex.now(), days: access_validity_days)
-    }
-
-    case Contents.create_access(params) do
-      {:ok, access} ->
-        %{access_id: access.id}
-        |> __MODULE__.new()
-        |> Oban.insert()
-
-      {:error, reason} ->
-        Logger.error("#{__MODULE__} error: failed to create access, reason: #{inspect(reason)}")
-
-        {:error, reason}
-    end
-  end
-
-  def create(_order) do
-    {:ok, :noop}
+  def create(access) do
+    %{access_id: access.id}
+    |> __MODULE__.new()
+    |> Oban.insert()
   end
 
   @impl true

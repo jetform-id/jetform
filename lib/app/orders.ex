@@ -5,10 +5,10 @@ defmodule App.Orders do
   require Logger
   import Ecto.Query, warn: false
   alias App.Repo
-  alias Repo
 
   alias App.Orders.{Order, Payment}
   alias App.Contents
+  alias App.Credits
 
   # ------------- ORDERS -------------
 
@@ -46,6 +46,15 @@ defmodule App.Orders do
   def list_orders!(user, params) do
     Order
     |> where(user_id: ^user.id)
+    |> Flop.validate_and_run!(params)
+  end
+
+  def list_paid_orders!(params) do
+    from(
+      o in Order,
+      where: o.status == :paid,
+      where: o.total > 0
+    )
     |> Flop.validate_and_run!(params)
   end
 
@@ -99,13 +108,23 @@ defmodule App.Orders do
       |> Order.changeset(%{})
       |> Order.put_contents(contents)
     end)
-    |> Ecto.Multi.run(:workers, fn _repo, %{order: order} ->
+    |> Ecto.Multi.run(:access, fn _repo, %{order: order} ->
+      # If order paid/free (price == 0), create content access for buyer
+      case order.status do
+        :paid ->
+          Contents.create_changeset_for_order(order) |> Contents.create_access()
+
+        _ ->
+          {:ok, nil}
+      end
+    end)
+    |> Ecto.Multi.run(:workers, fn _repo, %{order: order, access: access} ->
       # - (if: pending) schedule a job to invalidate the order after it expires
       # - (always) notify user about the order
       # - (if: paid) notify user about their access to the product
       with {:ok, _} <- Workers.InvalidateOrder.create(order),
            {:ok, _} <- Workers.NotifyNewOrder.create(order),
-           {:ok, _} <- Workers.NotifyNewAccess.create(order) do
+           {:ok, _} <- Workers.NotifyNewAccess.create(access) do
         {:ok, true}
       else
         err -> err
@@ -339,6 +358,8 @@ defmodule App.Orders do
     # payment successfull:
     # - update payment status
     # - update order status
+    # - create credit for seller
+    # - create content access for buyer
     # - broadcast order:updated event
     # - create Oban job to deliver (create content access, send email to buyer) content
     Ecto.Multi.new()
@@ -351,9 +372,15 @@ defmodule App.Orders do
         "paid_at" => Timex.now()
       })
     )
-    |> Ecto.Multi.run(:workers, fn _repo, %{order: order} ->
+    |> Ecto.Multi.insert(:credit, fn %{order: order} ->
+      Credits.create_changeset_for_order(order)
+    end)
+    |> Ecto.Multi.insert(:access, fn %{order: order} ->
+      Contents.create_changeset_for_order(order)
+    end)
+    |> Ecto.Multi.run(:workers, fn _repo, %{access: access} ->
       # create a job to deliver (create content access, send email to buyer) content
-      Workers.NotifyNewAccess.create(order)
+      Workers.NotifyNewAccess.create(access)
     end)
     |> Repo.transaction()
     |> case do

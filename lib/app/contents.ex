@@ -189,10 +189,8 @@ defmodule App.Contents do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_access(attrs \\ %{}) do
-    %Access{}
-    |> Access.create_changeset(attrs)
-    |> Repo.insert()
+  def create_access(changeset) do
+    Repo.insert(changeset)
   end
 
   @doc """
@@ -240,5 +238,14 @@ defmodule App.Contents do
   """
   def change_access(%Access{} = access, attrs \\ %{}) do
     Access.changeset(access, attrs)
+  end
+
+  def create_changeset_for_order(order) do
+    access_validity_days = Application.fetch_env!(:app, :access_validity_days)
+
+    Access.create_changeset(%Access{}, %{
+      "order" => order,
+      "valid_until" => Timex.shift(Timex.now(), days: access_validity_days)
+    })
   end
 end

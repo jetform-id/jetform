@@ -33,7 +33,7 @@ defmodule Workers.NotifyNewOrder do
     Harga: Rp. #{order.total}
     No. Invoice: #{order.invoice_number}
 
-    Detail pembelian bisa anda lihat di halaman berikut:
+    Detail pembelian dan cara pembayaran bisa anda lihat di halaman berikut:
     #{base_url}/invoice/#{order.id}
 
     --
@@ -50,7 +50,7 @@ defmodule Workers.NotifyNewOrder do
     No. Invoice: <b>#{order.invoice_number}</b>
     </p>
 
-    <p>Detail pembelian bisa anda lihat di halaman berikut:<br/>
+    <p>Detail pembelian dan cara pembayaran bisa anda lihat di halaman berikut:<br/>
     <a href="#{base_url}/invoice/#{order.id}" target="_blank">#{base_url}/invoice/#{order.id}</a>
     </p>
 

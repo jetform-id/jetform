@@ -9,6 +9,7 @@ defmodule App.Users.User do
 
   # alias App.Utils.ReservedWords
 
+  @default_tz "Asia/Jakarta"
   @tz_labels [
     {"Asia/Jakarta", "WIB", "Waktu Indonesia Barat"},
     {"Asia/Makassar", "WITA", "Waktu Indonesia Tengah"},
@@ -21,7 +22,7 @@ defmodule App.Users.User do
     pow_user_fields()
 
     # field :username, :string
-    field :timezone, :string, default: "Asia/Jakarta"
+    field :timezone, :string, default: @default_tz
     field :plan, :string
     field :plan_valid_until, :utc_datetime
 
@@ -32,6 +33,7 @@ defmodule App.Users.User do
     has_one :bank_account, App.Users.BankAccount
     has_many :products, App.Products.Product
     has_many :orders, App.Orders.Order
+    has_many :credits, App.Credits.Credit
 
     timestamps(type: :utc_datetime)
   end
