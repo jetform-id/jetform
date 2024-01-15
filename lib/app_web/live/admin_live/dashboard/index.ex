@@ -1,7 +1,7 @@
 defmodule AppWeb.AdminLive.Dashboard.Index do
   use AppWeb, :live_view
 
-  alias App.Orders
+  alias App.{Orders, Credits}
   alias AppWeb.AdminLive.Product.Components.Commons
 
   @result_limit 5
@@ -10,21 +10,13 @@ defmodule AppWeb.AdminLive.Dashboard.Index do
   def mount(
         _params,
         _session,
-        %{assigns: %{current_user: %{unconfirmed_email: unconfirmed_email}}} = socket
+        %{assigns: %{current_user: user}} = socket
       ) do
     socket =
-      case unconfirmed_email do
-        nil ->
-          socket
-
-        email ->
-          socket
-          |> put_flash(
-            :warning,
-            "Click the link in the confirmation email to change your email to #{email}."
-          )
-      end
+      socket
       |> assign(:page_title, "Dashboard")
+      |> assign(:withdrawable_credits, Credits.withdrawable_credits_by_user(user, nil))
+      |> assign(:pending_credits, Credits.pending_credits_by_user(user))
       |> stream(:orders, [])
 
     {:ok, socket}

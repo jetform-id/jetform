@@ -1,9 +1,164 @@
 <div class="px-4 py-6">
+  <div class="grid w-full grid-cols-1 gap-4 mb-4 xl:grid-cols-2 2xl:grid-cols-2">
+    <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+      <div class="w-full">
+        <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
+          Penjualan bulan ini
+          <button
+            data-popover-target="popover-sale-month"
+            data-popover-placement="bottom-end"
+            type="button"
+          >
+            <.icon name="hero-question-mark-circle-solid text-gray-400" />
+            <span class="sr-only">Show information</span>
+          </button>
+        </h3>
+        <div
+          data-popover
+          id="popover-sale-month"
+          role="tooltip"
+          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
+        >
+          <div class="p-3 space-y-2">
+            <h3 class="font-semibold text-gray-900 dark:text-white">January 2024</h3>
+            <p class="text-sm">
+              Omset penjualan produk anda dari awal bulan ini sampai sekarang (sebelum dikurangi Snappy fee).
+            </p>
+          </div>
+          <div data-popper-arrow></div>
+        </div>
+        <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">
+          2,340
+        </span>
+        <p class="flex items-center text-base text-sm font-normal text-gray-400 dark:text-gray-400">
+          January 2024
+        </p>
+      </div>
+    </div>
+    <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+      <div class="w-full">
+        <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
+          Total penjualan
+          <button
+            data-popover-target="popover-sale-total"
+            data-popover-placement="bottom-end"
+            type="button"
+          >
+            <.icon name="hero-question-mark-circle-solid text-gray-400" />
+            <span class="sr-only">Show information</span>
+          </button>
+        </h3>
+        <div
+          data-popover
+          id="popover-sale-total"
+          role="tooltip"
+          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
+        >
+          <div class="p-3 space-y-2">
+            <h3 class="font-semibold text-gray-900 dark:text-white">All time</h3>
+            <p class="text-sm">
+              Omset penjualan produk anda dari awal (saat anda mendaftar) sampai sekarang (sebelum dikurangi Snappy fee).
+            </p>
+          </div>
+          <div data-popper-arrow></div>
+        </div>
+        <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">
+          2,340
+        </span>
+        <p class="flex items-center text-base text-sm font-normal text-gray-400 dark:text-gray-400">
+          Sejak July 2023
+        </p>
+      </div>
+    </div>
+    <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+      <div class="w-full">
+        <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
+          Dana cair
+          <button
+            data-popover-target="popover-credits-liquid"
+            data-popover-placement="bottom-end"
+            type="button"
+          >
+            <.icon name="hero-question-mark-circle-solid text-gray-400" />
+            <span class="sr-only">Show information</span>
+          </button>
+        </h3>
+        <div
+          data-popover
+          id="popover-credits-liquid"
+          role="tooltip"
+          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
+        >
+          <div class="p-3 space-y-2">
+            <h3 class="font-semibold text-gray-900 dark:text-white">Withdrawable fund</h3>
+            <p class="text-sm">
+              Pendapatan bersih (netto) yang sudah bisa di withdraw ke rekening bank anda (setelah dikurangi Snappy fee).
+            </p>
+            <a
+              href="#"
+              class="flex items-center font-normal text-sm text-primary-600 dark:text-primary-500 dark:hover:text-primary-600 hover:text-primary-700"
+            >
+              Selengkapnya...
+            </a>
+          </div>
+          <div data-popper-arrow></div>
+        </div>
+        <span class="text-2xl font-bold leading-none text-green-500 sm:text-3xl dark:text-white">
+          Rp. <.price value={@withdrawable_credits} />
+        </span>
+        <p class="flex items-center text-base font-normal text-sm text-gray-400 dark:text-gray-400">
+          Siap ditransfer ke bank anda
+        </p>
+      </div>
+    </div>
+    <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+      <div class="w-full">
+        <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
+          Dana pending
+          <button
+            data-popover-target="popover-credits-pending"
+            data-popover-placement="bottom-end"
+            type="button"
+          >
+            <.icon name="hero-question-mark-circle-solid text-gray-400" />
+            <span class="sr-only">Show information</span>
+          </button>
+        </h3>
+        <div
+          data-popover
+          id="popover-credits-pending"
+          role="tooltip"
+          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
+        >
+          <div class="p-3 space-y-2">
+            <h3 class="font-semibold text-gray-900 dark:text-white">Pending fund</h3>
+            <p class="text-sm">
+              Pendapatan bersih (netto) yang belum bisa di withdraw ke rekening bank anda (setelah dikurangi Snappy fee).
+            </p>
+            <a
+              href="#"
+              class="flex items-center font-normal text-sm text-primary-600 dark:text-primary-500 dark:hover:text-primary-600 hover:text-primary-700"
+            >
+              Selengkapnya...
+            </a>
+          </div>
+          <div data-popper-arrow></div>
+        </div>
+        <span class="text-2xl font-bold leading-none text-orange-500 sm:text-3xl dark:text-white">
+          Rp. <.price value={@pending_credits} />
+        </span>
+        <p class="flex items-center text-base font-normal text-sm text-gray-400 dark:text-gray-400">
+          Sedang diproses
+        </p>
+      </div>
+    </div>
+  </div>
+
   <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
     <!-- Card header -->
     <div class="items-center justify-between lg:flex">
       <div class="mb-4 lg:mb-0">
-        <h3 class="mb-2 text-2xl text-gray-900 dark:text-white">Pesanan</h3>
+        <h3 class="mb-2 text-2xl text-gray-900 dark:text-white">Penjualan</h3>
       </div>
       <div class="items-center sm:flex">
         <div class="flex items-center">
