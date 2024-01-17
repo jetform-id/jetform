@@ -4,7 +4,7 @@ defmodule AppWeb.AdminLive.Dashboard.Index do
   alias App.{Orders, Credits}
   alias AppWeb.AdminLive.Product.Components.Commons
 
-  @result_limit 5
+  @result_limit 10
 
   @impl true
   def mount(
@@ -15,6 +15,8 @@ defmodule AppWeb.AdminLive.Dashboard.Index do
     socket =
       socket
       |> assign(:page_title, "Dashboard")
+      |> assign(:month_sales_count, Orders.count_by_user_month(user))
+      |> assign(:month_sales_amount, Orders.amount_by_user_month(user))
       |> assign(:withdrawable_credits, Credits.withdrawable_credits_by_user(user, nil))
       |> assign(:pending_credits, Credits.pending_credits_by_user(user))
       |> stream(:orders, [])

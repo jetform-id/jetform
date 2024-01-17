@@ -48,14 +48,16 @@ defmodule AppWeb.CoreComponents do
   attr :tz, :string, default: "Asia/Jakarta"
   attr :show_label, :boolean, default: false
   attr :mode, :string, values: ["compact", "verbose"], default: "compact"
+  attr :compact_fmt, :string, default: "%d-%m-%Y %H:%M"
+  attr :verbose_fmt, :string, default: "%d %B %Y %H:%M"
 
   def indo_datetime(assigns) do
     label = if assigns.show_label, do: " " <> App.Users.tz_label(assigns.tz), else: ""
 
     format =
       case assigns.mode do
-        "compact" -> "%d-%m-%Y %H:%M" <> label
-        "verbose" -> "%d %B %Y %H:%M" <> label
+        "compact" -> assigns.compact_fmt <> label
+        "verbose" -> assigns.verbose_fmt <> label
       end
 
     value =

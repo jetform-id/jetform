@@ -58,6 +58,40 @@ defmodule App.Orders do
     |> Flop.validate_and_run!(params)
   end
 
+  def count_by_user_month(user) do
+    start_date = Timex.now() |> Timex.beginning_of_month()
+    end_date = Timex.now() |> Timex.end_of_month()
+
+    from(o in Order,
+      select: count(o.id),
+      where: o.user_id == ^user.id,
+      where: o.inserted_at >= ^start_date,
+      where: o.inserted_at <= ^end_date
+    )
+    |> Repo.one()
+    |> case do
+      nil -> 0
+      count -> count
+    end
+  end
+
+  def amount_by_user_month(user) do
+    start_date = Timex.now() |> Timex.beginning_of_month()
+    end_date = Timex.now() |> Timex.end_of_month()
+
+    from(o in Order,
+      select: sum(o.total),
+      where: o.user_id == ^user.id,
+      where: o.inserted_at >= ^start_date,
+      where: o.inserted_at <= ^end_date
+    )
+    |> Repo.one()
+    |> case do
+      nil -> 0
+      amount -> amount
+    end
+  end
+
   @doc """
   Gets a single order.
 

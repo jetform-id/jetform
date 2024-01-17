@@ -10,11 +10,12 @@ defmodule App.Orders.Order do
   @mail_regex ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/
   @required_fields ~w(invoice_number valid_until customer_name customer_email)a
   @optional_fields ~w(customer_phone status payment_type paid_at confirm)a
+  @statuses ~w(pending paid expired)a
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "orders" do
-    field :status, Ecto.Enum, values: [:pending, :paid, :expired, :cancelled], default: :pending
+    field :status, Ecto.Enum, values: [:pending, :paid, :expired], default: :pending
     field :invoice_number, :string
     field :valid_until, :utc_datetime
     field :customer_name, :string

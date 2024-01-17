@@ -18,7 +18,7 @@ defmodule AppWeb.Utils do
   def admin_menus do
     [
       %{
-        title: "Pesanan",
+        title: "Penjualan",
         path: ~p"/admin",
         icon: "hero-receipt-percent-solid"
       },
