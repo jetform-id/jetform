@@ -21,37 +21,6 @@ defmodule App.Credits do
     Repo.all(Credit)
   end
 
-  def withdrawable_credits_by_user(user, nil) do
-    withdrawable_credits_by_user(user, ~U[2024-01-01 00:00:00Z])
-  end
-
-  def withdrawable_credits_by_user(user, since) do
-    from(c in Credit,
-      select: sum(c.user_amount),
-      where: c.user_id == ^user.id,
-      where: c.withdrawable_at <= ^Timex.now(),
-      where: c.withdrawable_at > ^since
-    )
-    |> Repo.one()
-    |> case do
-      nil -> 0
-      amount -> amount
-    end
-  end
-
-  def pending_credits_by_user(user) do
-    from(c in Credit,
-      select: sum(c.user_amount),
-      where: c.user_id == ^user.id,
-      where: c.withdrawable_at > ^Timex.now()
-    )
-    |> Repo.one()
-    |> case do
-      nil -> 0
-      amount -> amount
-    end
-  end
-
   @doc """
   Gets a single credit.
 

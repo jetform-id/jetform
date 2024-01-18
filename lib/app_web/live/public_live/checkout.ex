@@ -36,6 +36,14 @@ defmodule AppWeb.PublicLive.Checkout do
   def handle_info({AppWeb.AdminLive.Product.Components.Preview, order}, socket) do
     socket =
       case order.status do
+        :free ->
+          socket
+          |> put_flash(
+            :info,
+            "Link untuk mengakses produk telah dikirim ke email anda: #{order.customer_email}"
+          )
+          |> push_navigate(to: ~p"/invoice/#{order.id}")
+
         :paid ->
           socket
           |> put_flash(

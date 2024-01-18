@@ -55,7 +55,7 @@
                 <.indo_datetime :if={!@current_user} value={@order.inserted_at} show_label={true} />
               </dd>
             </dl>
-            <dl :if={@order.status != :paid} class="gap-x-3">
+            <dl :if={!(@order.status in [:free, :paid])} class="gap-x-3">
               <dt class="col-span-3 font-semibold text-gray-800 dark:text-gray-200">
                 Berlaku hingga:
               </dt>

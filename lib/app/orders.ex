@@ -2,10 +2,9 @@ defmodule App.Orders do
   @moduledoc """
   The Orders context.
   """
-  require Logger
   import Ecto.Query, warn: false
+  require Logger
   alias App.Repo
-
   alias App.Orders.{Order, Payment}
   alias App.Contents
   alias App.Credits
@@ -56,40 +55,6 @@ defmodule App.Orders do
       where: o.total > 0
     )
     |> Flop.validate_and_run!(params)
-  end
-
-  def count_by_user_month(user) do
-    start_date = Timex.now() |> Timex.beginning_of_month()
-    end_date = Timex.now() |> Timex.end_of_month()
-
-    from(o in Order,
-      select: count(o.id),
-      where: o.user_id == ^user.id,
-      where: o.inserted_at >= ^start_date,
-      where: o.inserted_at <= ^end_date
-    )
-    |> Repo.one()
-    |> case do
-      nil -> 0
-      count -> count
-    end
-  end
-
-  def amount_by_user_month(user) do
-    start_date = Timex.now() |> Timex.beginning_of_month()
-    end_date = Timex.now() |> Timex.end_of_month()
-
-    from(o in Order,
-      select: sum(o.total),
-      where: o.user_id == ^user.id,
-      where: o.inserted_at >= ^start_date,
-      where: o.inserted_at <= ^end_date
-    )
-    |> Repo.one()
-    |> case do
-      nil -> 0
-      amount -> amount
-    end
   end
 
   @doc """
@@ -143,9 +108,9 @@ defmodule App.Orders do
       |> Order.put_contents(contents)
     end)
     |> Ecto.Multi.run(:access, fn _repo, %{order: order} ->
-      # If order paid/free (price == 0), create content access for buyer
+      # If order is free, create content access for buyer
       case order.status do
-        :paid ->
+        :free ->
           Contents.create_changeset_for_order(order) |> Contents.create_access()
 
         _ ->

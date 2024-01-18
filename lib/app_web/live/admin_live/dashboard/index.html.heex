@@ -21,13 +21,13 @@
         >
           <div class="p-3 space-y-2">
             <p class="text-sm">
-              Jumlah produk yang terjual dari awal bulan sampai sekarang, termasuk produk yang anda gratiskan.
+              Jumlah produk yang terjual dari awal bulan sampai sekarang (tidak termasuk produk gratis).
             </p>
           </div>
           <div data-popper-arrow></div>
         </div>
         <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">
-          <.price value={@month_sales_count} />
+          <.price value={@product_sold_this_month} />
         </span>
         <p class="flex items-center text-base text-sm font-normal text-gray-400 dark:text-gray-400">
           <.indo_datetime value={Timex.now()} tz={@current_user.timezone} compact_fmt="%B %Y" />
@@ -37,7 +37,7 @@
     <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="w-full">
         <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
-          Omset bulan ini
+          Penjualan bulan ini
           <button
             data-popover-target="popover-sale-total"
             data-popover-placement="bottom-end"
@@ -55,13 +55,13 @@
         >
           <div class="p-3 space-y-2">
             <p class="text-sm">
-              Omset penjualan dari awal bulan sampai sekarang (belum dikurangi Snappy fee).
+              Total penjualan dari awal bulan sampai sekarang.
             </p>
           </div>
           <div data-popper-arrow></div>
         </div>
         <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">
-          Rp. <.price value={@month_sales_amount} />
+          Rp. <.price value={@nett_sales_this_month} />
         </span>
         <p class="flex items-center text-base text-sm font-normal text-gray-400 dark:text-gray-400">
           <.indo_datetime value={Timex.now()} tz={@current_user.timezone} compact_fmt="%B %Y" />
@@ -90,7 +90,7 @@
           <div class="p-3 space-y-2">
             <h3 class="font-semibold text-gray-900 dark:text-white">Withdrawable fund</h3>
             <p class="text-sm">
-              Pendapatan bersih (netto) yang sudah bisa di withdraw ke rekening bank anda (setelah dikurangi Snappy fee).
+              Dana yang sudah bisa di withdraw ke rekening bank anda.
             </p>
             <a
               href="#"
@@ -131,7 +131,7 @@
           <div class="p-3 space-y-2">
             <h3 class="font-semibold text-gray-900 dark:text-white">Pending fund</h3>
             <p class="text-sm">
-              Pendapatan bersih (netto) yang belum bisa di withdraw ke rekening bank anda (setelah dikurangi Snappy fee).
+              Dana setiap penjualan perlu waktu paling tidak 3 hari kerja sebelum bisa di withdraw.
             </p>
             <a
               href="#"
@@ -160,85 +160,24 @@
       </div>
       <div class="items-center sm:flex">
         <div class="flex items-center">
-          <button
-            id="dropdownDefault"
-            data-dropdown-toggle="dropdown"
-            class="mb-4 sm:mb-0 mr-4 inline-flex items-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-            type="button"
+          <.simple_form
+            for={@status_filter_form}
+            phx-update="replace"
+            phx-change={JS.push("filter_order", page_loading: true)}
           >
-            Filter by status
-            <svg
-              class="w-4 h-4 ml-2"
-              aria-hidden="true"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 9l-7 7-7-7"
-              >
-              </path>
-            </svg>
-          </button>
-          <!-- Dropdown menu -->
-          <div
-            id="dropdown"
-            class="z-10 hidden w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700"
-          >
-            <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault">
-              <li class="flex items-center">
-                <input
-                  id="apple"
-                  type="checkbox"
-                  value=""
-                  class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                />
-
-                <label
-                  for="apple"
-                  class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                >
-                  Paid
-                </label>
-              </li>
-
-              <li class="flex items-center">
-                <input
-                  id="fitbit"
-                  type="checkbox"
-                  value=""
-                  class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                />
-
-                <label
-                  for="fitbit"
-                  class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                >
-                  Pending
-                </label>
-              </li>
-
-              <li class="flex items-center">
-                <input
-                  id="dell"
-                  type="checkbox"
-                  value=""
-                  class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                />
-
-                <label
-                  for="dell"
-                  class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                >
-                  Expired
-                </label>
-              </li>
-            </ul>
-          </div>
+            <.input
+              type="select"
+              field={@status_filter_form[:status]}
+              options={[
+                {"Semua status", nil},
+                {"Gratis", "free"},
+                {"Paid", "paid"},
+                {"Pending", "pending"},
+                {"Expired", "expired"}
+              ]}
+              class="mb-4 sm:mb-0 mr-4 inline-flex items-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+            />
+          </.simple_form>
         </div>
       </div>
     </div>
@@ -288,7 +227,7 @@
                   </th>
                 </tr>
               </thead>
-              <tbody class="bg-white dark:bg-gray-800" id="order-list" phx-update="stream">
+              <tbody class="bg-white dark:bg-gray-800" id="order-list" phx-update="replace">
                 <tr :for={{dom_id, order} <- @streams.orders} id={dom_id}>
                   <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400">
                     <.indo_datetime value={order.inserted_at} tz={@current_user.timezone} />

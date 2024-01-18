@@ -6,6 +6,12 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
   def order_status_badge(assigns) do
     ~H"""
     <span
+      :if={@status == :free}
+      class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400"
+    >
+      GRATIS
+    </span>
+    <span
       :if={@status == :pending}
       class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded dark:bg-gray-700 dark:text-yellow-300 border border-yellow-300"
     >

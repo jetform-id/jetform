@@ -76,6 +76,14 @@ defmodule AppWeb.PublicLive.Invoice do
     socket = assign(socket, :order, order)
 
     case order.status do
+      :free ->
+        {:noreply,
+         put_flash(
+           socket,
+           :info,
+           "Link untuk mengakses produk telah dikirim ke email anda: #{order.customer_email}"
+         )}
+
       :paid ->
         {:noreply,
          put_flash(
