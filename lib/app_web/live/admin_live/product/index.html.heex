@@ -113,7 +113,7 @@
                 </div>
               </td>
               <td class="max-w-sm p-4 overflow-hidden text-base font-normal text-gray-500 truncate xl:max-w-xs dark:text-gray-400">
-                <%= product.inserted_at %>
+                <.indo_datetime value={product.inserted_at} tz={@current_user.timezone} show_label/>
               </td>
               <td class="p-4 text-base text-gray-600 whitespace-nowrap dark:text-white">
                 <%= if App.Products.has_variants?(product) do %>

@@ -6,7 +6,7 @@ defmodule App.Credits do
   import Ecto.Query, warn: false
   alias App.Repo
 
-  alias App.Credits.Credit
+  alias App.Credits.{Credit, Withdrawal}
 
   @doc """
   Returns the list of credits.
@@ -19,6 +19,73 @@ defmodule App.Credits do
   """
   def list_credits do
     Repo.all(Credit)
+  end
+
+  def product_sold_this_month_by_user(user) do
+    start_date = Timex.now() |> Timex.beginning_of_month()
+    end_date = Timex.now() |> Timex.end_of_month()
+
+    from(c in Credit,
+      select: count(c.id),
+      where: c.user_id == ^user.id,
+      where: c.inserted_at >= ^start_date,
+      where: c.inserted_at <= ^end_date
+    )
+    |> Repo.one()
+    |> case do
+      nil -> 0
+      count -> count
+    end
+  end
+
+  def nett_sales_this_month_by_user(user) do
+    start_date = Timex.now() |> Timex.beginning_of_month()
+    end_date = Timex.now() |> Timex.end_of_month()
+
+    from(c in Credit,
+      select: sum(c.user_amount),
+      where: c.user_id == ^user.id,
+      where: c.inserted_at >= ^start_date,
+      where: c.inserted_at <= ^end_date
+    )
+    |> Repo.one()
+    |> case do
+      nil -> 0
+      amount -> amount
+    end
+  end
+
+  def withdrawable_credits_by_user(user, since, until \\ Timex.now())
+
+  def withdrawable_credits_by_user(user, nil, until) do
+    withdrawable_credits_by_user(user, ~U[2024-01-01 00:00:00Z], until)
+  end
+
+  def withdrawable_credits_by_user(user, since, until) do
+    from(c in Credit,
+      select: sum(c.user_amount),
+      where: c.user_id == ^user.id,
+      where: c.withdrawable_at <= ^until,
+      where: c.withdrawable_at > ^since
+    )
+    |> Repo.one()
+    |> case do
+      nil -> 0
+      amount -> amount
+    end
+  end
+
+  def pending_credits_by_user(user) do
+    from(c in Credit,
+      select: sum(c.user_amount),
+      where: c.user_id == ^user.id,
+      where: c.withdrawable_at > ^Timex.now()
+    )
+    |> Repo.one()
+    |> case do
+      nil -> 0
+      amount -> amount
+    end
   end
 
   @doc """
@@ -112,5 +179,25 @@ defmodule App.Credits do
 
   def backfill_orders_credit(orders) do
     Enum.map(orders, &create_credit/1)
+  end
+
+  def list_withdrawals_by_user(user) do
+    from(w in Withdrawal,
+      where: w.user_id == ^user.id,
+      order_by: [desc: w.inserted_at]
+    )
+    |> Repo.all()
+  end
+
+  def create_withdrawal(attrs) do
+    %Withdrawal{}
+    |> Withdrawal.create_changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_withdrawal(%Withdrawal{} = withdrawal, attrs) do
+    withdrawal
+    |> Withdrawal.changeset(attrs)
+    |> Repo.update()
   end
 end

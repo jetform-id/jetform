@@ -26,6 +26,13 @@ defmodule App.Midtrans do
     |> handle_response()
   end
 
+  def get_banks_list() do
+    get_app_base_url()
+    |> get_http_client()
+    |> Tesla.get("/iris/api/v1/beneficiary_banks")
+    |> handle_response()
+  end
+
   def test_create_transaction do
     payload = %{
       "transaction_details" => %{

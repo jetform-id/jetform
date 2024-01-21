@@ -34,6 +34,7 @@ defmodule App.Users.User do
     has_many :products, App.Products.Product
     has_many :orders, App.Orders.Order
     has_many :credits, App.Credits.Credit
+    has_many :withdrawals, App.Credits.Withdrawal
 
     timestamps(type: :utc_datetime)
   end
