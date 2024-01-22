@@ -36,7 +36,7 @@ defmodule AppWeb.AdminLive.Product.Index do
 
     socket
     |> assign(:new_modal, true)
-    |> assign(:page_title, "New Product")
+    |> assign(:page_title, "Buat Produk")
     |> assign(:changeset, Products.change_product(%Products.Product{}, %{"slug" => initial_slug}))
     |> assign(:action, ~p"/admin/products")
   end
@@ -44,6 +44,6 @@ defmodule AppWeb.AdminLive.Product.Index do
   defp apply_params(socket, _params) do
     socket
     |> assign(:new_modal, false)
-    |> assign(:page_title, "Products")
+    |> assign(:page_title, "Produk")
   end
 end

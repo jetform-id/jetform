@@ -18,7 +18,7 @@ defmodule AppWeb.AdminLive.Dashboard.Index do
       |> assign(:page_title, "Dashboard")
       |> assign(:product_sold_this_month, Credits.product_sold_this_month_by_user(user))
       |> assign(:nett_sales_this_month, Credits.nett_sales_this_month_by_user(user))
-      |> assign(:withdrawable_credits, Credits.withdrawable_credits_by_user(user, nil))
+      |> assign(:withdrawable_credits, Credits.withdrawable_credits_by_user(user))
       |> assign(:pending_credits, Credits.pending_credits_by_user(user))
       |> assign(:status_filter_form, to_form(%{"status" => nil}))
       |> stream(:orders, [])

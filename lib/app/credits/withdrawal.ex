@@ -3,7 +3,7 @@ defmodule App.Credits.Withdrawal do
   use Waffle.Ecto.Schema
   import Ecto.Changeset
 
-  @statuses ~w(pending approved rejected cancelled finished)a
+  @statuses ~w(pending submitted rejected cancelled success)a
   @required_fields ~w(amount withdrawable_credits_until)a
   @optional_fields ~w(status service_fee admin_note admin_transfer_prove)a
   @attachment_fields ~w(admin_transfer_prove)a

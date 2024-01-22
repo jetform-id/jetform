@@ -2,13 +2,17 @@
   <div class="w-full mb-1">
     <div class="items-center justify-between block sm:flex md:divide-x md:divide-gray-100 dark:divide-gray-700">
       <h1 class="text-xl font-semibold text-gray-600 sm:text-2xl dark:text-white">
-        Produk
+        Tersedia
+        <span class="text-green-500">
+          Rp. <.price value={@withdrawable_credits} />
+        </span>
       </h1>
       <.link
-        patch={~p"/admin/products?action=new"}
+        :if={@withdrawable_credits > 0}
+        patch={~p"/admin/withdrawals?action=new"}
         class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
       >
-        Tambah Produk
+        Tarik Dana
       </.link>
     </div>
   </div>
@@ -24,37 +28,31 @@
                 scope="col"
                 class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
               >
-                Live
-              </th>
-              <th
-                scope="col"
-                class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
-              >
-                Cover
-              </th>
-              <th
-                scope="col"
-                class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
-              >
-                Nama Produk
-              </th>
-              <th
-                scope="col"
-                class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
-              >
                 Dibuat Pada
               </th>
               <th
                 scope="col"
                 class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
               >
-                Harga
+                Jumlah Ditarik
               </th>
               <th
                 scope="col"
                 class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
               >
-                Terjual
+                Biaya Admin
+              </th>
+              <th
+                scope="col"
+                class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
+              >
+                Jumlah Diterima
+              </th>
+              <th
+                scope="col"
+                class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
+              >
+                Status
               </th>
               <th
                 scope="col"
@@ -69,74 +67,30 @@
             class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700"
             phx-update="stream"
           >
-            <%!-- product item --%>
+            <%!-- withdrawal item --%>
             <tr
-              :for={{dom_id, product} <- @streams.products}
+              :for={{dom_id, w} <- @streams.withdrawals}
               id={dom_id}
               class="hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               <td class="p-4 text-base font-medium text-gray-600 whitespace-nowrap dark:text-white">
-                <.icon
-                  :if={product.is_live}
-                  name="hero-check-circle-solid"
-                  class="w-8 h-8 text-green-500 dark:text-green-400"
-                />
-                <.icon
-                  :if={not product.is_live}
-                  name="hero-x-circle-solid"
-                  class="w-8 h-8 text-gray-500 dark:text-gray-400"
-                />
+                <.indo_datetime value={w.inserted_at} tz={@current_user.timezone} show_label />
               </td>
               <td class="text-base font-medium text-gray-600 dark:text-white">
-                <img
-                  src={App.Products.cover_url(product, :thumb)}
-                  class="w-24 rounded-md border border-gray-300"
-                />
+                Rp. <.price value={w.amount} />
               </td>
               <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400">
-                <div class="text-base font-semibold">
-                  <.link
-                    navigate={~p"/admin/products/#{product.id}/edit"}
-                    class="text-primary-600 dark:text-white"
-                  >
-                    <%= product.name %>
-                  </.link>
-                </div>
-                <div class="text-sm font-normal text-gray-400 dark:text-gray-400">
-                  <%= @base_url %>/p/<%= product.slug %>
-                  <.link href={@base_url <> "/p/" <> product.slug} target="_blank">
-                    <.icon
-                      name="hero-arrow-top-right-on-square"
-                      class="w-4 h-4 inline-block text-primary-600"
-                    />
-                  </.link>
-                </div>
+                Rp. <.price value={w.service_fee} />
+              </td>
+              <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400">
+                Rp. <.price value={w.amount - w.service_fee} />
               </td>
               <td class="max-w-sm p-4 overflow-hidden text-base font-normal text-gray-500 truncate xl:max-w-xs dark:text-gray-400">
-                <.indo_datetime value={product.inserted_at} tz={@current_user.timezone} show_label/>
+                <%= w.status %>
               </td>
-              <td class="p-4 text-base text-gray-600 whitespace-nowrap dark:text-white">
-                <%= if App.Products.has_variants?(product) do %>
-                  Bervariasi
-                <% else %>
-                  Rp. <.price value={product.price} />
-                <% end %>
-              </td>
-              <td class="p-4 text-base text-gray-600 whitespace-nowrap dark:text-white">
-                1203
-              </td>
-
-              <td class="p-4 space-x-2 whitespace-nowrap">
-                <.link
-                  phx-click={JS.push("delete", value: %{id: product.id})}
-                  data-confirm="Are you sure?"
-                  class="inline-flex items-center text-sm text-center text-red-600 rounded-sm focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
-                >
-                  <.icon name="hero-trash-solid" class="w-4 h-4 mr-1" /> Delete
-                </.link>
-              </td>
+              <td class="p-4 text-base text-gray-600 whitespace-nowrap dark:text-white">></td>
             </tr>
-            <%!-- end product item --%>
+            <%!-- end withdrawal item --%>
           </tbody>
         </table>
       </div>
@@ -229,12 +183,120 @@
   </div>
 </div>
 -->
-<.modal :if={@new_modal} id="product-modal" show on_cancel={JS.patch(~p"/admin/products")}>
-  <.live_component
-    module={AppWeb.AdminLive.Product.Components.NewForm}
-    id={:new_product}
-    changeset={@changeset}
-    base_url={@base_url}
-    current_user={@current_user}
-  />
+<.modal :if={@new_modal} id="product-modal" show on_cancel={JS.patch(~p"/admin/withdrawals")}>
+  <div>
+    <h3 class="text-xl mb-2">Penarikan Dana</h3>
+    <p class="text-base text-gray-500">
+      Anda akan melakukan penarikan dana dengan detail sebagai berikut:
+    </p>
+    <div class="relative overflow-x-auto rounded-md mt-6 mb-4">
+      <table class="w-full text-sm text-left rtl:text-right text-gray-700 dark:text-gray-700">
+        <tbody>
+          <tr class="bg-primary-100">
+            <td
+              scope="row"
+              class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
+            >
+              Waktu penarikan
+            </td>
+            <td
+              scope="row"
+              class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
+            >
+              <.icon name="hero-chevron-right me-2 w-3 h-3" />
+              <.indo_datetime
+                value={@withdrawal_params.withdrawal_timestamp}
+                tz={@current_user.timezone}
+                show_label
+              />
+            </td>
+          </tr>
+          <tr class="bg-primary-50">
+            <td
+              scope="row"
+              class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
+            >
+              Jumlah penarikan
+            </td>
+            <td
+              scope="row"
+              class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
+            >
+              <.icon name="hero-chevron-right me-2 w-3 h-3" /> Rp.
+              <.price value={@withdrawal_params.amount} />
+            </td>
+          </tr>
+          <tr class="bg-primary-100">
+            <td
+              scope="row"
+              class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
+            >
+              Biaya admin
+            </td>
+            <td
+              scope="row"
+              class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
+            >
+              <.icon name="hero-chevron-right me-2 w-3 h-3" /> Rp.
+              <.price value={@withdrawal_params.service_fee} />
+            </td>
+          </tr>
+          <tr class="bg-primary-50">
+            <td
+              scope="row"
+              class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
+            >
+              Jumlah yang akan diterima
+            </td>
+            <td
+              scope="row"
+              class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
+            >
+              <.icon name="hero-chevron-right me-2 w-3 h-3" />
+              <span class="font-bold">
+                Rp. <.price value={@withdrawal_params.amount_received} />
+              </span>
+            </td>
+          </tr>
+          <tr class="bg-primary-100">
+            <td
+              scope="row"
+              class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
+            >
+              Bank penerima
+            </td>
+            <td
+              scope="row"
+              class="flex p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
+            >
+              <.icon name="hero-chevron-right me-3 w-3 h-3" />
+              <p>
+                BANK<br /> ACCOUNT<br /> 12345678
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-base text-gray-500 mb-4">
+      Silahkan review data diatas untuk memastikan kebenarannya, kemudian klik tombol "Tarik Dana" di bawah untuk melanjutkan.
+    </p>
+    <div
+      class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
+      role="alert"
+    >
+      <span class="font-medium">
+        <.icon name="hero-hand-raised" /> Perhatian!
+      </span>
+      Demi keamanan transaksi, <strong>kami akan mengirimkan link konfirmasi penarikan dana ke email Anda</strong>. Silahkan cek email Anda dan klik link konfirmasi untuk melanjutkan proses penarikan dana.
+    </div>
+    <div class="mt-8 text-right">
+      <.button
+        phx-disable-with="Creating..."
+        class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+      >
+        Tarik Dana
+      </.button>
+    </div>
+  </div>
 </.modal>

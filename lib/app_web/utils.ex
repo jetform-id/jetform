@@ -34,8 +34,8 @@ defmodule AppWeb.Utils do
       #   icon: "hero-users-solid"
       # },
       %{
-        title: "Payouts",
-        path: ~p"/admin/payouts/bank-account",
+        title: "Penarikan Dana",
+        path: ~p"/admin/withdrawals",
         icon: "hero-banknotes-solid"
       }
       # %{

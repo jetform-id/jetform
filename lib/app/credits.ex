@@ -55,13 +55,13 @@ defmodule App.Credits do
     end
   end
 
-  def withdrawable_credits_by_user(user, since, until \\ Timex.now())
+  def withdrawable_credits_by_user(user, until \\ Timex.now()) do
+    since =
+      case get_last_successful_withdrawal_by_user(user) do
+        nil -> ~U[2024-01-01 00:00:00Z]
+        withdrawal -> withdrawal.withdrawable_credits_until
+      end
 
-  def withdrawable_credits_by_user(user, nil, until) do
-    withdrawable_credits_by_user(user, ~U[2024-01-01 00:00:00Z], until)
-  end
-
-  def withdrawable_credits_by_user(user, since, until) do
     from(c in Credit,
       select: sum(c.user_amount),
       where: c.user_id == ^user.id,
@@ -189,15 +189,34 @@ defmodule App.Credits do
     |> Repo.all()
   end
 
+  def get_last_successful_withdrawal_by_user(user) do
+    from(w in Withdrawal,
+      where: w.user_id == ^user.id,
+      where: w.status == :success,
+      order_by: [desc: w.inserted_at]
+    )
+    |> Repo.one()
+  end
+
+  def get_unprocessed_withdrawal_by_user(user) do
+    from(w in Withdrawal,
+      where: w.user_id == ^user.id,
+      where: w.status == :pending or w.status == :submitted
+    )
+    |> Repo.one()
+  end
+
   def create_withdrawal(attrs) do
-    %Withdrawal{}
-    |> Withdrawal.create_changeset(attrs)
-    |> Repo.insert()
+    create_withdrawal_changeset(attrs) |> Repo.insert()
   end
 
   def update_withdrawal(%Withdrawal{} = withdrawal, attrs) do
     withdrawal
     |> Withdrawal.changeset(attrs)
     |> Repo.update()
+  end
+
+  def create_withdrawal_changeset(attrs) do
+    Withdrawal.create_changeset(%Withdrawal{}, attrs)
   end
 end

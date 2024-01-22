@@ -76,7 +76,8 @@ defmodule AppWeb.Router do
       live "/products/:id/edit", AdminLive.Product.Edit
 
       # bank
-      live "/payouts/bank-account", AdminLive.Payout.Bank
+      live "/withdrawals/bank-account", AdminLive.Withdrawal.Bank
+      live "/withdrawals", AdminLive.Withdrawal.Index
 
       # dashboard
       live "/", AdminLive.Dashboard.Index
