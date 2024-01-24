@@ -69,14 +69,14 @@ defmodule AppWeb.Router do
     # accounts
     get "/account", AccountController, :edit
     put "/account", AccountController, :update
+    post "/account", AccountController, :update
 
     live_session :admin, on_mount: {AppWeb.LiveAuth, :admin}, layout: {AppWeb.Layouts, :admin} do
       # products
       live "/products", AdminLive.Product.Index
       live "/products/:id/edit", AdminLive.Product.Edit
 
-      # bank
-      live "/withdrawals/bank-account", AdminLive.Withdrawal.Bank
+      # withdrawals
       live "/withdrawals", AdminLive.Withdrawal.Index
 
       # dashboard

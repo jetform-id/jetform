@@ -384,8 +384,8 @@ defmodule AppWeb.CoreComponents do
   def flash_group(assigns) do
     ~H"""
     <div id={@id}>
-      <.flash kind={:info} title="Sukses!" flash={@flash} />
-      <.flash kind={:warning} title="Perhatian!" flash={@flash} />
+      <.flash kind={:info} title="Berhasil" flash={@flash} />
+      <.flash kind={:warning} title="Perhatian" flash={@flash} />
       <.flash kind={:error} title="Error!" flash={@flash} />
       <.flash
         id="client-error"

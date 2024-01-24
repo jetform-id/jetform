@@ -9,8 +9,8 @@ defmodule App.Users do
 
   def get_bank_account_by_user(user) do
     case Repo.get_by(BankAccount, user_id: user.id) do
-      nil -> {:error, :not_found}
-      bank_account -> {:ok, bank_account}
+      nil -> nil
+      bank_account -> bank_account |> Repo.preload(:user)
     end
   end
 
@@ -26,7 +26,7 @@ defmodule App.Users do
 
   def update_bank_account(bank_account, attrs) do
     bank_account
-    |> BankAccount.changeset(attrs)
+    |> BankAccount.update_changeset(attrs)
     |> Repo.update()
   end
 end

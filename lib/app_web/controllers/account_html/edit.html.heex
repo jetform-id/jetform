@@ -1,10 +1,11 @@
 <div class="px-4 pt-6">
   <div class="grid gap-4 xl:grid-cols-2 2xl:grid-cols-3">
+    <%!-- user form --%>
     <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="flex items-center justify-between mb-4">
         <div class="flex-shrink-0">
           <h3 class="text-xl font-bold leading-none text-gray-900 sm:text-2xl dark:text-white">
-            Edit Account
+            Edit Akun
           </h3>
         </div>
       </div>
@@ -26,24 +27,32 @@
           </div>
         </div>
 
-        <.simple_form :let={f} for={@changeset} as={:user} action={@action} phx-update="ignore">
+        <.simple_form
+          :let={f}
+          for={@user_changeset}
+          as={:user}
+          action={~p"/admin/account"}
+          phx-update="ignore"
+        >
           <div class="mt-8 space-y-6">
             <.error :if={
               Pow.Plug.extension_enabled?(@conn, PowResetPassword) &&
-                @changeset.data.unconfirmed_email
+                @user_changeset.data.unconfirmed_email
             }>
               <span>
-                Click the link in the confirmation email to change your email to <span class="font-semibold"><%= @changeset.data.unconfirmed_email %></span>.
+                Click the link in the confirmation email to change your email to <span class="font-semibold"><%= @user_changeset.data.unconfirmed_email %></span>.
               </span>
             </.error>
-            <.error :if={@changeset.action}>
+            <.error :if={@user_changeset.action}>
               Oops, something went wrong! Please check the errors below.
             </.error>
             <.input field={f[:action]} type="hidden" value="update" required />
             <.input
-              field={f[Pow.Ecto.Schema.user_id_field(@changeset)]}
-              type={(Pow.Ecto.Schema.user_id_field(@changeset) == :email && "email") || "text"}
-              label={Phoenix.Naming.humanize(Pow.Ecto.Schema.user_id_field(@changeset))}
+              field={f[Pow.Ecto.Schema.user_id_field(@user_changeset)]}
+              type={
+                (Pow.Ecto.Schema.user_id_field(@user_changeset) == :email && "email") || "text"
+              }
+              label={Phoenix.Naming.humanize(Pow.Ecto.Schema.user_id_field(@user_changeset))}
               required
             />
             <%!-- <.input
@@ -55,7 +64,7 @@
             >
               <:help>
                 <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                  Your shop URL: <%= @base_url %>/<span id="shop-username" class="font-bold"><%= Map.get(@changeset.changes, :username, @changeset.data.username) %></span>
+                  Your shop URL: <%= @base_url %>/<span id="shop-username" class="font-bold"><%= Map.get(@user_changeset.changes, :username, @user_changeset.data.username) %></span>
                 </div>
               </:help>
             </.input> --%>
@@ -63,32 +72,98 @@
               field={f[:timezone]}
               type="select"
               options={App.Users.tz_select_options()}
-              label="Timezone"
+              label="Zona Waktu"
             />
             <hr />
-            <.input field={f[:password]} type="password" label="New password" />
+            <.input field={f[:password]} type="password" label="Password baru" />
             <.input
               field={f[:password_confirmation]}
               type="password"
-              label="Confirm new password"
+              label="Konfirmasi password baru"
             />
-            <hr />
-            <.input
-              field={f[:current_password]}
-              type="password"
-              label="Current password"
-              value={nil}
-              required
-            />
+            <div
+              class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
+              role="alert"
+            >
+              <span class="font-medium">
+                <.icon name="hero-lock-closed-solid" />
+              </span>
+              Untuk mengubah detail akun, masukkan password saat ini.
+              <.input
+                wrapper_class="mt-4"
+                field={f[:current_password]}
+                type="password"
+                label="Password"
+                value={nil}
+                required
+              />
+            </div>
           </div>
-
           <:actions>
-            <div class="mt-8">
+            <div class="mt-8 text-right">
               <.button
-                phx-disable-with="Updating..."
+                phx-disable-with="Menyimpan..."
                 class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
-                Update <span aria-hidden="true">→</span>
+                Simpan <span aria-hidden="true">→</span>
+              </.button>
+            </div>
+          </:actions>
+        </.simple_form>
+      </div>
+    </div>
+
+    <%!-- bank account form --%>
+    <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex-shrink-0">
+          <h3 class="text-xl font-bold leading-none text-gray-900 sm:text-2xl dark:text-white">
+            Akun Bank
+          </h3>
+        </div>
+      </div>
+      <div id="main-chart">
+        <.simple_form
+          :let={f}
+          for={@bank_acc_changeset}
+          as={:bank_account}
+          action={~p"/admin/account"}
+          phx-update="ignore"
+        >
+          <div class="mt-8 space-y-6">
+            <.error :if={@bank_acc_changeset.action}>
+              Oops, something went wrong! Please check the errors below.
+            </.error>
+            <.input field={f[:bank_name]} type="text" label="Nama Bank" required />
+            <.input field={f[:account_number]} type="text" label="Nomer Rekening" required />
+            <.input field={f[:account_name]} type="text" label="Nama Pemilik Rekening" required />
+            <div
+              class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
+              role="alert"
+            >
+              <span class="font-medium">
+                <.icon name="hero-lock-closed-solid" />
+              </span>
+              Untuk mengubah data akun bank, masukkan password saat ini.
+              <.input
+                wrapper_class="mt-4"
+                field={f[:current_password]}
+                type="password"
+                label="Password"
+                value={nil}
+                required
+              />
+            </div>
+          </div>
+
+          <div class="bg-yellow-500"></div>
+          <:actions>
+            <div class="mt-8 text-right">
+              <.button
+                phx-disable-with="Menyimpan..."
+                class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+              >
+                Simpan <span aria-hidden="true">→</span>
               </.button>
             </div>
           </:actions>
