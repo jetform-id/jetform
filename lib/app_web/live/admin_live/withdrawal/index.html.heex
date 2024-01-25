@@ -1,19 +1,47 @@
 <div class="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
   <div class="w-full mb-1">
-    <div class="items-center justify-between block sm:flex md:divide-x md:divide-gray-100 dark:divide-gray-700">
-      <h1 class="text-xl font-semibold text-gray-600 sm:text-2xl dark:text-white">
-        Tersedia
-        <span class="text-green-500">
+    <div class="items-center block sm:flex sm:gap-6 md:divide-x md:divide-gray-200 dark:divide-gray-700">
+      <h1 class="flex-none mr-4 text-xl font-semibold text-gray-600 sm:text-2xl dark:text-white">
+        Penarikan Dana
+      </h1>
+
+      <div class="flex-none md:pl-8">
+        <span class="block text-sm text-gray-400">Dana cair</span>
+        <span class="text-green-500 font-semibold text-xl dark:text-white">
           Rp. <.price value={@withdrawable_credits} />
         </span>
-      </h1>
-      <.link
-        :if={@withdrawable_credits > 0}
-        patch={~p"/admin/withdrawals?action=new"}
-        class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-      >
-        Tarik Dana
-      </.link>
+      </div>
+
+      <div class="flex-none md:pl-8">
+        <span class="block text-sm text-gray-400">Dana Pending</span>
+        <span class="text-orange-500 font-semibold text-xl dark:text-white">
+          Rp. <.price value={@pending_credits} />
+        </span>
+      </div>
+
+      <div class="flex-1"></div>
+      <%= if @bank_account do %>
+        <div
+          :if={@withdrawable_credits == 0}
+          class="text-gray-400 bg-gray-200 font-medium rounded-lg text-sm px-5 py-2.5"
+        >
+          Tarik Dana
+        </div>
+        <.link
+          :if={@withdrawable_credits > 0}
+          patch={~p"/admin/withdrawals?action=new"}
+          class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+        >
+          Tarik Dana
+        </.link>
+      <% else %>
+        <.link
+          navigate={~p"/admin/account"}
+          class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+        >
+          <.icon name="hero-plus" /> Akun Bank Penerima
+        </.link>
+      <% end %>
     </div>
   </div>
 </div>

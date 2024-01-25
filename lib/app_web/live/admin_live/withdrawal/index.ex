@@ -4,12 +4,14 @@ defmodule AppWeb.AdminLive.Withdrawal.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    user = socket.assigns.current_user
+    user = socket.assigns.current_user |> App.Repo.preload(:bank_account)
 
     socket =
       socket
       |> assign(:new_modal, false)
+      |> assign(:bank_account, user.bank_account)
       |> assign(:withdrawable_credits, Credits.withdrawable_credits_by_user(user))
+      |> assign(:pending_credits, Credits.pending_credits_by_user(user))
       |> stream(:withdrawals, Credits.list_withdrawals_by_user(user))
 
     {:ok, socket}
