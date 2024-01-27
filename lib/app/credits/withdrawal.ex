@@ -4,7 +4,7 @@ defmodule App.Credits.Withdrawal do
   import Ecto.Changeset
 
   @statuses ~w(pending submitted rejected cancelled success)a
-  @required_fields ~w(amount withdrawable_credits_until)a
+  @required_fields ~w(amount withdrawal_timestamp recipient_bank_name recipient_bank_acc_name recipient_bank_acc_number)a
   @optional_fields ~w(status service_fee admin_note admin_transfer_prove)a
   @attachment_fields ~w(admin_transfer_prove)a
 
@@ -16,8 +16,10 @@ defmodule App.Credits.Withdrawal do
     field :service_fee, :integer
     field :admin_note, :string
     field :admin_transfer_prove, App.Credits.WithdrawalTransferProve.Type
-    field :withdrawable_credits_until, :utc_datetime
-
+    field :withdrawal_timestamp, :utc_datetime
+    field :recipient_bank_name, :string
+    field :recipient_bank_acc_name, :string
+    field :recipient_bank_acc_number, :string
     belongs_to :user, App.Users.User
 
     timestamps(type: :utc_datetime)

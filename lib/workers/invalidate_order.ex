@@ -7,7 +7,7 @@ defmodule Workers.InvalidateOrder do
   Create a new job to invalidate an order if it's still in pending state.
   """
   def create(%{status: :pending} = order) do
-    %{order_id: order.id}
+    %{id: order.id}
     |> __MODULE__.new(scheduled_at: order.valid_until)
     |> Oban.insert()
   end
@@ -17,8 +17,8 @@ defmodule Workers.InvalidateOrder do
   end
 
   @impl true
-  def perform(%{args: %{"order_id" => order_id}}) do
-    with %{status: :pending} = order <- Orders.get_order(order_id),
+  def perform(%{args: %{"id" => id}}) do
+    with %{status: :pending} = order <- Orders.get_order(id),
          {:ok, _order} <- Orders.update_order(order, %{status: :expired}) do
       :ok
     else
@@ -31,9 +31,7 @@ defmodule Workers.InvalidateOrder do
         :ok
 
       err ->
-        Logger.warning(
-          "Failed updating order=#{order_id} during invalidation, reason: #{inspect(err)}"
-        )
+        Logger.warning("Failed updating order=#{id} during invalidation, reason: #{inspect(err)}")
 
         :ok
     end

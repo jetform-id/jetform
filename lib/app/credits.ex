@@ -181,6 +181,11 @@ defmodule App.Credits do
     Enum.map(orders, &create_credit/1)
   end
 
+  # --------------- WITHDRAWALS ---------------
+
+  def get_withdrawal!(id), do: Repo.get!(Withdrawal, id)
+  def get_withdrawal(id), do: Repo.get(Withdrawal, id)
+
   def list_withdrawals_by_user(user) do
     from(w in Withdrawal,
       where: w.user_id == ^user.id,
@@ -207,7 +212,51 @@ defmodule App.Credits do
   end
 
   def create_withdrawal(attrs) do
-    create_withdrawal_changeset(attrs) |> Repo.insert()
+    Ecto.Multi.new()
+    |> Ecto.Multi.insert(:withdrawal, create_withdrawal_changeset(attrs))
+    |> Ecto.Multi.run(:notify, fn _repo, %{withdrawal: withdrawal} ->
+      Workers.Withdrawal.notify_withdrawal_confirmation(withdrawal)
+    end)
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{withdrawal: withdrawal}} ->
+        {:ok, withdrawal}
+
+      error ->
+        error
+    end
+  end
+
+  def cancel_withdrawal(withdrawal) do
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:withdrawal, Withdrawal.changeset(withdrawal, %{status: :cancelled}))
+    |> Ecto.Multi.run(:notify, fn _repo, %{withdrawal: withdrawal} ->
+      Workers.Withdrawal.notify_withdrawal_cancelation(withdrawal)
+    end)
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{withdrawal: withdrawal}} ->
+        {:ok, withdrawal}
+
+      error ->
+        error
+    end
+  end
+
+  def confirm_withdrawal(withdrawal) do
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:withdrawal, Withdrawal.changeset(withdrawal, %{status: :submitted}))
+    |> Ecto.Multi.run(:notify, fn _repo, %{withdrawal: withdrawal} ->
+      Workers.Withdrawal.notify_withdrawal_confirmed(withdrawal)
+    end)
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{withdrawal: withdrawal}} ->
+        {:ok, withdrawal}
+
+      error ->
+        error
+    end
   end
 
   def update_withdrawal(%Withdrawal{} = withdrawal, attrs) do
@@ -218,5 +267,13 @@ defmodule App.Credits do
 
   def create_withdrawal_changeset(attrs) do
     Withdrawal.create_changeset(%Withdrawal{}, attrs)
+  end
+
+  def create_withdrawal_confirmation_token(withdrawal) do
+    Phoenix.Token.sign(AppWeb.Endpoint, "withdrawal", withdrawal.id)
+  end
+
+  def verify_withdrawal_confirmation_token(token) do
+    Phoenix.Token.verify(AppWeb.Endpoint, "withdrawal", token)
   end
 end

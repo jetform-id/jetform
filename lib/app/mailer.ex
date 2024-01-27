@@ -34,7 +34,7 @@ defmodule App.Mailer do
   end
 
   def process_sync(email) do
-    email |> deliver()
+    deliver(email)
   end
 
   defp log_warnings({:error, reason}) do

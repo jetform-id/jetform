@@ -10,16 +10,16 @@ defmodule Workers.NotifyNewAccess do
   def create(nil), do: {:ok, :noop}
 
   def create(access) do
-    %{access_id: access.id}
+    %{id: access.id}
     |> __MODULE__.new()
     |> Oban.insert()
   end
 
   @impl true
-  def perform(%{args: %{"access_id" => access_id}}) do
-    case Contents.get_access(access_id) do
+  def perform(%{args: %{"id" => id}}) do
+    case Contents.get_access(id) do
       nil ->
-        Logger.warning("#{__MODULE__} warning: access=#{access_id} not found")
+        Logger.warning("#{__MODULE__} warning: access=#{id} not found")
 
         :ok
 
@@ -51,31 +51,14 @@ defmodule Workers.NotifyNewAccess do
     #{base_url}/invoice/#{order.id}
 
     --
-    Team Snappy
-    """
-
-    html = """
-    <p>Halo <b>#{order.customer_name}</b>,</p>
-
-    <p>Berikut adalah link untuk mengakses <b>#{Orders.product_fullname(order)}</b>:<br/>
-    <a href="#{base_url}/access/#{access.id}" target="_blank">#{base_url}/access/#{access.id}</a>
-    </p>
-
-    <i><b style="color:red">PENTING</b>: link di atas hanya berlaku sampai <b>#{valid_until} (7 hari dari sekarang)</b>.
-    Kami sarankan anda download semua file yang ada dan menyimpannya di tempat yang aman.</i>
-
-    <p>Dan berikut detail order anda:<br/>
-    <a href="#{base_url}/invoice/#{order.id}" target="_blank">#{base_url}/invoice/#{order.id}</a>
-    </p>
-
-    <p>--<br/>Team Snappy</p>
+    Tim Snappy
     """
 
     %{
       user: %{name: order.customer_name, email: order.customer_email},
       subject: "Akses #{App.Orders.product_fullname(order)}",
       text: text,
-      html: html
+      html: nil
     }
     |> App.Mailer.cast()
     |> App.Mailer.process_sync()

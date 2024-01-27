@@ -4,16 +4,16 @@ defmodule Workers.NotifyNewOrder do
   alias App.Orders
 
   def create(order) do
-    %{order_id: order.id}
+    %{id: order.id}
     |> __MODULE__.new()
     |> Oban.insert()
   end
 
   @impl true
-  def perform(%{args: %{"order_id" => order_id}}) do
-    case Orders.get_order(order_id) do
+  def perform(%{args: %{"id" => id}}) do
+    case Orders.get_order(id) do
       nil ->
-        Logger.warning("#{__MODULE__} warning: order=#{order_id} not found")
+        Logger.warning("#{__MODULE__} warning: order=#{id} not found")
 
         :ok
 
@@ -37,31 +37,14 @@ defmodule Workers.NotifyNewOrder do
     #{base_url}/invoice/#{order.id}
 
     --
-    Team Snappy
-    """
-
-    html = """
-    <p>Halo <b>#{order.customer_name}</b>,</p>
-
-    <p>Anda telah melakukan pembelian berikut:</p>
-    <p>
-    Produk: <b>#{Orders.product_fullname(order)}</b><br/>
-    Harga: <b>Rp. #{order.total}</b><br/>
-    No. Invoice: <b>#{order.invoice_number}</b>
-    </p>
-
-    <p>Detail pembelian dan cara pembayaran bisa anda lihat di halaman berikut:<br/>
-    <a href="#{base_url}/invoice/#{order.id}" target="_blank">#{base_url}/invoice/#{order.id}</a>
-    </p>
-
-    <p>--<br/>Team Snappy</p>
+    Tim Snappy
     """
 
     %{
       user: %{name: order.customer_name, email: order.customer_email},
       subject: "Detail pembelian anda ##{order.invoice_number}",
       text: text,
-      html: html
+      html: nil
     }
     |> App.Mailer.cast()
     |> App.Mailer.process_sync()

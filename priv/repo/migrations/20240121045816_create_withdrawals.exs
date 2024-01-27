@@ -10,7 +10,10 @@ defmodule App.Repo.Migrations.CreateWithdrawals do
       add :service_fee, :integer, default: 0
       add :admin_note, :text
       add :admin_transfer_prove, :string
-      add :withdrawable_credits_until, :utc_datetime, null: false
+      add :withdrawal_timestamp, :utc_datetime, null: false
+      add :recipient_bank_name, :string
+      add :recipient_bank_acc_name, :string
+      add :recipient_bank_acc_number, :string
 
       timestamps(type: :utc_datetime)
     end
