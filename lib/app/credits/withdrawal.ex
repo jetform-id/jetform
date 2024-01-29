@@ -3,6 +3,11 @@ defmodule App.Credits.Withdrawal do
   use Waffle.Ecto.Schema
   import Ecto.Changeset
 
+  @derive {
+    Flop.Schema,
+    filterable: [:status], sortable: [:inserted_at]
+  }
+
   @statuses ~w(pending submitted rejected cancelled success)a
   @required_fields ~w(amount withdrawal_timestamp recipient_bank_name recipient_bank_acc_name recipient_bank_acc_number)a
   @optional_fields ~w(status service_fee admin_note admin_transfer_prove)a

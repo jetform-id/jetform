@@ -93,7 +93,7 @@ defmodule Workers.Withdrawal do
     ----------------------------------------------------
 
     Silahkan klik link berikut untuk melanjutkan proses penarikan dana:
-    #{base_url}/admin/withdrawals/?action=confirm&token=#{token}
+    #{base_url}/admin/withdrawals/confirm/#{token}
 
     --
     Tim Snappy

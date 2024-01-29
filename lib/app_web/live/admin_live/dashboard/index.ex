@@ -55,13 +55,13 @@ defmodule AppWeb.AdminLive.Dashboard.Index do
 
   @impl true
   def handle_params(params, _uri, socket) do
-    {orders, page} = fetch_orders(socket.assigns.current_user, params)
+    {orders, pagination} = fetch_orders(socket.assigns.current_user, params)
 
     socket =
       socket
       |> assign(:params, params)
       |> assign(:status_filter_form, to_form(%{"status" => Map.get(params, "status")}))
-      |> assign(:pagination, page)
+      |> assign(:pagination, pagination)
       |> stream(:orders, orders, reset: true)
 
     {:noreply, socket}

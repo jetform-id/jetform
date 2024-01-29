@@ -42,19 +42,19 @@ defmodule App.Orders do
   @doc """
   Returns the list of orders for a given user.
   """
-  def list_orders!(user, params) do
+  def list_orders!(user, query) do
     Order
     |> where(user_id: ^user.id)
-    |> Flop.validate_and_run!(params)
+    |> Flop.validate_and_run!(query)
   end
 
-  def list_paid_orders!(params) do
+  def list_paid_orders!(query) do
     from(
       o in Order,
       where: o.status == :paid,
       where: o.total > 0
     )
-    |> Flop.validate_and_run!(params)
+    |> Flop.validate_and_run!(query)
   end
 
   @doc """

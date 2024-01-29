@@ -78,6 +78,7 @@ defmodule AppWeb.Router do
 
       # withdrawals
       live "/withdrawals", AdminLive.Withdrawal.Index
+      live "/withdrawals/confirm/:token", AdminLive.Withdrawal.Index, :confirm
 
       # dashboard
       live "/", AdminLive.Dashboard.Index

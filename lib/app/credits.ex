@@ -186,12 +186,12 @@ defmodule App.Credits do
   def get_withdrawal!(id), do: Repo.get!(Withdrawal, id)
   def get_withdrawal(id), do: Repo.get(Withdrawal, id)
 
-  def list_withdrawals_by_user(user) do
+  def list_withdrawals_by_user(user, query) do
     from(w in Withdrawal,
       where: w.user_id == ^user.id,
       order_by: [desc: w.inserted_at]
     )
-    |> Repo.all()
+    |> Flop.validate_and_run!(query)
   end
 
   def get_last_successful_withdrawal_by_user(user) do
