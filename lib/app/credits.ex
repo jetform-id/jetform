@@ -59,7 +59,7 @@ defmodule App.Credits do
     since =
       case get_last_successful_withdrawal_by_user(user) do
         nil -> ~U[2024-01-01 00:00:00Z]
-        withdrawal -> withdrawal.withdrawable_credits_until
+        withdrawal -> withdrawal.withdrawal_timestamp
       end
 
     from(c in Credit,
@@ -187,12 +187,17 @@ defmodule App.Credits do
   def get_withdrawal(id), do: Repo.get(Withdrawal, id)
 
   def list_withdrawals_by_user(user, query) do
-    from(w in Withdrawal,
-      where: w.user_id == ^user.id,
-      order_by: [desc: w.inserted_at]
-    )
+    Withdrawal
+    |> list_withdrawals_by_user_scope(user)
     |> Flop.validate_and_run!(query)
   end
+
+  # admin don't see pending and cancelled withdrawals
+  defp list_withdrawals_by_user_scope(q, %{role: :admin}),
+    do: where(q, [w], w.status not in [:pending])
+
+  # user see all withdrawals
+  defp list_withdrawals_by_user_scope(q, user), do: where(q, user_id: ^user.id)
 
   def get_last_successful_withdrawal_by_user(user) do
     from(w in Withdrawal,
@@ -215,7 +220,7 @@ defmodule App.Credits do
     Ecto.Multi.new()
     |> Ecto.Multi.insert(:withdrawal, create_withdrawal_changeset(attrs))
     |> Ecto.Multi.run(:notify, fn _repo, %{withdrawal: withdrawal} ->
-      Workers.Withdrawal.notify_withdrawal_confirmation(withdrawal)
+      Workers.Withdrawal.notify(withdrawal)
     end)
     |> Repo.transaction()
     |> case do
@@ -227,11 +232,21 @@ defmodule App.Credits do
     end
   end
 
-  def cancel_withdrawal(withdrawal) do
+  def update_withdrawal(
+        %Withdrawal{status: old_status} = withdrawal,
+        attrs
+      ) do
+    new_status = attrs["status"]
+    status_changed = new_status != nil and new_status != Atom.to_string(old_status)
+
     Ecto.Multi.new()
-    |> Ecto.Multi.update(:withdrawal, Withdrawal.changeset(withdrawal, %{status: :cancelled}))
+    |> Ecto.Multi.update(:withdrawal, Withdrawal.changeset(withdrawal, attrs))
     |> Ecto.Multi.run(:notify, fn _repo, %{withdrawal: withdrawal} ->
-      Workers.Withdrawal.notify_withdrawal_cancelation(withdrawal)
+      if status_changed do
+        Workers.Withdrawal.notify(withdrawal)
+      else
+        {:ok, :no_notify}
+      end
     end)
     |> Repo.transaction()
     |> case do
@@ -243,26 +258,8 @@ defmodule App.Credits do
     end
   end
 
-  def confirm_withdrawal(withdrawal) do
-    Ecto.Multi.new()
-    |> Ecto.Multi.update(:withdrawal, Withdrawal.changeset(withdrawal, %{status: :submitted}))
-    |> Ecto.Multi.run(:notify, fn _repo, %{withdrawal: withdrawal} ->
-      Workers.Withdrawal.notify_withdrawal_confirmed(withdrawal)
-    end)
-    |> Repo.transaction()
-    |> case do
-      {:ok, %{withdrawal: withdrawal}} ->
-        {:ok, withdrawal}
-
-      error ->
-        error
-    end
-  end
-
-  def update_withdrawal(%Withdrawal{} = withdrawal, attrs) do
-    withdrawal
-    |> Withdrawal.changeset(attrs)
-    |> Repo.update()
+  def change_withdrawal(%Withdrawal{} = withdrawal, attrs \\ %{}) do
+    Withdrawal.changeset(withdrawal, attrs)
   end
 
   def create_withdrawal_changeset(attrs) do
@@ -275,5 +272,13 @@ defmodule App.Credits do
 
   def verify_withdrawal_confirmation_token(token) do
     Phoenix.Token.verify(AppWeb.Endpoint, "withdrawal", token)
+  end
+
+  def withdrawal_attachment_url(withdrawal, opts \\ [signed: true]) do
+    App.Credits.WithdrawalTransferProve.url(
+      {withdrawal.admin_transfer_prove, withdrawal},
+      :original,
+      opts
+    )
   end
 end

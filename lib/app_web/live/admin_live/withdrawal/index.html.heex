@@ -56,7 +56,19 @@
                 scope="col"
                 class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
               >
-                Dibuat Pada
+                Dibuat
+              </th>
+              <th
+                scope="col"
+                class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
+              >
+                Diperbarui
+              </th>
+              <th
+                scope="col"
+                class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
+              >
+                Status
               </th>
               <th
                 scope="col"
@@ -80,12 +92,6 @@
                 scope="col"
                 class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
               >
-                Status
-              </th>
-              <th
-                scope="col"
-                class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
-              >
               </th>
             </tr>
           </thead>
@@ -98,10 +104,16 @@
             <tr
               :for={{dom_id, w} <- @streams.withdrawals}
               id={dom_id}
-              class={"hover:bg-gray-100 dark:hover:bg-gray-700 " <> if w.status in [:cancelled, :rejected], do: "opacity-50 dark:opacity-50", else: ""}
+              class={"hover:bg-gray-100 dark:hover:bg-gray-700 " <> if w.status in [:cancelled], do: "opacity-60 dark:opacity-60", else: ""}
             >
               <td class="p-4 text-sm text-gray-600 whitespace-nowrap dark:text-white">
-                <.indo_datetime value={w.inserted_at} tz={@current_user.timezone} show_label />
+                <.indo_datetime value={w.inserted_at} tz={@current_user.timezone} />
+              </td>
+              <td class="p-4 text-sm text-gray-600 whitespace-nowrap dark:text-white">
+                <.indo_datetime value={w.updated_at} tz={@current_user.timezone} />
+              </td>
+              <td class="max-w-sm p-4 overflow-hidden text-sm font-normal text-gray-500 truncate xl:max-w-xs dark:text-gray-400">
+                <Commons.status_badge status={w.status} />
               </td>
               <td class="text-sm text-gray-600 dark:text-white">
                 Rp. <.price value={w.amount} />
@@ -111,9 +123,6 @@
               </td>
               <td class="p-4 text-base font-medium text-green-500 whitespace-nowrap dark:text-gray-400">
                 Rp. <.price value={w.amount - w.service_fee} />
-              </td>
-              <td class="max-w-sm p-4 overflow-hidden text-sm font-normal text-gray-500 truncate xl:max-w-xs dark:text-gray-400">
-                <%= w.status %>
               </td>
               <td class="p-4 text-base text-gray-600 whitespace-nowrap dark:text-white">
                 <.link
@@ -255,7 +264,47 @@
             >
               <.icon name="hero-chevron-right me-3 w-3 h-3" />
               <p>
-                <%= @withdrawal.status %>
+                <Commons.status_badge status={@withdrawal.status} />
+              </p>
+            </td>
+          </tr>
+          <tr :if={@withdrawal != nil and @withdrawal.admin_transfer_prove} class="bg-yellow-50">
+            <td
+              scope="row"
+              class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
+            >
+              Attachment
+            </td>
+            <td
+              scope="row"
+              class="flex p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
+            >
+              <.icon name="hero-chevron-right me-3 w-3 h-3" />
+              <p>
+                <.link href={App.Credits.withdrawal_attachment_url(@withdrawal)} target="_blank">
+                  <%= @withdrawal.admin_transfer_prove.file_name %>
+                  <.icon
+                    name="hero-arrow-top-right-on-square"
+                    class="w-4 h-4 inline-block text-primary-600 font-bold"
+                  />
+                </.link>
+              </p>
+            </td>
+          </tr>
+          <tr :if={@withdrawal != nil and @withdrawal.admin_note} class="bg-yellow-50">
+            <td
+              scope="row"
+              class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
+            >
+              Catatan admin
+            </td>
+            <td
+              scope="row"
+              class="flex p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
+            >
+              <.icon name="hero-chevron-right me-3 w-3 h-3" />
+              <p>
+                <%= @withdrawal.admin_note %>
               </p>
             </td>
           </tr>
@@ -284,5 +333,56 @@
         Tarik Dana
       </.button>
     </div>
+
+    <%!-- admin actions --%>
+    <.admin_block user={@current_user}>
+      <.simple_form
+        for={@admin_form}
+        phx-submit="admin:update_withdrawal"
+        phx-change="admin:update_withdrawal_validate"
+      >
+        <div class="space-y-4">
+          <.input
+            label="Status"
+            field={@admin_form[:status]}
+            type="select"
+            options={[
+              {"Cancelled", "cancelled"},
+              {"Submitted", "submitted"},
+              {"Rejected", "rejected"},
+              {"Success", "success"}
+            ]}
+            required
+          />
+          <.input label="Catatan" field={@admin_form[:admin_note]} type="textarea" />
+          <AppWeb.AdminLive.Product.Components.Commons.live_file_error upload={
+            @uploads.admin_transfer_prove
+          } />
+          <.live_file_input upload={@uploads.admin_transfer_prove} />
+          <.link
+            :if={@withdrawal.admin_transfer_prove}
+            href={App.Credits.withdrawal_attachment_url(@withdrawal)}
+            target="_blank"
+          >
+            <%= @withdrawal.admin_transfer_prove.file_name %>
+            <.icon
+              name="hero-arrow-top-right-on-square"
+              class="w-4 h-4 inline-block text-primary-600 font-bold"
+            />
+          </.link>
+        </div>
+        <:actions>
+          <div class="mt-2 text-right">
+            <.button
+              phx-disable-with="Loading..."
+              class="w-full px-5 py-2 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            >
+              Submit
+            </.button>
+          </div>
+        </:actions>
+      </.simple_form>
+    </.admin_block>
+    <%!-- end admin actions --%>
   </div>
 </.modal>

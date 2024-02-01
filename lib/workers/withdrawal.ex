@@ -4,26 +4,24 @@ defmodule Workers.Withdrawal do
   alias App.Users
   alias App.Credits
 
-  def notify_withdrawal_confirmation(withdrawal) do
-    %{action: "notify_withdrawal_confirmation", id: withdrawal.id}
-    |> __MODULE__.new()
-    |> Oban.insert()
-  end
+  def notify(withdrawal) do
+    action =
+      case withdrawal.status do
+        :pending -> "withdrawal_confirmation"
+        :submitted -> "withdrawal_confirmed"
+        :cancelled -> "withdrawal_cancellation"
+        :rejected -> "withdrawal_rejected"
+        :success -> "withdrawal_success"
+        _ -> "noop"
+      end
 
-  def notify_withdrawal_confirmed(withdrawal) do
-    %{action: "notify_withdrawal_confirmed", id: withdrawal.id}
-    |> __MODULE__.new()
-    |> Oban.insert()
-  end
-
-  def notify_withdrawal_cancelation(withdrawal) do
-    %{action: "notify_withdrawal_cancelation", id: withdrawal.id}
+    %{action: action, id: withdrawal.id}
     |> __MODULE__.new()
     |> Oban.insert()
   end
 
   @impl true
-  def perform(%{args: %{"action" => "notify_withdrawal_confirmation", "id" => id}}) do
+  def perform(%{args: %{"action" => action, "id" => id}}) do
     case Credits.get_withdrawal(id) do
       nil ->
         Logger.warning("#{__MODULE__} warning: withdrawal=#{id} not found")
@@ -31,34 +29,31 @@ defmodule Workers.Withdrawal do
         :ok
 
       withdrawal ->
-        send_confirmation_email(withdrawal)
+        case action do
+          "withdrawal_confirmation" ->
+            send_confirmation_email(withdrawal)
+
+          "withdrawal_confirmed" ->
+            send_confirmed_email(withdrawal)
+
+          "withdrawal_cancellation" ->
+            send_cancellation_email(withdrawal)
+
+          "withdrawal_rejected" ->
+            send_rejected_email(withdrawal)
+
+          "withdrawal_success" ->
+            send_success_email(withdrawal)
+
+          _ ->
+            :ok
+        end
     end
   end
 
   @impl true
-  def perform(%{args: %{"action" => "notify_withdrawal_confirmed", "id" => id}}) do
-    case Credits.get_withdrawal(id) do
-      nil ->
-        Logger.warning("#{__MODULE__} warning: withdrawal=#{id} not found")
-
-        :ok
-
-      withdrawal ->
-        send_confirmed_email(withdrawal)
-    end
-  end
-
-  @impl true
-  def perform(%{args: %{"action" => "notify_withdrawal_cancelation", "id" => id}}) do
-    case Credits.get_withdrawal(id) do
-      nil ->
-        Logger.warning("#{__MODULE__} warning: withdrawal=#{id} not found")
-
-        :ok
-
-      withdrawal ->
-        send_cancelation_email(withdrawal)
-    end
+  def perform(_job) do
+    :ok
   end
 
   defp withdrawal_detail(withdrawal) do
@@ -95,6 +90,10 @@ defmodule Workers.Withdrawal do
     Silahkan klik link berikut untuk melanjutkan proses penarikan dana:
     #{base_url}/admin/withdrawals/confirm/#{token}
 
+    *** PENTING ***
+    Kami tidak bertanggung jawab atas kesalahan transfer dana yang disebabkan oleh kesalahan nomor rekening, nama rekening, atau nama bank penerima.
+    Oleh karena itu mohon pastikan data di atas sudah benar dan segera batalkan penarikan dana apabila ada kesalahan.
+
     --
     Tim Snappy
     """
@@ -124,7 +123,7 @@ defmodule Workers.Withdrawal do
     Dana segera ditransfer ke rekening Anda di hari kerja berikutnya (maksimal dalam 3 hari kerja).
 
     *** PENTING ***
-    Apabila dalam 3 hari kerja dana belum juga masuk ke rekening Anda, silahkan hubungi kami dengan membalas email ini.
+    - Apabila dalam 3 hari kerja dana belum juga masuk ke rekening Anda, silahkan hubungi kami dengan membalas email ini.
 
     --
     Tim Snappy
@@ -140,7 +139,7 @@ defmodule Workers.Withdrawal do
     |> App.Mailer.process_sync()
   end
 
-  defp send_cancelation_email(withdrawal) do
+  defp send_cancellation_email(withdrawal) do
     withdrawal = App.Repo.preload(withdrawal, :user)
     user = withdrawal.user
     base_url = AppWeb.Utils.base_url()
@@ -148,7 +147,7 @@ defmodule Workers.Withdrawal do
     text = """
     Halo #{user.email},
 
-    Anda telah MEMBATALKAN penarikan dana berikut:
+    Penarikan dana berikut telah DIBATALKAN:
     ----------------------------------------------------
     #{withdrawal_detail(withdrawal)}
     ----------------------------------------------------
@@ -163,6 +162,70 @@ defmodule Workers.Withdrawal do
     %{
       user: %{email: user.email},
       subject: "Penarikan Dana Dibatalkan",
+      text: text,
+      html: nil
+    }
+    |> App.Mailer.cast()
+    |> App.Mailer.process_sync()
+  end
+
+  defp send_rejected_email(withdrawal) do
+    withdrawal = App.Repo.preload(withdrawal, :user)
+    user = withdrawal.user
+
+    text = """
+    Halo #{user.email},
+
+    Penarikan dana berikut telah DITOLAK:
+    ----------------------------------------------------
+    #{withdrawal_detail(withdrawal)}
+    ----------------------------------------------------
+
+    Alasan penolakan:
+    #{withdrawal.admin_note}
+
+
+    Apabila ada yang kurang jelas, silahkan hubungi kami dengan membalas email ini.
+
+    --
+    Tim Snappy
+    """
+
+    %{
+      user: %{email: user.email},
+      subject: "Penarikan Dana Ditolak",
+      text: text,
+      html: nil
+    }
+    |> App.Mailer.cast()
+    |> App.Mailer.process_sync()
+  end
+
+  defp send_success_email(withdrawal) do
+    withdrawal = App.Repo.preload(withdrawal, :user)
+    user = withdrawal.user
+
+    text = """
+    Halo #{user.email},
+
+    Penarikan dana berikut telah SELESAI:
+    ----------------------------------------------------
+    #{withdrawal_detail(withdrawal)}
+    ----------------------------------------------------
+
+    Silahkan cek rekening Anda untuk memastikan dana telah masuk.
+
+
+    *** PENTING ***
+    Kami tidak bertanggung jawab atas kesalahan transfer dana yang disebabkan oleh kesalahan nomor rekening, nama rekening, atau nama bank penerima.
+
+    --
+    Tim Snappy
+    """
+
+    %{
+      user: %{email: user.email},
+      subject: "Penarikan Dana Berhasil",
       text: text,
       html: nil
     }

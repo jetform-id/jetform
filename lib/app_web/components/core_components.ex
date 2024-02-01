@@ -254,6 +254,20 @@ defmodule AppWeb.CoreComponents do
     """
   end
 
+  attr :user, :map, required: true
+  slot :inner_block
+
+  def admin_block(assigns) do
+    ~H"""
+    <div
+      :if={@user.role == :admin}
+      class="p-4 mb-4 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-2 border-dashed border-red-600"
+    >
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
   @doc """
   Renders a modal.
 

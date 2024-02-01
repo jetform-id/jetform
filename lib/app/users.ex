@@ -7,6 +7,12 @@ defmodule App.Users do
   defdelegate tz_select_options(), to: User
   defdelegate tz_label(tz), to: User
 
+  def set_role(user, role) do
+    user
+    |> User.changeset_role(%{role: role})
+    |> Repo.update()
+  end
+
   def get_bank_account_by_user(user) do
     case Repo.get_by(BankAccount, user_id: user.id) do
       nil -> nil

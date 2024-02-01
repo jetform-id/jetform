@@ -16,12 +16,15 @@ defmodule App.Users.User do
     {"Asia/Jayapura", "WIT", "Waktu Indonesia Timur"}
   ]
 
+  @roles ~w(user admin)a
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "users" do
     pow_user_fields()
 
     # field :username, :string
+    field :role, Ecto.Enum, values: @roles, default: :user
     field :timezone, :string, default: @default_tz
     field :plan, :string
     field :plan_valid_until, :utc_datetime
@@ -77,6 +80,12 @@ defmodule App.Users.User do
     user_or_changeset
     |> pow_changeset(attrs)
     |> pow_extension_changeset(attrs)
+  end
+
+  def changeset_role(user_or_changeset, attrs) do
+    user_or_changeset
+    |> cast(attrs, [:role])
+    |> validate_inclusion(:role, @roles)
   end
 
   # defp validate_username(changeset) do

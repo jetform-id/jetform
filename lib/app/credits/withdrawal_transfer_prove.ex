@@ -16,14 +16,14 @@ defmodule App.Credits.WithdrawalTransferProve do
   # end
 
   # Whitelist file extensions:
-  # def validate({file, _}) do
-  #   file_extension = file.file_name |> Path.extname() |> String.downcase()
+  def validate({file, _}) do
+    file_extension = file.file_name |> Path.extname() |> String.downcase()
 
-  #   case Enum.member?(~w(.jpg .jpeg .png), file_extension) do
-  #     true -> :ok
-  #     false -> {:error, "invalid file type"}
-  #   end
-  # end
+    case Enum.member?(~w(.jpg .jpeg .png), file_extension) do
+      true -> :ok
+      false -> {:error, "invalid file type"}
+    end
+  end
 
   # Override the persisted filenames:
   # def filename(version, _) do

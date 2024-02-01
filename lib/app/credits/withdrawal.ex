@@ -9,8 +9,8 @@ defmodule App.Credits.Withdrawal do
   }
 
   @statuses ~w(pending submitted rejected cancelled success)a
-  @required_fields ~w(amount withdrawal_timestamp recipient_bank_name recipient_bank_acc_name recipient_bank_acc_number)a
-  @optional_fields ~w(status service_fee admin_note admin_transfer_prove)a
+  @required_fields ~w(status amount withdrawal_timestamp recipient_bank_name recipient_bank_acc_name recipient_bank_acc_number)a
+  @optional_fields ~w(service_fee admin_note)a
   @attachment_fields ~w(admin_transfer_prove)a
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -31,8 +31,8 @@ defmodule App.Credits.Withdrawal do
   end
 
   @doc false
-  def changeset(payout, attrs) do
-    payout
+  def changeset(withdrawal, attrs) do
+    withdrawal
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> cast_attachments(attrs, @attachment_fields, allow_paths: true)
     |> validate_required(@required_fields)
