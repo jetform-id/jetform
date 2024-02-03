@@ -15,7 +15,7 @@ config :app,
   order_validity_hours: 2,
   access_validity_days: 7,
   withdrawal_fee: 5_000,
-  default_plan: App.Plans.Commission5
+  default_plan: App.Plans.Commission10
 
 config :app,
   ecto_repos: [App.Repo],

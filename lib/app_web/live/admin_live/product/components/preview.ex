@@ -107,12 +107,14 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           <.buy_button
             :if={@step == :cart}
             product={@product}
+            is_free={@total_price == 0}
             error={@error}
             on_click={JS.push("buy", target: @myself)}
           />
 
           <.checkout_form
             :if={@step == :checkout}
+            is_free={@total_price == 0}
             changeset={@checkout_changeset}
             submit_event={if @preview, do: "fake_order", else: "create_order"}
             submit_target={@myself}
@@ -127,6 +129,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
 
   attr :error, :string, default: nil
   attr :product, :map, required: true
+  attr :is_free, :boolean, default: false
   attr :on_click, JS, default: %JS{}
 
   def buy_button(assigns) do
@@ -145,16 +148,21 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         type="button"
         class="group inline-flex w-full items-center justify-center rounded-md bg-primary-700 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-800"
       >
-        <%= if Products.cta_custom?(@product.cta) do %>
-          <%= @product.cta_text %>
+        <%= if @is_free do %>
+          Dapatkan Gratis!
         <% else %>
-          <%= Products.cta_text(@product.cta) %>
+          <%= if Products.cta_custom?(@product.cta) do %>
+            <%= @product.cta_text %>
+          <% else %>
+            <%= Products.cta_text(@product.cta) %>
+          <% end %>
         <% end %>
       </button>
     </div>
     """
   end
 
+  attr :is_free, :boolean, default: false
   attr :changeset, :map, required: true
   attr :submit_event, :string, required: true
   attr :submit_target, :any, required: true
@@ -198,7 +206,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           <div class="border border-yellow-300 bg-yellow-100 rounded p-2 text-center">
             <p class="pl-6 mt-1 text-xs text-yellow-600">
               <.icon name="hero-exclamation-triangle" />
-              Harap pastikan data di atas sudah benar. Pihak penjual dan Snappy tidak bertanggung jawab atas kesalahan data yang dimasukan.
+              Harap pastikan data di atas sudah benar. Pihak penjual dan Snappy tidak bertanggung jawab atas akibat dari kesalahan data yang dimasukan.
             </p>
           </div>
 
@@ -224,7 +232,11 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
             type="submit"
             class="mt-6 w-full items-center justify-center rounded-md bg-primary-700 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-800"
           >
-            Pembayaran <span aria-hidden="true">→</span>
+            <%= if @is_free do
+              "Kirim link akses via email"
+            else
+              "Pembayaran"
+            end %> <span aria-hidden="true">→</span>
           </button>
         </:actions>
       </.simple_form>

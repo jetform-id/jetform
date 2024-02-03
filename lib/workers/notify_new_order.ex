@@ -3,10 +3,14 @@ defmodule Workers.NotifyNewOrder do
   require Logger
   alias App.Orders
 
-  def create(order) do
+  def create(%{status: :pending} = order) do
     %{id: order.id}
     |> __MODULE__.new()
     |> Oban.insert()
+  end
+
+  def create(_order) do
+    {:ok, :noop}
   end
 
   @impl true
