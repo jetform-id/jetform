@@ -105,10 +105,11 @@ defmodule Workers.Withdrawal do
       html: nil
     }
     |> App.Mailer.cast()
-    |> App.Mailer.process_sync()
+    |> App.Mailer.deliver()
   end
 
   defp send_confirmed_email(withdrawal) do
+    admin_email = Application.fetch_env!(:app, :admin_email)
     withdrawal = App.Repo.preload(withdrawal, :user)
     user = withdrawal.user
 
@@ -130,13 +131,14 @@ defmodule Workers.Withdrawal do
     """
 
     %{
+      bcc: {"", admin_email},
       user: %{email: user.email},
       subject: "Penarikan Dana Segera Diproses",
       text: text,
       html: nil
     }
     |> App.Mailer.cast()
-    |> App.Mailer.process_sync()
+    |> App.Mailer.deliver()
   end
 
   defp send_cancellation_email(withdrawal) do
@@ -166,7 +168,7 @@ defmodule Workers.Withdrawal do
       html: nil
     }
     |> App.Mailer.cast()
-    |> App.Mailer.process_sync()
+    |> App.Mailer.deliver()
   end
 
   defp send_rejected_email(withdrawal) do
@@ -198,7 +200,7 @@ defmodule Workers.Withdrawal do
       html: nil
     }
     |> App.Mailer.cast()
-    |> App.Mailer.process_sync()
+    |> App.Mailer.deliver()
   end
 
   defp send_success_email(withdrawal) do
@@ -230,6 +232,6 @@ defmodule Workers.Withdrawal do
       html: nil
     }
     |> App.Mailer.cast()
-    |> App.Mailer.process_sync()
+    |> App.Mailer.deliver()
   end
 end

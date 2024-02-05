@@ -121,8 +121,10 @@
               <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400">
                 Rp. <.price value={w.service_fee} />
               </td>
-              <td class="p-4 text-base font-medium text-green-500 whitespace-nowrap dark:text-gray-400">
-                Rp. <.price value={w.amount - w.service_fee} />
+              <td class="p-4 text-base font-medium whitespace-nowrap dark:text-gray-400">
+                <span class={if w.status == :success, do: "text-green-500", else: ""}>
+                  Rp. <.price value={w.amount - w.service_fee} />
+                </span>
               </td>
               <td class="p-4 text-base text-gray-600 whitespace-nowrap dark:text-white">
                 <.link

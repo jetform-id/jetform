@@ -119,8 +119,8 @@ defmodule App.Orders do
     end)
     |> Ecto.Multi.run(:workers, fn _repo, %{order: order, access: access} ->
       # - (if: pending) schedule a job to invalidate the order after it expires
-      # - (always) notify user about the order
-      # - (if: paid) notify user about their access to the product
+      # - (always) notify buyer about the order
+      # - (if: paid) notify buyer about their access to the product
       with {:ok, _} <- Workers.InvalidateOrder.create(order),
            {:ok, _} <- Workers.NotifyNewOrder.create(order),
            {:ok, _} <- Workers.NotifyNewAccess.create(access) do
@@ -377,9 +377,15 @@ defmodule App.Orders do
     |> Ecto.Multi.insert(:access, fn %{order: order} ->
       Contents.create_changeset_for_order(order)
     end)
-    |> Ecto.Multi.run(:workers, fn _repo, %{access: access} ->
-      # create a job to deliver (create content access, send email to buyer) content
-      Workers.NotifyNewAccess.create(access)
+    |> Ecto.Multi.run(:workers, fn _repo, %{order: order, access: access} ->
+      # - notify product owner and buyer about paid order
+      # - create a job to deliver (create content access, send email to buyer) content
+      with {:ok, _} <- Workers.NotifyPaidOrder.create(order),
+           {:ok, _} <- Workers.NotifyNewAccess.create(access) do
+        {:ok, true}
+      else
+        err -> err
+      end
     end)
     |> Repo.transaction()
     |> case do

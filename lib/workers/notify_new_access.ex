@@ -44,7 +44,8 @@ defmodule Workers.NotifyNewAccess do
     Berikut adalah link untuk mengakses '#{Orders.product_fullname(order)}':
     #{base_url}/access/#{access.id}
 
-    PENTING: link di atas hanya berlaku sampai #{valid_until} (7 hari dari sekarang).
+    *** PENTING ***
+    link di atas hanya berlaku sampai #{valid_until} (7 hari dari sekarang).
     Kami sarankan anda download semua file yang ada dan menyimpannya di tempat yang aman.
 
     Dan berikut detail order anda:
@@ -61,6 +62,6 @@ defmodule Workers.NotifyNewAccess do
       html: nil
     }
     |> App.Mailer.cast()
-    |> App.Mailer.process_sync()
+    |> App.Mailer.deliver()
   end
 end

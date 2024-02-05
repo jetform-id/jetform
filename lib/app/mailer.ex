@@ -6,16 +6,22 @@ defmodule App.Mailer do
   require Logger
 
   @impl true
-  def cast(%{user: user, subject: subject, text: text, html: html}) do
+  def cast(%{user: user, subject: subject, text: text, html: html} = params) do
     from_name = Application.fetch_env!(:app, :mailer_from_name)
     from_email = Application.fetch_env!(:app, :mailer_from_email)
 
-    %Swoosh.Email{}
-    |> to({Map.get(user, :name, ""), user.email})
-    |> from({from_name, from_email})
-    |> subject(subject)
-    |> html_body(html)
-    |> text_body(text)
+    email =
+      %Swoosh.Email{}
+      |> to({Map.get(user, :name, ""), user.email})
+      |> from({from_name, from_email})
+      |> subject(subject)
+      |> html_body(html)
+      |> text_body(text)
+
+    case params[:bcc] do
+      nil -> email
+      bcc -> bcc(email, bcc)
+    end
   end
 
   @impl true
@@ -31,10 +37,6 @@ defmodule App.Mailer do
     end)
 
     :ok
-  end
-
-  def process_sync(email) do
-    deliver(email)
   end
 
   defp log_warnings({:error, reason}) do

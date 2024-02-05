@@ -1,9 +1,9 @@
-defmodule Workers.NotifyNewOrder do
+defmodule Workers.NotifyPaidOrder do
   use Oban.Worker, queue: :default, max_attempts: 3
   require Logger
   alias App.Orders
 
-  def create(%{status: :pending} = order) do
+  def create(%{status: :paid} = order) do
     %{id: order.id}
     |> __MODULE__.new()
     |> Oban.insert()
@@ -32,13 +32,17 @@ defmodule Workers.NotifyNewOrder do
     buyer_text = """
     Halo #{order.customer_name},
 
-    Anda telah melakukan pembelian berikut:
+    Pembayaran anda atas produk berikut berhasil:
     No. Invoice: ##{order.invoice_number}
     Produk: #{Orders.product_fullname(order)}
     Total: Rp. #{order.total}
-    Status: #{order.status} (Menunggu Pembayaran)
+    Status: #{order.status} (LUNAS)
 
-    Detail pembelian dan cara pembayaran bisa anda lihat di halaman berikut:
+    *** PENTING ***
+    Anda akan segera menerima email tentang cara mengakses ke produk yang anda beli.
+    Apabila dalam 1 jam anda belum menerima email tersebut, silahkan hubungi kami dengan membalas email ini.
+
+    Detail pembelian bisa anda lihat di halaman berikut:
     #{base_url}/invoice/#{order.id}
 
     --
@@ -50,11 +54,14 @@ defmodule Workers.NotifyNewOrder do
     user_text = """
     Halo #{user.email},
 
-    Terdapat pesanan baru atas produk anda:
-    No. Invoice: ##{order.invoice_number}
+    Pembelian atas produk anda telah LUNAS:
+    No. Invoice: #{order.invoice_number}
     Produk: #{Orders.product_fullname(order)}
-    Total: Rp. #{order.total}
-    Status: #{order.status} (Menunggu Pembayaran)
+    Harga: Rp. #{order.total}
+    Status: #{order.status} (LUNAS)
+
+    Detail pembelian bisa anda lihat di halaman berikut:
+    #{base_url}/invoice/#{order.id}
 
     --
     Tim Snappy
@@ -62,16 +69,16 @@ defmodule Workers.NotifyNewOrder do
 
     [
       %{
-        user: %{name: order.customer_name, email: order.customer_email},
-        subject:
-          "Detail pembelian anda ##{order.invoice_number} | #{Orders.product_fullname(order)}",
-        text: buyer_text,
+        user: %{name: "", email: user.email},
+        subject: "Order Lunas ##{order.invoice_number} | #{Orders.product_fullname(order)}",
+        text: user_text,
         html: nil
       },
       %{
-        user: %{name: "", email: user.email},
-        subject: "Order Pending ##{order.invoice_number} | #{Orders.product_fullname(order)}",
-        text: user_text,
+        user: %{name: order.customer_name, email: order.customer_email},
+        subject:
+          "Pembayaran berhasil ##{order.invoice_number} | #{Orders.product_fullname(order)}",
+        text: buyer_text,
         html: nil
       }
     ]

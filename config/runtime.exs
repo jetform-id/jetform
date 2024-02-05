@@ -26,7 +26,8 @@ config :app,
   midtrans_merchant_id: System.get_env("MIDTRANS_MERCHANT_ID"),
   midtrans_mode: System.get_env("MIDTRANS_MODE", "sandbox"),
   mailer_from_name: System.get_env("MAILER_FROM_NAME", "Snappy"),
-  mailer_from_email: System.get_env("MAILER_FROM_EMAIL", "hello@snappy.id")
+  mailer_from_email: System.get_env("MAILER_FROM_EMAIL", "support@snappy.local"),
+  admin_email: System.get_env("ADMIN_EMAIL", "admin@snappy.local")
 
 if System.get_env("WAFFLE_AWS_S3_BUCKET") do
   config :waffle,
