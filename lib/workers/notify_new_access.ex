@@ -45,7 +45,7 @@ defmodule Workers.NotifyNewAccess do
     #{base_url}/access/#{access.id}
 
     *** PENTING ***
-    link di atas hanya berlaku sampai #{valid_until} (7 hari dari sekarang).
+    Link di atas hanya berlaku sampai #{valid_until} (7 hari dari sekarang).
     Kami sarankan anda download semua file yang ada dan menyimpannya di tempat yang aman.
 
     Dan berikut detail order anda:
