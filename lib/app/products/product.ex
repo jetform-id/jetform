@@ -5,6 +5,11 @@ defmodule App.Products.Product do
   import Ecto.Changeset
   alias App.Utils.ReservedWords
 
+  @derive {
+    Flop.Schema,
+    filterable: [:is_live], sortable: [:inserted_at]
+  }
+
   @required_fields ~w(name slug price cta)a
   @optional_fields ~w(is_live description cta_text details)a
   @ctas [

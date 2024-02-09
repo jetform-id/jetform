@@ -5,10 +5,10 @@
         Produk
       </h1>
       <.link
-        patch={~p"/admin/products?action=new"}
+        phx-click={JS.push("new", page_loading: true)}
         class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
       >
-        Tambah Produk
+        <.icon name="hero-plus" /> Buat Produk
       </.link>
     </div>
   </div>
@@ -42,19 +42,13 @@
                 scope="col"
                 class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
               >
-                Dibuat Pada
+                Dibuat
               </th>
               <th
                 scope="col"
                 class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
               >
                 Harga
-              </th>
-              <th
-                scope="col"
-                class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
-              >
-                Terjual
               </th>
               <th
                 scope="col"
@@ -112,27 +106,23 @@
                   </.link>
                 </div>
               </td>
-              <td class="max-w-sm p-4 overflow-hidden text-base font-normal text-gray-500 truncate xl:max-w-xs dark:text-gray-400">
-                <.indo_datetime value={product.inserted_at} tz={@current_user.timezone} show_label/>
+              <td class="p-4 overflow-hidden text-sm font-normal text-gray-500 truncate xl:max-w-xs dark:text-gray-400">
+                <.indo_datetime value={product.inserted_at} tz={@current_user.timezone} />
               </td>
-              <td class="p-4 text-base text-gray-600 whitespace-nowrap dark:text-white">
+              <td class="p-4 text-sm text-sm text-gray-600 whitespace-nowrap dark:text-white">
                 <%= if App.Products.has_variants?(product) do %>
                   Bervariasi
                 <% else %>
                   Rp. <.price value={product.price} />
                 <% end %>
               </td>
-              <td class="p-4 text-base text-gray-600 whitespace-nowrap dark:text-white">
-                1203
-              </td>
-
               <td class="p-4 space-x-2 whitespace-nowrap">
                 <.link
                   phx-click={JS.push("delete", value: %{id: product.id})}
-                  data-confirm="Are you sure?"
+                  data-confirm="Anda yakin ingin menghapus produk?"
                   class="inline-flex items-center text-sm text-center text-red-600 rounded-sm focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
                 >
-                  <.icon name="hero-trash-solid" class="w-4 h-4 mr-1" /> Delete
+                  <.icon name="hero-x-circle-solid" class="w-4 h-4 mr-1" /> Hapus
                 </.link>
               </td>
             </tr>
@@ -141,6 +131,12 @@
         </table>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="sticky bottom-0 right-0 items-center w-full p-4 bg-white border-t border-gray-200 sm:flex sm:justify-between dark:bg-gray-800 dark:border-gray-700">
+  <div class="flex items-center mb-4 sm:mb-0">
+    <.pagination :if={@pagination} meta={@pagination} />
   </div>
 </div>
 <!--
@@ -229,7 +225,7 @@
   </div>
 </div>
 -->
-<.modal :if={@new_modal} id="product-modal" show on_cancel={JS.patch(~p"/admin/products")}>
+<.modal :if={@show_modal} id="product-modal" show on_cancel={JS.push("close_modal")}>
   <.live_component
     module={AppWeb.AdminLive.Product.Components.NewForm}
     id={:new_product}

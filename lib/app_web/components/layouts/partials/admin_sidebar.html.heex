@@ -12,13 +12,33 @@
           <% end %>
         </ul>
         <div class="pt-2 space-y-2">
+          <.link
+            navigate={~p"/admin/account"}
+            class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
+          >
+            <.icon
+              name="hero-user-solid"
+              class="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+            />
+            <span class="ml-3" sidebar-toggle-item>Akun</span>
+          </.link>
+          <.link
+            navigate={~p"/admin/integrations"}
+            class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
+          >
+            <.icon
+              name="hero-sparkles-solid"
+              class="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+            />
+            <span class="ml-3" sidebar-toggle-item>Integrasi</span>
+          </.link>
           <a
             href="https://github.com/ekaputra07/snappy/discussions"
             target="_blank"
             class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
           >
             <.icon
-              name="hero-lifebuoy"
+              name="hero-lifebuoy-solid"
               class="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
             />
             <span class="ml-3" sidebar-toggle-item>Bantuan</span>
@@ -29,7 +49,7 @@
             class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
           >
             <.icon
-              name="hero-code-bracket-square"
+              name="hero-code-bracket-square-solid"
               class="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
             />
             <span class="ml-3" sidebar-toggle-item>Open Source</span>

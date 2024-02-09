@@ -22,7 +22,7 @@ defmodule AppWeb.AdminLive.Product.Components.NewForm do
           <.input field={f[:price]} type="number" label="Harga" required>
             <:help>
               <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                Masukkan 0 untuk membuat varian ini gratis.
+                Masukkan 0 untuk membuat produk ini gratis.
               </div>
             </:help>
           </.input>
@@ -34,7 +34,7 @@ defmodule AppWeb.AdminLive.Product.Components.NewForm do
               phx-disable-with="Creating..."
               class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
             >
-              Create and customize <span aria-hidden="true">→</span>
+              Buat Produk <span aria-hidden="true">→</span>
             </.button>
           </div>
         </:actions>
@@ -51,7 +51,7 @@ defmodule AppWeb.AdminLive.Product.Components.NewForm do
       case Products.create_product(params) do
         {:ok, product} ->
           socket
-          |> put_flash(:info, "Product created successfully.")
+          |> put_flash(:info, "Produk berhasil dibuat.")
           |> push_navigate(to: ~p"/admin/products/#{product.id}/edit")
 
         {:error, changeset} ->

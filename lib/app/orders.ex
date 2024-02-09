@@ -44,8 +44,14 @@ defmodule App.Orders do
   """
   def list_orders!(user, query) do
     Order
-    |> where(user_id: ^user.id)
+    |> list_orders_by_user_scope(user)
     |> Flop.validate_and_run!(query)
+  end
+
+  def list_orders_by_user_scope(q, %{role: :admin}), do: q
+
+  def list_orders_by_user_scope(q, user) do
+    where(q, [o], o.user_id == ^user.id)
   end
 
   def list_paid_orders!(query) do

@@ -56,18 +56,6 @@
                 scope="col"
                 class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
               >
-                Dibuat
-              </th>
-              <th
-                scope="col"
-                class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
-              >
-                Diperbarui
-              </th>
-              <th
-                scope="col"
-                class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
-              >
                 Status
               </th>
               <th
@@ -92,6 +80,18 @@
                 scope="col"
                 class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
               >
+                Dibuat
+              </th>
+              <th
+                scope="col"
+                class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
+              >
+                Diubah
+              </th>
+              <th
+                scope="col"
+                class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
+              >
               </th>
             </tr>
           </thead>
@@ -106,12 +106,6 @@
               id={dom_id}
               class={"hover:bg-gray-100 dark:hover:bg-gray-700 " <> if w.status in [:cancelled], do: "opacity-60 dark:opacity-60", else: ""}
             >
-              <td class="p-4 text-sm text-gray-600 whitespace-nowrap dark:text-white">
-                <.indo_datetime value={w.inserted_at} tz={@current_user.timezone} />
-              </td>
-              <td class="p-4 text-sm text-gray-600 whitespace-nowrap dark:text-white">
-                <.indo_datetime value={w.updated_at} tz={@current_user.timezone} />
-              </td>
               <td class="max-w-sm p-4 overflow-hidden text-sm font-normal text-gray-500 truncate xl:max-w-xs dark:text-gray-400">
                 <Commons.status_badge status={w.status} />
               </td>
@@ -125,6 +119,12 @@
                 <span class={if w.status == :success, do: "text-green-500", else: ""}>
                   Rp. <.price value={w.amount - w.service_fee} />
                 </span>
+              </td>
+              <td class="p-4 text-sm text-gray-600 whitespace-nowrap dark:text-white">
+                <.indo_datetime value={w.inserted_at} tz={@current_user.timezone} />
+              </td>
+              <td class="p-4 text-sm text-gray-600 whitespace-nowrap dark:text-white">
+                <.indo_datetime value={w.updated_at} tz={@current_user.timezone} />
               </td>
               <td class="p-4 text-base text-gray-600 whitespace-nowrap dark:text-white">
                 <.link

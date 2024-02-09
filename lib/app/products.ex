@@ -10,9 +10,16 @@ defmodule App.Products do
   defdelegate has_details?(product), to: Product
   defdelegate has_variants?(product), to: Product
 
-  def list_products_by_user(user) do
-    query = from(p in Product, where: p.user_id == ^user.id, order_by: [desc: p.inserted_at])
-    Repo.all(query)
+  def list_products_by_user!(user, query) do
+    Product
+    |> list_products_by_user_scope(user)
+    |> Flop.validate_and_run!(query)
+  end
+
+  def list_products_by_user_scope(q, %{role: :admin}), do: q
+
+  def list_products_by_user_scope(q, user) do
+    where(q, [p], p.user_id == ^user.id)
   end
 
   def get_product(id) do

@@ -1,0 +1,181 @@
+<div class="px-4 py-6 space-y-4">
+  <div class="flex gap-12 p-10 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800">
+    <img src={~p"/images/integrations.svg"} class="flex-none max-w-xs" />
+    <div class="flex-1 space-y-3">
+      <h1 class="text-2xl font-semibold text-primary-600 mb-4">
+        Integrasi dengan Snappy
+      </h1>
+      <p class="text-base text-gray-500 font-light text-xl">
+        Snappy bisa diintegrasikan dengan berbagai platform lain yang bisa membuatnya jauh lebih powerful.
+      </p>
+      <p class="text-base text-gray-500 text-md">
+        Anda bisa menggunakan integrasi Snappy dengan
+        <.link href="https://zapier.com/" class="text-primary-600 font-medium" target="_blank">
+          Zapier
+        </.link>
+        sehingga otomatis terhubung dengan ribuan platform yang didukung oleh Zapier tanpa perlu keahlian coding.
+      </p>
+      <p class="text-base text-gray-500 text-md">
+        Informasi lebih detail mengenai integrasi dengan Zapier atau manual menggunakan API dari Snappy bisa anda temukan di halaman
+        <.link href="https://zapier.com/" class="text-primary-600 font-medium" target="_blank">
+          dokumentasi integrasi
+        </.link>
+        kami.
+      </p>
+    </div>
+  </div>
+
+  <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+    <!-- Card header -->
+    <div class="items-center justify-between lg:flex">
+      <div class="mb-4 lg:mb-0">
+        <h3 class="mb-2 text-xl font-semibold text-gray-900 dark:text-white">API Keys</h3>
+      </div>
+      <div class="items-center sm:flex">
+        <div class="flex items-center">
+          <button
+            phx-click={JS.push("new_key", page_loading: true)}
+            class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+          >
+            <.icon name="hero-plus" /> Buat API Key
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Table -->
+    <div class="flex flex-col mt-6">
+      <div class="overflow-x-auto rounded-lg">
+        <div class="inline-block min-w-full align-middle">
+          <div class="overflow-hidden shadow sm:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+              <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                  <th
+                    scope="col"
+                    class="p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white"
+                  >
+                    Nama
+                  </th>
+                  <th
+                    scope="col"
+                    class="p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white"
+                  >
+                    Key (Masked)
+                  </th>
+                  <th
+                    scope="col"
+                    class="p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white"
+                  >
+                    Dibuat
+                  </th>
+                  <th
+                    scope="col"
+                    class="p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white"
+                  >
+                    Diubah
+                  </th>
+                  <th
+                    scope="col"
+                    class="p-4 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-white"
+                  >
+                    Aksi
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white dark:bg-gray-800" id="api-key-list" phx-update="stream">
+                <tr :for={{dom_id, key} <- @streams.api_keys} id={dom_id}>
+                  <td class="p-4 text-sm font-normal text-primary-600 whitespace-nowrap dark:text-white">
+                    <.link phx-click={
+                      JS.push("show_key", value: %{id: key.id}, page_loading: true)
+                    }>
+                      <span class="font-semibold text-primary-600"><%= key.name %></span>
+                    </.link>
+                  </td>
+                  <td class="p-4 text-sm whitespace-nowrap text-gray-500">
+                    <%= key.masked_key %>
+                  </td>
+                  <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap">
+                    <.indo_datetime value={key.inserted_at} tz={@current_user.timezone} />
+                  </td>
+                  <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap">
+                    <.indo_datetime value={key.updated_at} tz={@current_user.timezone} />
+                  </td>
+                  <td class="p-4 text-sm font-normal text-primary-600 whitespace-nowrap">
+                    <.link
+                      phx-click={JS.push("delete_key", value: %{id: key.id}, page_loading: true)}
+                      data-confirm="Menghapus API Key ini akan membuat semua integrasi yang menggunakan key ini tidak bekerja. Anda yakin ingin melanjutkan?"
+                      class="text-red-500"
+                    >
+                      <.icon name="hero-x-circle-solid" class="w-4 h-4 mr-1" /> Hapus
+                    </.link>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Card Footer -->
+    <.modal :if={@show_modal} id="api-key-modal" show on_cancel={JS.push("close_modal")}>
+      <div>
+        <h3 class="text-xl mb-2">
+          API Key
+        </h3>
+        <div
+          :if={@form.data.id}
+          class="p-4 mt-2 text-sm text-left text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
+          role="alert"
+        >
+          <strong>Hanya Nama key yang bisa diubah</strong>. Jika Anda merasa key ini sudah tidak aman, silakan hapus dan buat key baru.
+        </div>
+        <.simple_form
+          for={@form}
+          as={:api_key}
+          phx-update="replace"
+          phx-submit={if @form.data.id, do: "update_key", else: "create_key"}
+        >
+          <div class="mt-8 space-y-6">
+            <.input field={@form[:name]} type="text" label="Nama Key" required>
+              <:help>
+                <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  Mempermudah mengidentifikasi key ini dengan yang lain. Contoh:
+                  <strong>Integrasi dengan Zapier</strong>
+                </div>
+              </:help>
+            </.input>
+
+            <%= if @form.data.id do %>
+              <.input field={@form[:id]} type="hidden" required />
+              <.input field={@form[:masked_key]} type="text" label="Key (masked)" disabled />
+            <% else %>
+              <.input field={@form[:key]} type="hidden" required />
+              <.input field={@form[:key]} type="text" label="Key" required disabled />
+            <% end %>
+          </div>
+
+          <:actions>
+            <div class="mt-8 text-right">
+              <div
+                :if={!@form.data.id}
+                class="p-4 mb-4 text-sm text-left text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
+                role="alert"
+              >
+                <span class="font-medium">
+                  <.icon name="hero-hand-raised" /> <strong>PERHATIAN!</strong>
+                </span>
+                Sebelum menyimpan, pastikan untuk menyalin KEY di atas dan menyimpannya di tempat yang aman. <strong>Key ini tidak akan ditampilkan lagi</strong>.
+              </div>
+              <.button
+                phx-disable-with="Menyimpan key..."
+                class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+              >
+                Simpan <span aria-hidden="true">→</span>
+              </.button>
+            </div>
+          </:actions>
+        </.simple_form>
+      </div>
+    </.modal>
+  </div>
+</div>

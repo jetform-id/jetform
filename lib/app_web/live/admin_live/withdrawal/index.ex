@@ -235,26 +235,20 @@ defmodule AppWeb.AdminLive.Withdrawal.Index do
   end
 
   defp apply_params(socket, params) do
-    page = Map.get(params, "page", "1") |> String.to_integer()
+    query = %{
+      order_by: [:inserted_at],
+      order_directions: [:desc],
+      page_size: @result_limit,
+      page: max(1, Map.get(params, "page", "1") |> String.to_integer())
+    }
 
     {withdrawals, pagination} =
-      fetch_withdrawals(socket.assigns.current_user, page)
+      Credits.list_withdrawals_by_user!(socket.assigns.current_user, query)
 
     socket
     |> assign(:show_modal, false)
     |> assign(:pagination, pagination)
     |> stream(:withdrawals, withdrawals, reset: true)
-  end
-
-  defp fetch_withdrawals(user, page) do
-    query = %{
-      order_by: [:inserted_at],
-      order_directions: [:desc],
-      page_size: @result_limit,
-      page: max(page, 1)
-    }
-
-    Credits.list_withdrawals_by_user(user, query)
   end
 
   defp maybe_put_attachment(socket, params, field) when is_atom(field) do

@@ -122,6 +122,9 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           />
         </div>
       </div>
+      <p class="text-center p-3 text-sm text-gray-400">
+        <.link navigate="/">powered by Snappy</.link>
+      </p>
     </div>
     <%!-- end preview --%>
     """
@@ -213,7 +216,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           <.input
             field={f[:confirm]}
             type="checkbox"
-            label="Saya menyatakan bahwa data di atas sudah benar."
+            label="Saya setuju dengan Syarat dan Ketentuan yang berlaku."
             wrapper_class="mx-auto"
             required
           />
@@ -233,7 +236,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
             class="mt-6 w-full items-center justify-center rounded-md bg-primary-700 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-800"
           >
             <%= if @is_free do
-              "Kirim link akses via email"
+              "Kirim akses produk via email"
             else
               "Pembayaran"
             end %> <span aria-hidden="true">→</span>

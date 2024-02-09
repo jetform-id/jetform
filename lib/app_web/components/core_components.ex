@@ -48,7 +48,7 @@ defmodule AppWeb.CoreComponents do
   attr :tz, :string, default: "Asia/Jakarta"
   attr :show_label, :boolean, default: false
   attr :mode, :string, values: ["compact", "verbose"], default: "compact"
-  attr :compact_fmt, :string, default: "%d-%m-%Y %H:%M"
+  attr :compact_fmt, :string, default: "%d/%m/%Y %H:%M"
   attr :verbose_fmt, :string, default: "%d %B %Y %H:%M"
 
   def indo_datetime(assigns) do

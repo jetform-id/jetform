@@ -186,7 +186,7 @@ defmodule App.Credits do
   def get_withdrawal!(id), do: Repo.get!(Withdrawal, id)
   def get_withdrawal(id), do: Repo.get(Withdrawal, id)
 
-  def list_withdrawals_by_user(user, query) do
+  def list_withdrawals_by_user!(user, query) do
     Withdrawal
     |> list_withdrawals_by_user_scope(user)
     |> Flop.validate_and_run!(query)

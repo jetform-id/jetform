@@ -31,12 +31,22 @@ defmodule AppWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :protected_api do
+    plug :accepts, ["json"]
+    plug AppWeb.Plug.RequireAPIKey
+  end
+
   # -------------------- Scopes --------------------
   scope "/api", AppWeb do
     pipe_through :api
 
     get "/payment/redirect", PaymentController, :midtrans_redirect
     post "/payment/notification", PaymentController, :midtrans_notification
+
+    scope "/v1" do
+      pipe_through :protected_api
+      resources "/orders", API.OrderController, only: [:index, :show]
+    end
   end
 
   scope "/", AppWeb do
@@ -79,6 +89,9 @@ defmodule AppWeb.Router do
       # withdrawals
       live "/withdrawals", AdminLive.Withdrawal.Index
       live "/withdrawals/confirm/:token", AdminLive.Withdrawal.Index, :confirm
+
+      # integrations
+      live "/integrations", AdminLive.APIKey.Index
 
       # dashboard
       live "/", AdminLive.Dashboard.Index
