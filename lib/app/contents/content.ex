@@ -4,7 +4,7 @@ defmodule App.Contents.Content do
   import Ecto.Changeset
 
   @required_fields ~w(type name)a
-  @optional_fields ~w(text is_deleted)a
+  @optional_fields ~w(text deleted_at)a
   @attachment_fields ~w(file)a
   @types ~w(text file)a
 
@@ -15,7 +15,7 @@ defmodule App.Contents.Content do
     field :name, :string
     field :text, :string
     field :file, App.Contents.ContentFile.Type
-    field :is_deleted, :boolean, default: false
+    field :deleted_at, :utc_datetime
 
     belongs_to :product, App.Products.Product
     belongs_to :product_variant, App.Products.Variant

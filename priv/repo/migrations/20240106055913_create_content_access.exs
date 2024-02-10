@@ -1,6 +1,12 @@
 defmodule App.Repo.Migrations.CreateContentAccess do
   use Ecto.Migration
 
+  @doc """
+  Store buyer's access to contents.
+
+  When order deleted, access will be deleted.
+  No point keeping content accesses if the order is deleted.
+  """
   def change do
     create table(:content_access, primary_key: false) do
       add :id, :binary_id, primary_key: true

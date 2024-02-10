@@ -1,6 +1,11 @@
 defmodule App.Repo.Migrations.CreateProductVersions do
   use Ecto.Migration
 
+  @doc """
+  Store user's product versions.
+
+  When user deleted, all their product variant will be deleted.
+  """
   def change do
     create table(:product_variants, primary_key: false) do
       add :id, :binary_id, primary_key: true

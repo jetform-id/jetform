@@ -18,7 +18,7 @@ defmodule App.Mailer do
       |> html_body(html)
       |> text_body(text)
 
-    case params[:bcc] do
+    case Map.get(params, :bcc) do
       nil -> email
       bcc -> bcc(email, bcc)
     end

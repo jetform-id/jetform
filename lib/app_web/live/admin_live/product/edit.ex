@@ -18,7 +18,6 @@ defmodule AppWeb.AdminLive.Product.Edit do
           |> assign(:product, App.Repo.preload(product, :variants))
           |> assign(:changeset, Products.change_product(product, %{}))
           |> allow_upload(:cover, accept: ~w(.jpg .jpeg .png), max_file_size: 1_000_000)
-          |> assign(:action, ~p"/admin/products")
       end
 
     {:ok, socket}
@@ -53,7 +52,8 @@ defmodule AppWeb.AdminLive.Product.Edit do
           socket
           |> assign(:product, product)
           |> assign(:changeset, Products.change_product(product, %{}))
-          |> put_flash(:info, "Product updated successfully.")
+          |> put_flash(:info, "Produk berhasil disimpan.")
+          |> redirect(to: ~p"/admin/products")
 
         {:error, changeset} ->
           socket

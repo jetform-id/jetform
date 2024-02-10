@@ -1,6 +1,12 @@
 defmodule App.Repo.Migrations.CreateCredits do
   use Ecto.Migration
 
+  @doc """
+  Store user's credits. Have one-to-one relation with order.
+
+  When user deleted, all their credits will be deleted.
+  When order deleted, all their credits will be deleted.
+  """
   def change do
     create table(:credits, primary_key: false) do
       add :id, :binary_id, primary_key: true

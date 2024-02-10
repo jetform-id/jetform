@@ -79,9 +79,10 @@ config :app, :pow,
   repo: App.Repo,
   extensions: [PowResetPassword, PowEmailConfirmation],
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks,
-  routes_backend: AppWeb.PowAuthRoutes,
   cache_store_backend: Pow.Store.Backend.MnesiaCache,
-  mailer_backend: App.Mailer
+  mailer_backend: App.Mailer,
+  routes_backend: AppWeb.PowAuthRoutes,
+  messages_backend: AppWeb.PowAuthMessages
 
 config :waffle,
   storage: Waffle.Storage.Local,

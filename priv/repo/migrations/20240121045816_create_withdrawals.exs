@@ -1,6 +1,11 @@
 defmodule App.Repo.Migrations.CreateWithdrawals do
   use Ecto.Migration
 
+  @doc """
+  Store user's withdrawals.
+
+  When user deleted, all their withdrawals will be deleted.
+  """
   def change do
     create table(:withdrawals, primary_key: false) do
       add :id, :binary_id, primary_key: true

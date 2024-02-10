@@ -5,6 +5,7 @@ defmodule AppWeb.AccountController do
   alias App.Plans
 
   def edit(conn, _params) do
+    IO.inspect(conn.assigns.current_user)
     plan = Plans.get(conn.assigns.current_user.plan)
     user = conn.assigns.current_user |> App.Repo.preload(:bank_account)
 

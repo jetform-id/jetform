@@ -23,20 +23,20 @@ defmodule App.Contents do
     Repo.all(Content)
   end
 
-  def list_contents_by_product(product, is_deleted \\ false) do
+  def list_contents_by_product(product) do
     Repo.all(
       from c in Content,
         where: c.product_id == ^product.id,
-        where: c.is_deleted == ^is_deleted,
+        where: is_nil(c.deleted_at),
         order_by: [asc: c.inserted_at]
     )
   end
 
-  def list_contents_by_variant(variant, is_deleted \\ false) do
+  def list_contents_by_variant(variant) do
     Repo.all(
       from c in Content,
         where: c.product_variant_id == ^variant.id,
-        where: c.is_deleted == ^is_deleted,
+        where: is_nil(c.deleted_at),
         order_by: [asc: c.inserted_at]
     )
   end
@@ -122,7 +122,7 @@ defmodule App.Contents do
 
   def soft_delete_content(%Content{} = content) do
     content
-    |> Content.changeset(%{"is_deleted" => true})
+    |> Content.changeset(%{"deleted_at" => Timex.now()})
     |> Repo.update()
   end
 

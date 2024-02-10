@@ -1,6 +1,11 @@
 defmodule App.Repo.Migrations.CreateBankAccounts do
   use Ecto.Migration
 
+  @doc """
+  Store user's bank accounts.
+
+  When user deleted, all their bank accounts will be deleted.
+  """
   def change do
     create table(:bank_accounts, primary_key: false) do
       add :id, :binary_id, primary_key: true

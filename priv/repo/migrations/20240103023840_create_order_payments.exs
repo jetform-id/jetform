@@ -1,6 +1,12 @@
 defmodule App.Repo.Migrations.CreateOrderPayments do
   use Ecto.Migration
 
+  @doc """
+  Store payments history for orders.
+
+  When order deleted, payments history for order will be deleted.
+  No point keeping payments history if the order is deleted.
+  """
   def change do
     create table(:order_payments, primary_key: false) do
       add :id, :uuid, primary_key: true, null: false

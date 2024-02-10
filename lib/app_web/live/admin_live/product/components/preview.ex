@@ -107,14 +107,14 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           <.buy_button
             :if={@step == :cart}
             product={@product}
-            is_free={@total_price == 0}
+            is_free={@selected_variant && @total_price == 0}
             error={@error}
             on_click={JS.push("buy", target: @myself)}
           />
 
           <.checkout_form
             :if={@step == :checkout}
-            is_free={@total_price == 0}
+            is_free={@selected_variant && @total_price == 0}
             changeset={@checkout_changeset}
             submit_event={if @preview, do: "fake_order", else: "create_order"}
             submit_target={@myself}
@@ -152,7 +152,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         class="group inline-flex w-full items-center justify-center rounded-md bg-primary-700 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-800"
       >
         <%= if @is_free do %>
-          Dapatkan Gratis!
+          Dapatkan Akses Gratis!
         <% else %>
           <%= if Products.cta_custom?(@product.cta) do %>
             <%= @product.cta_text %>
@@ -175,11 +175,11 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
     ~H"""
     <div class="mt-6 space-y-4">
       <hr class="my-4" />
-      <div>
+      <%!-- <div>
         <p class="font-normal flex items-center">
           <.icon name="hero-identification me-1" />Data Pembeli
         </p>
-      </div>
+      </div> --%>
       <.simple_form
         :let={f}
         for={@changeset}

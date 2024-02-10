@@ -1,6 +1,11 @@
 defmodule App.Repo.Migrations.CreateApiKeys do
   use Ecto.Migration
 
+  @doc """
+  Store user's API keys.
+
+  When user deleted, all their API keys will be deleted.
+  """
   def change do
     create table(:api_keys, primary_key: false) do
       add :id, :binary_id, primary_key: true

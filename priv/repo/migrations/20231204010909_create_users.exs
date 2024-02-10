@@ -8,8 +8,9 @@ defmodule App.Repo.Migrations.CreateUsers do
       add :email, :string, null: false
       add :password_hash, :string
       # extra fields
-      add :timezone, :string, null: false
       # add :username, :string, null: false
+      add :role, :string, null: false
+      add :timezone, :string, null: false
       add :plan, :string, null: false
       add :plan_valid_until, :utc_datetime, null: false
 

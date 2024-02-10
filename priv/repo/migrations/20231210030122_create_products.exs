@@ -1,6 +1,11 @@
 defmodule App.Repo.Migrations.CreateProducts do
   use Ecto.Migration
 
+  @doc """
+  Store user's products.
+
+  When user deleted, all their products will be deleted.
+  """
   def change do
     create table(:products, primary_key: false) do
       add :id, :binary_id, primary_key: true

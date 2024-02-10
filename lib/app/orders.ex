@@ -43,7 +43,10 @@ defmodule App.Orders do
   Returns the list of orders for a given user.
   """
   def list_orders!(user, query) do
-    Order
+    from(
+      o in Order,
+      where: not is_nil(o.product_id)
+    )
     |> list_orders_by_user_scope(user)
     |> Flop.validate_and_run!(query)
   end
@@ -52,15 +55,6 @@ defmodule App.Orders do
 
   def list_orders_by_user_scope(q, user) do
     where(q, [o], o.user_id == ^user.id)
-  end
-
-  def list_paid_orders!(query) do
-    from(
-      o in Order,
-      where: o.status == :paid,
-      where: o.total > 0
-    )
-    |> Flop.validate_and_run!(query)
   end
 
   @doc """
