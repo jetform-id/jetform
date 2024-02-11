@@ -69,7 +69,7 @@ defmodule Workers.Withdrawal do
     Jumlah penarikan: Rp. #{withdrawal.amount}
     Biaya admin: Rp. #{withdrawal.service_fee}
     Jumlah diterima: Rp. #{withdrawal.amount - withdrawal.service_fee}
-    Akun Bank penerima: #{withdrawal.recipient_bank_name} / #{withdrawal.recipient_bank_acc_name} / #{withdrawal.recipient_bank_acc_number}
+    Akun Bank penerima: #{App.Users.bank_name(withdrawal.recipient_bank_name)} / #{withdrawal.recipient_bank_acc_name} / #{withdrawal.recipient_bank_acc_number}
     """
   end
 

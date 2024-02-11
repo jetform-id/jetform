@@ -2,7 +2,7 @@ defmodule App.Users do
   import Ecto.Query, warn: false
 
   alias App.Repo
-  alias App.Users.{User, BankAccount, APIKey}
+  alias App.Users.{User, BankAccount, APIKey, BankList}
 
   defdelegate tz_select_options(), to: User
   defdelegate tz_label(tz), to: User
@@ -11,6 +11,23 @@ defmodule App.Users do
     user
     |> User.changeset_role(%{role: role})
     |> Repo.update()
+  end
+
+  def enabled_banks_select_options() do
+    Enum.map(BankList.enabled(), fn {code, name} = _bank ->
+      {name, code}
+    end)
+  end
+
+  def bank_name(code) do
+    Enum.find(
+      BankList.all(),
+      {"not_found", "BANK DENGAN CODE=#{code} TIDAK DITEMUKAN!!"},
+      fn {c, _} ->
+        c == code
+      end
+    )
+    |> elem(1)
   end
 
   def get_bank_account_by_user(user) do

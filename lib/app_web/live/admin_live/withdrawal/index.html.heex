@@ -248,7 +248,7 @@
             >
               <.icon name="hero-chevron-right me-3 w-3 h-3" />
               <p>
-                <%= @withdrawal_params.recipient_bank_name |> String.upcase() %><br /> <%= @withdrawal_params.recipient_bank_acc_name
+                <%= App.Users.bank_name(@withdrawal_params.recipient_bank_name) %><br /> <%= @withdrawal_params.recipient_bank_acc_name
                 |> String.upcase() %><br /> <%= @withdrawal_params.recipient_bank_acc_number %>
               </p>
             </td>

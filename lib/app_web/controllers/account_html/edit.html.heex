@@ -134,7 +134,13 @@
             <.error :if={@bank_acc_changeset.action}>
               Oops, something went wrong! Please check the errors below.
             </.error>
-            <.input field={f[:bank_name]} type="text" label="Nama Bank" required />
+            <.input
+              field={f[:bank_name]}
+              type="select"
+              options={App.Users.enabled_banks_select_options()}
+              label="Nama Bank"
+              required
+            />
             <.input field={f[:account_number]} type="text" label="Nomer Rekening" required />
             <.input field={f[:account_name]} type="text" label="Nama Pemilik Rekening" required />
             <div
