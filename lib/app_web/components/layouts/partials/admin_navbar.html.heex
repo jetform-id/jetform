@@ -38,14 +38,16 @@
             </path>
           </svg>
         </button>
-        <a href={~p"/admin"} class="flex ml-2 md:mr-24">
-          <%!-- <img src="/images/logo.svg" class="h-8 mr-3" alt="FlowBite Logo" /> --%>
-          <span class="self-center text-xl font-medium sm:text-2xl whitespace-nowrap dark:text-white">
-            <%= app_info(:name) %>
+        <a href={~p"/admin"} class="flex gap-1 ml-2 md:mr-24 text-center">
+          <img src="/images/logo.png" class="h-8 mr-3" alt="HipStore Logo" />
+          <span class="self-center text-gray-400 text-lg font-light border-l pl-3">
+            DASHBOARD
+          </span>
+          <%!-- <span class="self-center text-xl font-medium sm:text-2xl whitespace-nowrap dark:text-white">
             <span class="bg-primary-100 text-primary-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-primary-700 dark:text-primary-300">
               v<%= Application.spec(:app, :vsn) %>
             </span>
-          </span>
+          </span> --%>
         </a>
         <%!-- <form action="#" method="GET" class="hidden lg:block lg:pl-3.5">
           <label for="topbar-search" class="sr-only">Search</label>
@@ -129,8 +131,7 @@
               href="#"
               class="flex px-4 py-3 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
             >
-              <div class="flex-shrink-0">
-              </div>
+              <div class="flex-shrink-0"></div>
               <div class="w-full pl-3">
                 <div class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">
                   Fitur notifikasi masih dalam pengembangan 🙏
