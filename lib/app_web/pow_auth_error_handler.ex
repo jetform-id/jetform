@@ -11,6 +11,6 @@ defmodule AppWeb.PowAuthErrorHandler do
   @spec call(Conn.t(), atom()) :: Conn.t()
   def call(conn, :already_authenticated) do
     conn
-    |> redirect(to: ~p"/admin")
+    |> redirect(to: ~p"/")
   end
 end

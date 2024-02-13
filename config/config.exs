@@ -8,8 +8,8 @@
 import Config
 
 config :app,
-  app_name: "Snappy",
-  app_tagline: "Digital products marketplace",
+  app_name: "JetForm",
+  app_tagline: "JetForm Dashboard",
   default_tz: "Asia/Jakarta",
   default_tz_label: "WIB",
   order_validity_hours: 2,

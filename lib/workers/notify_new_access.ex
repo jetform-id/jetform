@@ -52,7 +52,7 @@ defmodule Workers.NotifyNewAccess do
     #{base_url}/invoice/#{order.id}
 
     --
-    Tim Snappy
+    Tim JetForm
     """
 
     %{

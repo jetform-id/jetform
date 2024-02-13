@@ -56,7 +56,7 @@ defmodule AppWeb.AdminLive.Product.Index do
 
   @impl true
   def handle_event("change_page", %{"page" => page}, socket) do
-    {:noreply, push_patch(socket, to: ~p"/admin/products?page=#{page}", replace: true)}
+    {:noreply, push_patch(socket, to: ~p"/products?page=#{page}", replace: true)}
   end
 
   @impl true

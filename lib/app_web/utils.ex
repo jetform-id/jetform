@@ -19,30 +19,30 @@ defmodule AppWeb.Utils do
     [
       %{
         title: "Penjualan",
-        path: ~p"/admin",
+        path: ~p"/",
         icon: "hero-receipt-percent-solid"
       },
-      # %{title: "Dashboard", path: ~p"/admin", icon: "hero-chart-pie-solid"},
+      # %{title: "Dashboard", path: ~p"/", icon: "hero-chart-pie-solid"},
       %{
         title: "Produk",
-        path: ~p"/admin/products",
+        path: ~p"/products",
         icon: "hero-squares-2x2-solid"
       },
       # %{
       #   title: "Pembeli",
-      #   path: ~p"/admin",
+      #   path: ~p"/",
       #   icon: "hero-users-solid"
       # },
       %{
         title: "Penarikan Dana",
-        path: ~p"/admin/withdrawals",
+        path: ~p"/withdrawals",
         icon: "hero-banknotes-solid"
       }
       # %{
       #   title: "Settings",
       #   icon: "hero-cog-6-tooth-solid",
       #   children: [
-      #     %{title: "Account", path: ~p"/admin/account", icon: nil}
+      #     %{title: "Account", path: ~p"/account", icon: nil}
       #   ]
       # }
     ]

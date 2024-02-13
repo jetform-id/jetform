@@ -15,6 +15,7 @@ defmodule App.Products.Product do
   @ctas [
     {"Beli", :buy},
     {"Beli Sekarang", :buy_now},
+    {"Download Gratis", :free_download},
     {"Custom...", :custom}
   ]
 
@@ -26,7 +27,7 @@ defmodule App.Products.Product do
     field :price, :integer, default: 0
     field :description, :string
     field :is_live, :boolean, default: false
-    field :cta, Ecto.Enum, values: [:buy, :buy_now, :custom], default: :buy
+    field :cta, Ecto.Enum, values: [:buy, :buy_now, :free_download, :custom], default: :buy
     field :cta_text, :string
     field :details, :map, default: %{"items" => []}
     field :cover, App.Products.ProductCover.Type

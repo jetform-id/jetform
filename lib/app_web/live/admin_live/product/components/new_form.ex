@@ -52,7 +52,7 @@ defmodule AppWeb.AdminLive.Product.Components.NewForm do
         {:ok, product} ->
           socket
           |> put_flash(:info, "Produk berhasil dibuat.")
-          |> push_navigate(to: ~p"/admin/products/#{product.id}/edit")
+          |> push_navigate(to: ~p"/products/#{product.id}/edit")
 
         {:error, changeset} ->
           socket

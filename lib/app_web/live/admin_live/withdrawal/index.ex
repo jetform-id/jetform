@@ -86,7 +86,7 @@ defmodule AppWeb.AdminLive.Withdrawal.Index do
             "Silahkan cek email Anda dan klik link konfirmasi untuk melanjutkan proses penarikan dana."
           )
           |> assign(:show_modal, false)
-          |> push_navigate(to: ~p"/admin/withdrawals", replace: true)
+          |> push_navigate(to: ~p"/withdrawals", replace: true)
 
         error ->
           Logger.error("Failed to create withdrawal: #{inspect(error)}")
@@ -200,7 +200,7 @@ defmodule AppWeb.AdminLive.Withdrawal.Index do
 
   @impl true
   def handle_event("change_page", %{"page" => page}, socket) do
-    {:noreply, push_patch(socket, to: ~p"/admin/withdrawals?page=#{page}", replace: true)}
+    {:noreply, push_patch(socket, to: ~p"/withdrawals?page=#{page}", replace: true)}
   end
 
   @impl true
@@ -217,20 +217,20 @@ defmodule AppWeb.AdminLive.Withdrawal.Index do
         :info,
         "Penarikan dana telah dikonfirmasi, kami akan segera memproses penarikan dana Anda."
       )
-      |> push_navigate(to: ~p"/admin/withdrawals")
+      |> push_navigate(to: ~p"/withdrawals")
     else
       {:error, _op, _value, _changeset} ->
         # error during updating withdrawal status
 
         socket
         |> put_flash(:error, @error_message)
-        |> push_navigate(to: ~p"/admin/withdrawals")
+        |> push_navigate(to: ~p"/withdrawals")
 
       _ ->
         # other errors
         socket
         |> put_flash(:error, "Token konfirmasi tidak valid.")
-        |> push_navigate(to: ~p"/admin/withdrawals")
+        |> push_navigate(to: ~p"/withdrawals")
     end
   end
 

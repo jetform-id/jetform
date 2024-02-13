@@ -33,7 +33,7 @@ defmodule AppWeb.AdminLive.Dashboard.Index do
     socket =
       socket
       |> assign(:params, params)
-      |> push_patch(to: ~p"/admin?#{params}", replace: true)
+      |> push_patch(to: ~p"/?#{params}", replace: true)
 
     {:noreply, socket}
   end
@@ -48,7 +48,7 @@ defmodule AppWeb.AdminLive.Dashboard.Index do
     socket =
       socket
       |> assign(:params, params)
-      |> push_patch(to: ~p"/admin?#{params}", replace: true)
+      |> push_patch(to: ~p"/?#{params}", replace: true)
 
     {:noreply, socket}
   end

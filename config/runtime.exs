@@ -25,23 +25,25 @@ config :app,
   midtrans_client_key: System.get_env("MIDTRANS_CLIENT_KEY"),
   midtrans_merchant_id: System.get_env("MIDTRANS_MERCHANT_ID"),
   midtrans_mode: System.get_env("MIDTRANS_MODE", "sandbox"),
-  mailer_from_name: System.get_env("MAILER_FROM_NAME", "Snappy"),
-  mailer_from_email: System.get_env("MAILER_FROM_EMAIL", "support@snappy.local"),
-  admin_email: System.get_env("ADMIN_EMAIL", "admin@snappy.local")
+  mailer_from_name: System.get_env("MAILER_FROM_NAME", "JetForm"),
+  mailer_from_email: System.get_env("MAILER_FROM_EMAIL", "support@jetform.local"),
+  admin_email: System.get_env("ADMIN_EMAIL", "admin@jetform.local")
 
 if System.get_env("WAFFLE_AWS_S3_BUCKET") do
   config :waffle,
     storage: Waffle.Storage.S3,
     bucket: System.get_env("WAFFLE_AWS_S3_BUCKET"),
     asset_host: System.get_env("WAFFLE_ASSET_HOST")
+end
 
+if SYSTEM.get_env("AWS_S3_HOST") do
   config :ex_aws,
     json_codec: Jason,
     s3: [
-      scheme: "https://",
-      host: "is3.cloudhost.id"
+      scheme: System.get_env("AWS_S3_SCHEME", "https://"),
+      host: System.get_env("AWS_S3_HOST", "is3.cloudhost.id")
     ],
-    debug_requests: true
+    debug_requests: false
 end
 
 if config_env() == :prod do

@@ -60,7 +60,7 @@ defmodule Workers.NotifyNewOrder do
     #{base_url}/invoice/#{order.id}
 
     --
-    Tim Snappy
+    Tim JetForm
     """
 
     user = order.user
@@ -75,7 +75,7 @@ defmodule Workers.NotifyNewOrder do
     Status: #{order.status} #{status_text}
 
     --
-    Tim Snappy
+    Tim JetForm
     """
 
     buyer_email =

@@ -53,7 +53,6 @@ defmodule AppWeb.Router do
     pipe_through [:browser]
 
     # public pages
-    get "/", PageController, :index
     get "/access/:id", AccessController, :index
 
     # public live-pages
@@ -73,7 +72,7 @@ defmodule AppWeb.Router do
     pow_extension_routes()
   end
 
-  scope "/admin", AppWeb do
+  scope "/", AppWeb do
     pipe_through [:browser, :admin_area]
 
     # accounts

@@ -21,7 +21,7 @@ defmodule AppWeb.AccountController do
       {:ok, _user, conn} ->
         conn
         |> put_flash(:info, "Data akun anda telah diperbarui.")
-        |> redirect(to: ~p"/admin/account")
+        |> redirect(to: ~p"/account")
 
       {:error, changeset, conn} ->
         user = conn.assigns.current_user |> App.Repo.preload(:bank_account)
@@ -50,7 +50,7 @@ defmodule AppWeb.AccountController do
       {:ok, _bank_account} ->
         conn
         |> put_flash(:info, "Data akun bank anda telah disimpan.")
-        |> redirect(to: ~p"/admin/account")
+        |> redirect(to: ~p"/account")
 
       {:error, changeset} ->
         render(conn, :edit,
@@ -66,7 +66,7 @@ defmodule AppWeb.AccountController do
       {:ok, _bank_account} ->
         conn
         |> put_flash(:info, "Data akun bank anda telah diperbarui.")
-        |> redirect(to: ~p"/admin/account")
+        |> redirect(to: ~p"/account")
 
       {:error, changeset} ->
         render(conn, :edit,

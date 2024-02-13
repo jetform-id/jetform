@@ -2,8 +2,8 @@ defmodule App.Plans.Commission10 do
   @behaviour App.Plans.Plan
 
   @id "plan-comm-10"
-  @name "Snappy 10"
-  @description "Snappy fee 10% per transaksi (dengan minimum Rp. 5,000 per transaksi)"
+  @name "JetForm 10"
+  @description "JetForm fee 10% per transaksi (dengan minimum Rp. 5,000 per transaksi)"
   @commission_percent 10
   @min_commission_value 5_000
 

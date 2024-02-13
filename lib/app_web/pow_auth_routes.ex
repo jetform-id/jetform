@@ -3,8 +3,8 @@ defmodule AppWeb.PowAuthRoutes do
   use AppWeb, :verified_routes
 
   @impl true
-  def after_sign_in_path(_params), do: ~p"/admin"
+  def after_sign_in_path(_params), do: ~p"/"
 
   @impl true
-  def after_registration_path(_params), do: ~p"/admin"
+  def after_registration_path(_params), do: ~p"/"
 end

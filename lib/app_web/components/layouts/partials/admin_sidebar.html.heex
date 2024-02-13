@@ -13,7 +13,7 @@
         </ul>
         <div class="pt-2 space-y-2">
           <.link
-            navigate={~p"/admin/account"}
+            navigate={~p"/account"}
             class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
           >
             <.icon
@@ -23,7 +23,7 @@
             <span class="ml-3" sidebar-toggle-item>Akun</span>
           </.link>
           <.link
-            navigate={~p"/admin/integrations"}
+            navigate={~p"/integrations"}
             class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
           >
             <.icon
@@ -33,7 +33,7 @@
             <span class="ml-3" sidebar-toggle-item>Integrasi</span>
           </.link>
           <a
-            href="https://github.com/ekaputra07/snappy/discussions"
+            href="https://github.com/ekaputra07/jetform/discussions"
             target="_blank"
             class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
           >
@@ -44,7 +44,7 @@
             <span class="ml-3" sidebar-toggle-item>Bantuan</span>
           </a>
           <a
-            href="https://github.com/ekaputra07/snappy"
+            href="https://github.com/ekaputra07/jetform"
             target="_blank"
             class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
           >
@@ -54,6 +54,19 @@
             />
             <span class="ml-3" sidebar-toggle-item>Open Source</span>
           </a>
+        </div>
+        <div class="pt-2 space-y-2">
+          <.link
+            href={~p"/session"}
+            method="delete"
+            class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700"
+          >
+            <.icon
+              name="hero-lock-closed-solid"
+              class="w-5 h-5 text-red-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+            />
+            <span class="ml-3 text-red-500" sidebar-toggle-item>Keluar</span>
+          </.link>
         </div>
       </div>
     </div>

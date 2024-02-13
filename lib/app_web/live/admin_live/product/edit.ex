@@ -10,7 +10,7 @@ defmodule AppWeb.AdminLive.Product.Edit do
         nil ->
           socket
           |> put_flash(:error, "Product not found.")
-          |> redirect(to: ~p"/admin/products")
+          |> redirect(to: ~p"/products")
 
         product ->
           socket
@@ -53,7 +53,7 @@ defmodule AppWeb.AdminLive.Product.Edit do
           |> assign(:product, product)
           |> assign(:changeset, Products.change_product(product, %{}))
           |> put_flash(:info, "Produk berhasil disimpan.")
-          |> redirect(to: ~p"/admin/products")
+          |> redirect(to: ~p"/products")
 
         {:error, changeset} ->
           socket

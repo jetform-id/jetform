@@ -46,7 +46,7 @@ defmodule Workers.NotifyPaidOrder do
     #{base_url}/invoice/#{order.id}
 
     --
-    Tim Snappy
+    Tim JetForm
     """
 
     user = order.user
@@ -64,7 +64,7 @@ defmodule Workers.NotifyPaidOrder do
     #{base_url}/invoice/#{order.id}
 
     --
-    Tim Snappy
+    Tim JetForm
     """
 
     [

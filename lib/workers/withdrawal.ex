@@ -95,7 +95,7 @@ defmodule Workers.Withdrawal do
     Oleh karena itu mohon pastikan data di atas sudah benar dan segera batalkan penarikan dana apabila ada kesalahan.
 
     --
-    Tim Snappy
+    Tim JetForm
     """
 
     %{
@@ -127,7 +127,7 @@ defmodule Workers.Withdrawal do
     - Apabila dalam 3 hari kerja dana belum juga masuk ke rekening Anda, silahkan hubungi kami dengan membalas email ini.
 
     --
-    Tim Snappy
+    Tim JetForm
     """
 
     %{
@@ -158,7 +158,7 @@ defmodule Workers.Withdrawal do
     #{base_url}/admin/withdrawals
 
     --
-    Tim Snappy
+    Tim JetForm
     """
 
     %{
@@ -190,7 +190,7 @@ defmodule Workers.Withdrawal do
     Apabila ada yang kurang jelas, silahkan hubungi kami dengan membalas email ini.
 
     --
-    Tim Snappy
+    Tim JetForm
     """
 
     %{
@@ -222,7 +222,7 @@ defmodule Workers.Withdrawal do
     Kami tidak bertanggung jawab atas kesalahan transfer dana yang disebabkan oleh kesalahan nomor rekening, nama rekening, atau nama bank penerima.
 
     --
-    Tim Snappy
+    Tim JetForm
     """
 
     %{

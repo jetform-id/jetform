@@ -123,7 +123,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         </div>
       </div>
       <p class="text-center p-3 text-sm text-gray-400">
-        <.link navigate="/">powered by Snappy</.link>
+        <.link navigate="/">powered by JetForm</.link>
       </p>
     </div>
     <%!-- end preview --%>
@@ -209,7 +209,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           <div class="border border-yellow-300 bg-yellow-100 rounded p-2 text-center">
             <p class="pl-6 mt-1 text-xs text-yellow-600">
               <.icon name="hero-exclamation-triangle" />
-              Harap pastikan data di atas sudah benar. Pihak penjual dan Snappy tidak bertanggung jawab atas akibat dari kesalahan data yang dimasukan.
+              Harap pastikan data di atas sudah benar. Pihak penjual dan JetForm tidak bertanggung jawab atas akibat dari kesalahan data yang dimasukan.
             </p>
           </div>
 
