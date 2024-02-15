@@ -142,7 +142,7 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
         <div class="mt-8">
           <.button
             phx-disable-with={@loading_text}
-            class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
           >
             <%= @btn_text %>
             <span aria-hidden="true">→</span>
@@ -171,7 +171,7 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
           <.button
             phx-click={JS.push(@on_edit, value: %{id: @variant.id}, target: @target)}
             type="button"
-            class="text-primary-700 hover:text-white border border-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-2 py-1 text-center dark:border-primary-500 dark:text-primary-500 dark:hover:text-white dark:hover:bg-primary-500 dark:focus:ring-primary-800"
+            class="text-primary-700 hover:text-white border border-primary-700 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-2 py-1 text-center dark:border-primary-500 dark:text-primary-500 dark:hover:text-white dark:hover:bg-primary-600 dark:focus:ring-primary-800"
           >
             Edit
           </.button>
@@ -272,7 +272,7 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
         <div class="mt-8">
           <.button
             phx-disable-with={@loading_text}
-            class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
           >
             <%= @btn_text %>
             <span aria-hidden="true">→</span>
@@ -305,7 +305,7 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
           <.button
             phx-click={JS.push(@on_edit, value: %{id: @content.id}, target: @target)}
             type="button"
-            class="text-primary-700 hover:text-white border border-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-2 py-1 text-center dark:border-primary-500 dark:text-primary-500 dark:hover:text-white dark:hover:bg-primary-500 dark:focus:ring-primary-800"
+            class="text-primary-700 hover:text-white border border-primary-700 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-2 py-1 text-center dark:border-primary-500 dark:text-primary-500 dark:hover:text-white dark:hover:bg-primary-600 dark:focus:ring-primary-800"
           >
             Edit
           </.button>
@@ -340,7 +340,7 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
         <.button
           phx-click={JS.push(@on_edit, value: %{id: @content.id}, target: @target)}
           type="button"
-          class="p-1 text-primary-600 text-sm text-center"
+          class="p-1 text-primary-500 text-sm text-center"
         >
           Edit
         </.button>
@@ -376,7 +376,7 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
           <.link href={App.Contents.file_url(@content)} target="_blank">
             <.icon
               name="hero-arrow-top-right-on-square"
-              class="w-4 h-4 inline-block text-primary-600 font-bold"
+              class="w-4 h-4 inline-block text-primary-500 font-bold"
             />
           </.link>
         <% else %>

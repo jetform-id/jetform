@@ -94,7 +94,7 @@
             </p>
             <a
               href="#"
-              class="flex items-center font-normal text-sm text-primary-600 dark:text-primary-500 dark:hover:text-primary-600 hover:text-primary-700"
+              class="flex items-center font-normal text-sm text-primary-500 dark:text-primary-500 dark:hover:text-primary-500 hover:text-primary-700"
             >
               Selengkapnya...
             </a>
@@ -135,7 +135,7 @@
             </p>
             <a
               href="#"
-              class="flex items-center font-normal text-sm text-primary-600 dark:text-primary-500 dark:hover:text-primary-600 hover:text-primary-700"
+              class="flex items-center font-normal text-sm text-primary-500 dark:text-primary-500 dark:hover:text-primary-500 hover:text-primary-700"
             >
               Selengkapnya...
             </a>
@@ -232,7 +232,7 @@
                   <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400">
                     <.indo_datetime value={order.inserted_at} tz={@current_user.timezone} />
                   </td>
-                  <td class="p-4 text-sm font-normal text-primary-600 whitespace-nowrap dark:text-white">
+                  <td class="p-4 text-sm font-normal text-primary-500 whitespace-nowrap dark:text-white">
                     <.link navigate={~p"/products/#{order.product_id}/edit"}>
                       <span class="font-semibold"><%= App.Orders.product_fullname(order) %></span>
                     </.link>
@@ -249,7 +249,7 @@
                       JetForm fee Rp. <.price value={order.service_fee} />
                     </p>
                   </td>
-                  <td class="p-4 text-sm font-normal text-primary-600 whitespace-nowrap dark:text-gray-400">
+                  <td class="p-4 text-sm font-normal text-primary-500 whitespace-nowrap dark:text-gray-400">
                     <.link href={~p"/invoice/#{order.id}"} target="_blank">
                       <%= order.invoice_number %>
                     </.link>

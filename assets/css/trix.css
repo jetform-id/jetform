@@ -33,7 +33,7 @@
 }
 
 .trix-content a {
-    @apply text-primary-600;
+    @apply text-primary-500;
 }
 
 .trix-content ol li {

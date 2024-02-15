@@ -36,7 +36,7 @@ if System.get_env("WAFFLE_AWS_S3_BUCKET") do
     asset_host: System.get_env("WAFFLE_ASSET_HOST")
 end
 
-if SYSTEM.get_env("AWS_S3_HOST") do
+if System.get_env("AWS_S3_HOST") do
   config :ex_aws,
     json_codec: Jason,
     s3: [

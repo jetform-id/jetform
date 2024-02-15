@@ -149,7 +149,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
       <button
         phx-click={@on_click}
         type="button"
-        class="group inline-flex w-full items-center justify-center rounded-md bg-primary-700 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-800"
+        class="group inline-flex w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-700"
       >
         <%= if @is_free do %>
           Dapatkan Akses Gratis!
@@ -233,7 +233,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         <:actions>
           <button
             type="submit"
-            class="mt-6 w-full items-center justify-center rounded-md bg-primary-700 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-800"
+            class="mt-6 w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-700"
           >
             <%= if @is_free do
               "Kirim akses produk via email"

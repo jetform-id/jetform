@@ -25,7 +25,7 @@ defmodule AppWeb.AdminLive.Product.Components.Variants do
       <.button
         phx-click={JS.push("new", target: @myself)}
         type="button"
-        class="mt-2 w-full bg-primary-700 hover:bg-primary-800 text-white border focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-3 text-center me-2 mb-2"
+        class="mt-2 w-full bg-primary-600 hover:bg-primary-700 text-white border focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-3 text-center me-2 mb-2"
       >
         <.icon name="hero-plus-small w-4 h-4" />Buat Varian Produk
       </.button>

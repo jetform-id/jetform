@@ -2,7 +2,7 @@
   <div class="flex gap-12 p-10 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800">
     <img src={~p"/images/integrations.svg"} class="flex-none max-w-xs" />
     <div class="flex-1 space-y-3">
-      <h1 class="text-2xl font-semibold text-primary-600 mb-4">
+      <h1 class="text-2xl font-semibold text-primary-500 mb-4">
         Integrasi dengan JetForm
       </h1>
       <p class="text-base text-gray-500 font-light text-xl">
@@ -10,14 +10,14 @@
       </p>
       <p class="text-base text-gray-500 text-md">
         Anda bisa menggunakan integrasi JetForm dengan
-        <.link href="https://zapier.com/" class="text-primary-600 font-medium" target="_blank">
+        <.link href="https://zapier.com/" class="text-primary-500 font-medium" target="_blank">
           Zapier
         </.link>
         sehingga otomatis terhubung dengan ribuan platform yang didukung oleh Zapier tanpa perlu keahlian coding.
       </p>
       <p class="text-base text-gray-500 text-md">
         Informasi lebih detail mengenai integrasi dengan Zapier atau manual menggunakan API dari JetForm bisa anda temukan di halaman
-        <.link href="https://zapier.com/" class="text-primary-600 font-medium" target="_blank">
+        <.link href="https://zapier.com/" class="text-primary-500 font-medium" target="_blank">
           dokumentasi integrasi
         </.link>
         kami.
@@ -35,7 +35,7 @@
         <div class="flex items-center">
           <button
             phx-click={JS.push("new_key", page_loading: true)}
-            class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+            class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-600 focus:outline-none dark:focus:ring-primary-800"
           >
             <.icon name="hero-plus" /> Buat API Key
           </button>
@@ -84,11 +84,11 @@
               </thead>
               <tbody class="bg-white dark:bg-gray-800" id="api-key-list" phx-update="stream">
                 <tr :for={{dom_id, key} <- @streams.api_keys} id={dom_id}>
-                  <td class="p-4 text-sm font-normal text-primary-600 whitespace-nowrap dark:text-white">
+                  <td class="p-4 text-sm font-normal text-primary-500 whitespace-nowrap dark:text-white">
                     <.link phx-click={
                       JS.push("show_key", value: %{id: key.id}, page_loading: true)
                     }>
-                      <span class="font-semibold text-primary-600"><%= key.name %></span>
+                      <span class="font-semibold text-primary-500"><%= key.name %></span>
                     </.link>
                   </td>
                   <td class="p-4 text-sm whitespace-nowrap text-gray-500">
@@ -100,7 +100,7 @@
                   <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap">
                     <.indo_datetime value={key.updated_at} tz={@current_user.timezone} />
                   </td>
-                  <td class="p-4 text-sm font-normal text-primary-600 whitespace-nowrap">
+                  <td class="p-4 text-sm font-normal text-primary-500 whitespace-nowrap">
                     <.link
                       phx-click={JS.push("delete_key", value: %{id: key.id}, page_loading: true)}
                       data-confirm="Menghapus API Key ini akan membuat semua integrasi yang menggunakan key ini tidak bekerja. Anda yakin ingin melanjutkan?"
@@ -168,7 +168,7 @@
               </div>
               <.button
                 phx-disable-with="Menyimpan key..."
-                class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
               >
                 Simpan <span aria-hidden="true">→</span>
               </.button>

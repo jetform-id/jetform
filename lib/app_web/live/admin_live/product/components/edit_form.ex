@@ -40,7 +40,7 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
                   <%= Utils.base_url() %>/p/<span id="shop-username" class="font-bold"><%= Map.get(@changeset.changes, :slug, @changeset.data.slug) %></span>
                   <.icon
                     name="hero-arrow-top-right-on-square"
-                    class="w-4 h-4 inline-block text-primary-600"
+                    class="w-4 h-4 inline-block text-primary-500"
                   />
                 </.link>
               </div>
@@ -195,10 +195,10 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
           </div>
           <div class="flex-1"></div>
           <.button
-            phx-disable-with="Saving..."
-            class="flex-none px-8 py-3 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            phx-disable-with="Menyimpan..."
+            class="flex-none px-8 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
           >
-            Save <span aria-hidden="true">→</span>
+            Simpan <span aria-hidden="true">→</span>
           </.button>
         </div>
       </:actions>
@@ -249,7 +249,7 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
       <.button
         phx-click={@on_add}
         type="button"
-        class="mt-2 w-full bg-primary-700 hover:bg-primary-800 text-white border focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-3 text-center me-2 mb-2"
+        class="mt-2 w-full bg-primary-600 hover:bg-primary-700 text-white border focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-3 text-center me-2 mb-2"
       >
         <.icon name="hero-plus-small w-4 h-4" />Tambah detail
       </.button>

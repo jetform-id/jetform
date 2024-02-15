@@ -17,7 +17,7 @@ defmodule AppWeb.AdminLive.Withdrawal.Components.Commons do
     </span>
     <span
       :if={@status == :submitted}
-      class="inline-block rounded rounded-full w-3 h-3 me-1 bg-primary-500"
+      class="inline-block rounded rounded-full w-3 h-3 me-1 bg-primary-600"
     >
     </span>
     <span :if={@status == :rejected} class="inline-block rounded rounded-full w-3 h-3 me-1 bg-red-500">

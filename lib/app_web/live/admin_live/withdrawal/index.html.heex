@@ -30,14 +30,14 @@
         <button
           :if={@withdrawable_credits > 0}
           phx-click={JS.push("new_withdrawal", page_loading: true)}
-          class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+          class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-600 focus:outline-none dark:focus:ring-primary-800"
         >
           Tarik Dana
         </button>
       <% else %>
         <.link
           navigate={~p"/account"}
-          class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+          class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-600 focus:outline-none dark:focus:ring-primary-800"
         >
           <.icon name="hero-plus" /> Akun Bank Penerima
         </.link>
@@ -138,7 +138,7 @@
                 <.link
                   :if={w.status != :pending}
                   phx-click={JS.push("show_withdrawal", value: %{id: w.id}, page_loading: true)}
-                  class="inline-flex items-center text-sm text-center text-primary-600 rounded-sm focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
+                  class="inline-flex items-center text-sm text-center text-primary-500 rounded-sm focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
                 >
                   <.icon name="hero-eye-solid" class="w-4 h-4 mr-1" /> Detail
                 </.link>
@@ -287,7 +287,7 @@
                   <%= @withdrawal.admin_transfer_prove.file_name %>
                   <.icon
                     name="hero-arrow-top-right-on-square"
-                    class="w-4 h-4 inline-block text-primary-600 font-bold"
+                    class="w-4 h-4 inline-block text-primary-500 font-bold"
                   />
                 </.link>
               </p>
@@ -330,7 +330,7 @@
       <.button
         phx-click={JS.push("create_withdrawal", value: @withdrawal_params, page_loading: true)}
         phx-disable-with="Loading..."
-        class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+        class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
       >
         Tarik Dana
       </.button>
@@ -369,7 +369,7 @@
             <%= @withdrawal.admin_transfer_prove.file_name %>
             <.icon
               name="hero-arrow-top-right-on-square"
-              class="w-4 h-4 inline-block text-primary-600 font-bold"
+              class="w-4 h-4 inline-block text-primary-500 font-bold"
             />
           </.link>
         </div>
@@ -377,7 +377,7 @@
           <div class="mt-2 text-right">
             <.button
               phx-disable-with="Loading..."
-              class="w-full px-5 py-2 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+              class="w-full px-5 py-2 text-base font-medium text-center text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
             >
               Submit
             </.button>

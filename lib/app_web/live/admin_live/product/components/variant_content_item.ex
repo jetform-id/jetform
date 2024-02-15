@@ -20,7 +20,7 @@ defmodule AppWeb.AdminLive.Product.Components.VariantContentItem do
           <.button
             phx-click={JS.push("new", target: @myself)}
             type="button"
-            class="px-2 py-1 bg-primary-700 hover:bg-primary-800 rounded-lg text-white text-sm text-center"
+            class="px-2 py-1 bg-primary-600 hover:bg-primary-700 rounded-lg text-white text-sm text-center"
           >
             + Tambah konten
           </.button>
