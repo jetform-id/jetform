@@ -15,7 +15,12 @@ config :app,
   order_validity_hours: 2,
   access_validity_days: 7,
   withdrawal_fee: 5_000,
-  default_plan: App.Plans.Commission10
+  default_plan: App.Plans.Commission75
+
+config :app, :midtrans,
+  payment_channels_cc: ["credit_card"],
+  payment_channels_va: ["bca_va", "permata_va", "bni_va", "bri_va", "cimb_va", "other_va"],
+  payment_channels_qris: ["gopay", "shopeepay", "other_qris"]
 
 config :app,
   ecto_repos: [App.Repo],

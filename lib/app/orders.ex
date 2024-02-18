@@ -8,6 +8,7 @@ defmodule App.Orders do
   alias App.Orders.{Order, Payment}
   alias App.Contents
   alias App.Credits
+  alias App.Midtrans
 
   # ------------- ORDERS -------------
 
@@ -241,7 +242,20 @@ defmodule App.Orders do
   To simplify payment time management, we strictly enforce te payment page expiry time as
   well as the transaction expiry time to the value of `expiry_in_minutes`.
   """
-  def midtrans_payload(order, payment, expiry_in_minutes) do
+  def midtrans_payload(%Order{} = order, %Payment{} = payment, expiry_in_minutes) do
+    # Payment channels that we enable are based on the service fee,
+    # this is to prevent the Midtrans fees to be higher than our service fee.
+    enabled_payments =
+      cond do
+        order.service_fee < 5_000 ->
+          Midtrans.config_value(:payment_channels_qris)
+
+        true ->
+          Midtrans.config_value(:payment_channels_cc) ++
+            Midtrans.config_value(:payment_channels_va) ++
+            Midtrans.config_value(:payment_channels_qris)
+      end
+
     %{
       "transaction_details" => %{
         "order_id" => payment.id,
@@ -266,7 +280,8 @@ defmodule App.Orders do
       "page_expiry" => %{
         "duration" => expiry_in_minutes,
         "unit" => "minutes"
-      }
+      },
+      "enabled_payments" => enabled_payments
     }
   end
 
@@ -301,12 +316,12 @@ defmodule App.Orders do
                                         } ->
       payload = midtrans_payload(order, payment, expiry)
 
-      case App.Midtrans.create_transaction(payload) do
+      case Midtrans.create_transaction(payload) do
         {:ok, %{"redirect_url" => redirect_url}} ->
           {:ok, redirect_url}
 
         {:error, err} ->
-          Logger.error("App.Midtrans.create_transaction/1 error: #{inspect(err)}")
+          Logger.error("Midtrans.create_transaction/1 error: #{inspect(err)}")
           {:error, :midtrans_error}
       end
     end)
@@ -410,7 +425,7 @@ defmodule App.Orders do
   end
 
   def refresh_payment(%Payment{} = payment) do
-    with {:ok, status} <- App.Midtrans.get_transaction_status(payment.id),
+    with {:ok, status} <- Midtrans.get_transaction_status(payment.id),
          {:ok, payment} <- update_payment(payment, status) do
       {:ok, payment}
     else
@@ -422,7 +437,7 @@ defmodule App.Orders do
     Ecto.Multi.new()
     |> Ecto.Multi.update(:payment, change_payment(payment, %{"trx_status" => "cancel"}))
     |> Ecto.Multi.run(:cancel, fn _repo, %{payment: payment} ->
-      App.Midtrans.cancel_transaction(payment.id)
+      Midtrans.cancel_transaction(payment.id)
     end)
     |> Repo.transaction()
   end

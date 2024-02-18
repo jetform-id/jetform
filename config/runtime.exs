@@ -21,13 +21,15 @@ if System.get_env("PHX_SERVER") do
 end
 
 config :app,
-  midtrans_server_key: System.get_env("MIDTRANS_SERVER_KEY"),
-  midtrans_client_key: System.get_env("MIDTRANS_CLIENT_KEY"),
-  midtrans_merchant_id: System.get_env("MIDTRANS_MERCHANT_ID"),
-  midtrans_mode: System.get_env("MIDTRANS_MODE", "sandbox"),
   mailer_from_name: System.get_env("MAILER_FROM_NAME", "JetForm"),
   mailer_from_email: System.get_env("MAILER_FROM_EMAIL", "support@jetform.local"),
   admin_email: System.get_env("ADMIN_EMAIL", "admin@jetform.local")
+
+config :app, :midtrans,
+  server_key: System.get_env("MIDTRANS_SERVER_KEY"),
+  client_key: System.get_env("MIDTRANS_CLIENT_KEY"),
+  merchant_id: System.get_env("MIDTRANS_MERCHANT_ID"),
+  mode: System.get_env("MIDTRANS_MODE", "sandbox")
 
 if System.get_env("WAFFLE_AWS_S3_BUCKET") do
   config :waffle,
@@ -40,8 +42,8 @@ if System.get_env("AWS_S3_HOST") do
   config :ex_aws,
     json_codec: Jason,
     s3: [
-      scheme: System.get_env("AWS_S3_SCHEME", "https://"),
-      host: System.get_env("AWS_S3_HOST", "is3.cloudhost.id")
+      scheme: "https://",
+      host: System.get_env("AWS_S3_HOST")
     ],
     debug_requests: false
 end

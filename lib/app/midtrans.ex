@@ -5,6 +5,17 @@ defmodule App.Midtrans do
   @api_sandbox_base_url "https://api.sandbox.midtrans.com"
   @api_production_base_url "https://api.midtrans.com"
 
+  def config_value(key) when is_binary(key) do
+    config_value(String.to_atom(key))
+  end
+
+  def config_value(key) when is_atom(key) do
+    case Application.get_env(:app, :midtrans)[key] do
+      nil -> raise "Missing config :app, :midtrans, :#{key}"
+      value -> value
+    end
+  end
+
   def create_transaction(%{} = payload) do
     get_app_base_url()
     |> get_http_client()
@@ -80,15 +91,15 @@ defmodule App.Midtrans do
           "gross_amount" => gross_amount
         } = payload
       ) do
-    server_key = Application.get_env(:app, :midtrans_server_key)
-    merch_id = Application.get_env(:app, :midtrans_merchant_id)
-
     computed_key =
-      :crypto.hash(:sha512, "#{order_id}#{status_code}#{gross_amount}#{server_key}")
+      :crypto.hash(
+        :sha512,
+        "#{order_id}#{status_code}#{gross_amount}#{config_value(:server_key)}"
+      )
       |> Base.encode16()
       |> String.downcase()
 
-    case merchant_id == merch_id and signature_key == computed_key do
+    case merchant_id == config_value(:merchant_id) and signature_key == computed_key do
       true -> {:ok, payload}
       false -> {:error, :invalid_payload}
     end
@@ -97,22 +108,21 @@ defmodule App.Midtrans do
   def verify_payload(_), do: {:error, :invalid_payload}
 
   defp get_app_base_url do
-    case Application.get_env(:app, :midtrans_mode) do
+    case config_value(:mode) do
       "sandbox" -> @app_sandbox_base_url
       "production" -> @app_production_base_url
     end
   end
 
   defp get_api_base_url do
-    case Application.get_env(:app, :midtrans_mode) do
+    case config_value(:mode) do
       "sandbox" -> @api_sandbox_base_url
       "production" -> @api_production_base_url
     end
   end
 
   defp get_auth_token do
-    server_key = Application.get_env(:app, :midtrans_server_key, "")
-    Base.encode64(server_key <> ":")
+    Base.encode64(config_value(:server_key) <> ":")
   end
 
   defp get_http_client(base_url) do
