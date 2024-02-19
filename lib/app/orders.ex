@@ -135,7 +135,8 @@ defmodule App.Orders do
       {:ok, %{order_with_contents: order}} ->
         {:ok, order}
 
-      {:error, _op, _value, changeset} ->
+      {:error, op, value, changeset} ->
+        Logger.error("create_order/1 error: op=#{inspect(op)}, value=#{inspect(value)}")
         {:error, changeset}
     end
   end

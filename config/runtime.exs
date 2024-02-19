@@ -23,7 +23,8 @@ end
 config :app,
   mailer_from_name: System.get_env("MAILER_FROM_NAME", "JetForm"),
   mailer_from_email: System.get_env("MAILER_FROM_EMAIL", "support@jetform.local"),
-  admin_email: System.get_env("ADMIN_EMAIL", "admin@jetform.local")
+  admin_email: System.get_env("ADMIN_EMAIL", "admin@jetform.local"),
+  marketing_site: System.get_env("MARKETING_SITE", "http://localhost:4321")
 
 config :app, :midtrans,
   server_key: System.get_env("MIDTRANS_SERVER_KEY"),

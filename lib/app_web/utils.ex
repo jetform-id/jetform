@@ -15,6 +15,8 @@ defmodule AppWeb.Utils do
     end
   end
 
+  def marketing_site, do: Application.fetch_env!(:app, :marketing_site)
+
   def admin_menus do
     [
       %{

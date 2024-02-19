@@ -123,7 +123,9 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         </div>
       </div>
       <p class="text-center p-3 text-sm text-gray-400">
-        <.link navigate="/">powered by JetForm</.link>
+        <.link href={AppWeb.Utils.marketing_site()} target="_blank">
+          powered by JetForm
+        </.link>
       </p>
     </div>
     <%!-- end preview --%>
@@ -213,13 +215,12 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
             </p>
           </div>
 
-          <.input
-            field={f[:confirm]}
-            type="checkbox"
-            label="Saya setuju dengan Syarat dan Ketentuan yang berlaku."
-            wrapper_class="mx-auto"
-            required
-          />
+          <label class="flex items-center">
+            <.input field={f[:confirm]} type="checkbox" required />
+            <span class="text-sm text-slate-500 ml-2">
+              Saya menyatakan data di atas sudah sesuai dan benar adanya.
+            </span>
+          </label>
 
           <div
             :if={@error}
