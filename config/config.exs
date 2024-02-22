@@ -76,13 +76,11 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-# config :mnesia, dir: "/app/tmp/"
-
 config :app, :pow,
   web_module: AppWeb,
   user: App.Users.User,
   repo: App.Repo,
-  extensions: [PowResetPassword, PowEmailConfirmation],
+  extensions: [PowResetPassword, PowEmailConfirmation, PowPersistentSession],
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks,
   cache_store_backend: Pow.Store.Backend.MnesiaCache,
   mailer_backend: App.Mailer,

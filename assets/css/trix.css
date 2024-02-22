@@ -1,8 +1,5 @@
 @import "trix/dist/trix.css";
 
-
-/* This file is for your main application CSS */
-
 /* Trix styles */
 .trix-button--icon-strike {
     display: none;

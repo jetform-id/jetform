@@ -1,0 +1,49 @@
+# fly.toml app configuration file generated for jetform-app on 2024-02-21T19:33:29+08:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "jetform-app"
+primary_region = "sin"
+kill_signal = "SIGTERM"
+
+[build]
+
+[deploy]
+  release_command = "/app/bin/migrate"
+
+[env]
+  PHX_HOST = "app.jetform.me"
+  PORT = "8080"
+  MIDTRANS_MODE = "sandbox"
+  WAFFLE_AWS_S3_BUCKET = "jetform-static"
+  WAFFLE_ASSET_HOST = "https://is3.cloudhost.id/jetform-static"
+  AWS_S3_HOST = "is3.cloudhost.id"
+  MAILER_FROM_EMAIL = "support@jetform.me"
+  ADMIN_EMAIL = "support@jetform.me"
+  MARKETING_SITE = "https://www.jetform.me"
+  POOL_SIZE = "6"
+  ECTO_IPV6 = "true"
+  MAILGUN_DOMAIN = "mg.jetform.me"
+  DNS_CLUSTER_QUERY = "jetform-app.internal"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+  [http_service.concurrency]
+    type = "connections"
+    hard_limit = 1000
+    soft_limit = 1000
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 1024
+
+[mounts]
+  source="jetform_data"
+  destination="/data"

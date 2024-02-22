@@ -2,16 +2,9 @@ defmodule AppWeb.Utils do
   use AppWeb, :verified_routes
 
   def base_url do
-    url = Application.fetch_env!(:app, AppWeb.Endpoint)[:url]
-    http = Application.fetch_env!(:app, AppWeb.Endpoint)[:http]
-    host = Keyword.get(url, :host, "localhost")
-    scheme = Keyword.get(url, :scheme, "http")
-    port = Keyword.get(http, :port, 4000)
-
-    case port do
-      80 -> scheme <> "://" <> host
-      443 -> scheme <> "://" <> host
-      port -> scheme <> "://" <> host <> ":" <> Integer.to_string(port)
+    case System.get_env("PHX_HOST") do
+      nil -> "http://localhost:4000"
+      host -> "https://#{host}"
     end
   end
 
@@ -22,27 +15,27 @@ defmodule AppWeb.Utils do
       %{
         title: "Penjualan",
         path: ~p"/",
-        icon: "hero-receipt-percent-solid"
+        icon: "hero-receipt-percent"
       },
-      # %{title: "Dashboard", path: ~p"/", icon: "hero-chart-pie-solid"},
+      # %{title: "Dashboard", path: ~p"/", icon: "hero-chart-pie"},
       %{
         title: "Produk",
         path: ~p"/products",
-        icon: "hero-squares-2x2-solid"
+        icon: "hero-squares-2x2"
       },
       # %{
       #   title: "Pembeli",
       #   path: ~p"/",
-      #   icon: "hero-users-solid"
+      #   icon: "hero-users"
       # },
       %{
         title: "Penarikan Dana",
         path: ~p"/withdrawals",
-        icon: "hero-banknotes-solid"
+        icon: "hero-banknotes"
       }
       # %{
       #   title: "Settings",
-      #   icon: "hero-cog-6-tooth-solid",
+      #   icon: "hero-cog-6-tooth",
       #   children: [
       #     %{title: "Account", path: ~p"/account", icon: nil}
       #   ]

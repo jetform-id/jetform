@@ -1,0 +1,11 @@
+#!/bin/bash -eu
+
+cd $(dirname $0)/..
+
+export VERSION=${VERSION:-dev}
+
+./script/build
+
+# Push to container registy
+docker push jetform-dev/jetform:latest
+docker push jetform-dev/jetform:$VERSION

@@ -1,0 +1,7 @@
+#!/bin/bash -eu
+
+cd $(dirname $0)/..
+
+export VERSION=${VERSION:-dev}
+
+docker build -t jetform-dev/jetform:latest -t jetform-dev/jetform:$VERSION .

@@ -189,14 +189,14 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
         </div> --%>
       </div>
       <:actions :let={f}>
-        <div class="flex items-center p-4 dark:bg-gray-800">
-          <div class="flex flex-none gap-2 text-gray-800 text-sm">
-            Publish? <.input field={f[:is_live]} type="tw-toggle" />
+        <div class="flex items-center justify-between p-4 dark:bg-gray-800">
+          <div class="flex gap-2 text-gray-800 text-sm mt-4">
+            Produk Aktif <.input field={f[:is_live]} type="tw-toggle" />
           </div>
-          <div class="flex-1"></div>
+
           <.button
             phx-disable-with="Menyimpan..."
-            class="flex-none px-8 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
+            class="px-8 py-3 text-base font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
           >
             Simpan <span aria-hidden="true">→</span>
           </.button>

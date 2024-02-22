@@ -64,6 +64,7 @@ defmodule AppWeb.PublicLive.Checkout do
   defp return_product(socket, product) do
     socket =
       socket
+      |> assign(:body_class, "bg-slate-200")
       |> assign(:page_title, product.name)
       |> assign(:product, App.Repo.preload(product, :variants))
 

@@ -61,15 +61,15 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
       case assigns.changeset.data.id do
         nil ->
           assigns
-          |> assign(:title, "New Variant")
-          |> assign(:btn_text, "Create")
-          |> assign(:loading_text, "Creating...")
+          |> assign(:title, "Varian Baru")
+          |> assign(:btn_text, "Buat")
+          |> assign(:loading_text, "Membuat...")
 
         _ ->
           assigns
-          |> assign(:title, "Edit Variant")
-          |> assign(:btn_text, "Update")
-          |> assign(:loading_text, "Updating...")
+          |> assign(:title, "Edit Varian")
+          |> assign(:btn_text, "Simpan")
+          |> assign(:loading_text, "Menyimpan...")
       end
 
     ~H"""
@@ -139,7 +139,7 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
       </div>
 
       <:actions>
-        <div class="mt-8">
+        <div class="mt-8 text-right">
           <.button
             phx-disable-with={@loading_text}
             class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
@@ -208,13 +208,13 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
       case assigns.changeset.data.id do
         nil ->
           assigns
-          |> assign(:btn_text, "Create")
-          |> assign(:loading_text, "Creating...")
+          |> assign(:btn_text, "Buat")
+          |> assign(:loading_text, "Membuat...")
 
         _ ->
           assigns
-          |> assign(:btn_text, "Update")
-          |> assign(:loading_text, "Updating...")
+          |> assign(:btn_text, "Simpan")
+          |> assign(:loading_text, "Menyimpan...")
       end
       |> assign(
         :type,
@@ -269,7 +269,7 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
       </div>
 
       <:actions>
-        <div class="mt-8">
+        <div class="mt-8 text-right">
           <.button
             phx-disable-with={@loading_text}
             class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"

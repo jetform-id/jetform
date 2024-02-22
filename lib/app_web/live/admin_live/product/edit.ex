@@ -25,6 +25,14 @@ defmodule AppWeb.AdminLive.Product.Edit do
 
   @impl true
   def handle_event("validate", %{"product" => product_params}, socket) do
+    # set details changes
+    # TODO: handle details on client side
+    product_params =
+      case Map.get(socket.assigns.changeset.changes, :details) do
+        nil -> product_params
+        details -> Map.put(product_params, "details", details)
+      end
+
     changeset =
       socket.assigns.product
       |> Products.change_product(product_params)

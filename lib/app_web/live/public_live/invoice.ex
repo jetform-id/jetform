@@ -14,6 +14,7 @@ defmodule AppWeb.PublicLive.Invoice do
 
     socket =
       socket
+      |> assign(:body_class, "bg-slate-200")
       |> assign(:page_title, "Invoice #" <> order.invoice_number)
       |> assign(:order, order)
       |> assign(:status, order.status)

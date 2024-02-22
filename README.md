@@ -1,4 +1,4 @@
-![logo](https://github.com/ekaputra07/jetform/assets/1094221/c3df4be4-8903-43f2-b7f1-35744a160bba)
+![logo](https://github.com/jetform-dev/jetform/assets/1094221/c3df4be4-8903-43f2-b7f1-35744a160bba)
 
 # JetForm
 
@@ -44,7 +44,7 @@ Dan berikut detailnya:
 - [ ] **Advance analytics**. Lihat siapa yang mengakses halaman produk anda, siapa yang membeli, lewat apa (mobile atau web), kampanye iklan yang mana, dll.
 - [ ] **Your product, your data**. Export data produk, penjualan dan pembeli untuk keperluan analisis anda.
 
-Anda punya ide menarik? [lets talk](https://github.com/ekaputra07/jetform/discussions).
+Anda punya ide menarik? [lets talk](https://github.com/jetform-dev/jetform/discussions).
 
 ## Detail Teknis
 
@@ -73,4 +73,4 @@ Yang artinya:
 Siapa saja boleh mempergunakan, memodifikasi dan mendistribusikan proyek ini tetapi harus tetap menggunakan lisensi yang sama dan kode sumber harus selalu dibuka secara penuh.
 ```
 
-Lebih detail mengenai lisensi ini bisa dibaca [disini](https://github.com/ekaputra07/JetForm/blob/main/LICENSE).
+Lebih detail mengenai lisensi ini bisa dibaca [disini](https://github.com/jetform-dev/JetForm/blob/main/LICENSE).
