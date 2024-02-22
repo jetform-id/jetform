@@ -1,5 +1,3 @@
-![logo](https://github.com/jetform-dev/jetform/assets/1094221/c3df4be4-8903-43f2-b7f1-35744a160bba)
-
 # JetForm
 
 > 🚧 Under heavy development... 🚧
