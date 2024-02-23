@@ -82,7 +82,7 @@ config :app, :pow,
   repo: App.Repo,
   extensions: [PowResetPassword, PowEmailConfirmation],
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks,
-  cache_store_backend: Pow.Store.Backend.MnesiaCache,
+  cache_store_backend: AppWeb.PowRedisCache,
   mailer_backend: App.Mailer,
   routes_backend: AppWeb.PowAuthRoutes,
   messages_backend: AppWeb.PowAuthMessages

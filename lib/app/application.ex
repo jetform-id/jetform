@@ -14,9 +14,10 @@ defmodule App.Application do
       {Phoenix.PubSub, name: App.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: App.Finch},
-      {Pow.Store.Backend.MnesiaCache, extra_db_nodes: {Node, :list, []}},
-      Pow.Store.Backend.MnesiaCache.Unsplit,
       {Oban, Application.fetch_env!(:app, Oban)},
+      {Redix,
+       {Application.get_env(:app, :redis_url),
+        [name: :redix, socket_opts: Application.get_env(:app, :redis_socket_opts)]}},
       # Start a worker by calling: App.Worker.start_link(arg)
       # {App.Worker, arg},
       # Start to serve requests, typically the last entry

@@ -24,7 +24,9 @@ config :app,
   mailer_from_name: System.get_env("MAILER_FROM_NAME", "JetForm"),
   mailer_from_email: System.get_env("MAILER_FROM_EMAIL", "support@jetform.local"),
   admin_email: System.get_env("ADMIN_EMAIL", "admin@jetform.local"),
-  marketing_site: System.get_env("MARKETING_SITE", "http://localhost:4321")
+  marketing_site: System.get_env("MARKETING_SITE", "http://localhost:4321"),
+  redis_url: System.get_env("REDIS_URL", "redis://redis:6379/1"),
+  redis_socket_opts: if(System.get_env("REDIS_IPV6") in ~w(true 1), do: [:inet6], else: [])
 
 config :app, :midtrans,
   server_key: System.get_env("MIDTRANS_SERVER_KEY"),

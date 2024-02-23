@@ -15,7 +15,7 @@ kill_signal = "SIGTERM"
 [env]
   PHX_HOST = "app.jetform.me"
   PORT = "8080"
-  MIDTRANS_MODE = "sandbox"
+  MIDTRANS_MODE = "production"
   WAFFLE_AWS_S3_BUCKET = "jetform-static"
   WAFFLE_ASSET_HOST = "https://is3.cloudhost.id/jetform-static"
   AWS_S3_HOST = "is3.cloudhost.id"
@@ -24,6 +24,7 @@ kill_signal = "SIGTERM"
   MARKETING_SITE = "https://www.jetform.me"
   POOL_SIZE = "6"
   ECTO_IPV6 = "true"
+  REDIS_IPV6 = "true"
   MAILGUN_DOMAIN = "mg.jetform.me"
   DNS_CLUSTER_QUERY = "jetform-app.internal"
 
@@ -43,7 +44,3 @@ kill_signal = "SIGTERM"
   cpu_kind = "shared"
   cpus = 1
   memory_mb = 1024
-
-[mounts]
-  source="jetform_data"
-  destination="/data"
