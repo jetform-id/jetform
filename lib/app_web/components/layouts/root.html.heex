@@ -2,17 +2,18 @@
 <html lang="en" class="[scrollbar-gutter:stable]" class="dark">
   <head>
     <meta charset="utf-8" />
+    <meta name="generator" content={"JetForm v#{Application.spec(:app, :vsn)}"} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title suffix={" · " <> app_info(:tagline)}>
+    <.live_title suffix={" | " <> app_info(:tagline)}>
       <%= assigns[:page_title] || app_info(:name) %>
     </.live_title>
+    <.seo_tags :if={assigns[:page_info]} page_info={assigns[:page_info]} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>

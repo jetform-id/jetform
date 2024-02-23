@@ -64,6 +64,17 @@ defmodule AppWeb.Router do
     end
   end
 
+  # overriden pow routes
+  scope "/", Pow.Phoenix, as: "pow" do
+    pipe_through [:browser, :auth_area]
+
+    get "/signup", RegistrationController, :new
+    post "/signup", RegistrationController, :create
+
+    get "/signin", SessionController, :new
+    post "/signin", SessionController, :create
+  end
+
   scope "/" do
     pipe_through [:browser, :auth_area]
 

@@ -63,7 +63,8 @@ defmodule App.MixProject do
       {:timex, "~> 3.7"},
       {:flop, "~> 0.24.1"},
       {:oban, "~> 2.16"},
-      {:tesla, "~> 1.4.0"}
+      {:tesla, "~> 1.4.0"},
+      {:html_sanitize_ex, "~> 1.4"}
     ]
   end
 

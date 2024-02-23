@@ -13,18 +13,18 @@ defmodule AppWeb.LiveAuth do
       socket
       |> assign(:base_url, Utils.base_url())
       |> assign(:admin_menus, Utils.admin_menus())
-      |> assign_new(:current_user, fn ->
-        {_conn, user} = conn_user_from_session(session)
-        user
-      end)
+      |> assign_new(:current_user, fn -> user_from_session(session) end)
 
     if socket.assigns.current_user do
       {:cont, socket}
     else
       socket =
         socket
-        |> put_flash(:error, "You must be logged in to access this page.")
-        |> redirect(to: ~p"/session/new")
+        |> put_flash(
+          :error,
+          "Sesi admin anda telah berakhir, silahkan login kembali untuk melanjutkan."
+        )
+        |> redirect(to: ~p"/signin")
 
       {:halt, socket}
     end
@@ -34,15 +34,12 @@ defmodule AppWeb.LiveAuth do
     socket =
       socket
       |> assign(:base_url, Utils.base_url())
-      |> assign_new(:current_user, fn ->
-        {_conn, user} = conn_user_from_session(session)
-        user
-      end)
+      |> assign_new(:current_user, fn -> user_from_session(session) end)
 
     {:cont, socket}
   end
 
-  def conn_user_from_session(session) do
+  def user_from_session(session) do
     pow_config = [otp_app: :app]
 
     %Plug.Conn{
@@ -56,5 +53,6 @@ defmodule AppWeb.LiveAuth do
     }
     |> Map.put(:secret_key_base, AppWeb.Endpoint.config(:secret_key_base))
     |> Pow.Plug.Session.fetch(pow_config)
+    |> then(fn {_conn, user} -> user end)
   end
 end

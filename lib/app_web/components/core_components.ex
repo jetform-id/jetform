@@ -30,6 +30,31 @@ defmodule AppWeb.CoreComponents do
     Application.fetch_env!(:app, :app_tagline)
   end
 
+  attr :page_info, :map, default: %{}
+
+  def seo_tags(assigns) do
+    ~H"""
+    <%!-- general --%>
+    <link rel="canonical" href={@page_info.url} />
+    <meta name="description" content={@page_info.description} />
+    <%!-- OG --%>
+    <meta property="og:title" content={@page_info.title} />
+    <meta property="og:type" content={@page_info.type} />
+    <meta property="og:image" content={@page_info.image} />
+    <meta property="og:url" content={@page_info.url} />
+    <meta property="og:description" content={@page_info.description} />
+    <meta property="og:image:url" content={@page_info.image} />
+    <meta property="og:image:alt" content={@page_info.title} />
+    <%!-- Twitter --%>
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@jetform_app" />
+    <meta name="twitter:title" content={@page_info.title} />
+    <meta name="twitter:image" content={@page_info.image} />
+    <meta name="twitter:image:alt" content={@page_info.title} />
+    <meta name="twitter:description" content={@page_info.description} />
+    """
+  end
+
   @doc """
   Renders formatted price.
   """

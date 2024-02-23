@@ -5,7 +5,7 @@ defmodule AppWeb.PowAuthErrorHandler do
   @spec call(Conn.t(), atom()) :: Conn.t()
   def call(conn, :not_authenticated) do
     conn
-    |> redirect(to: ~p"/session/new")
+    |> redirect(to: ~p"/signin")
   end
 
   @spec call(Conn.t(), atom()) :: Conn.t()

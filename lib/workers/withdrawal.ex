@@ -65,7 +65,7 @@ defmodule Workers.Withdrawal do
       |> Timex.format!("%d-%m-%Y %H:%M " <> Users.tz_label(user.timezone), :strftime)
 
     """
-    Tanggal & waktu penarikan: #{withdrawal_time}
+    Tanggal & waktu pengajuan: #{withdrawal_time}
     Jumlah penarikan: Rp. #{withdrawal.amount}
     Biaya admin: Rp. #{withdrawal.service_fee}
     Jumlah diterima: Rp. #{withdrawal.amount - withdrawal.service_fee}
@@ -88,7 +88,7 @@ defmodule Workers.Withdrawal do
     ----------------------------------------------------
 
     Silahkan klik link berikut untuk melanjutkan proses penarikan dana:
-    #{base_url}/admin/withdrawals/confirm/#{token}
+    #{base_url}/withdrawals/confirm/#{token}
 
     *** PENTING ***
     Kami tidak bertanggung jawab atas kesalahan transfer dana yang disebabkan oleh kesalahan nomor rekening, nama rekening, atau nama bank penerima.
@@ -155,7 +155,7 @@ defmodule Workers.Withdrawal do
     ----------------------------------------------------
 
     Berikut link untuk melihat daftar penarikan dana anda:
-    #{base_url}/admin/withdrawals
+    #{base_url}/withdrawals
 
     --
     Tim JetForm
