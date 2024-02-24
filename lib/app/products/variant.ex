@@ -25,6 +25,7 @@ defmodule App.Products.Variant do
     variant
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
+    |> validate_length(:name, max: 50, message: "maksimum %{count} karakter")
     |> validate_number(:price, greater_than_or_equal_to: 0)
   end
 

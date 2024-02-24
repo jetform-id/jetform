@@ -1,6 +1,7 @@
 defmodule Workers.NotifyNewAccess do
   use Oban.Worker, queue: :default, max_attempts: 3
   require Logger
+  alias App.Mailer
   alias App.Orders
   alias App.Contents
 
@@ -61,7 +62,7 @@ defmodule Workers.NotifyNewAccess do
       text: text,
       html: nil
     }
-    |> App.Mailer.cast()
-    |> App.Mailer.deliver()
+    |> Mailer.cast()
+    |> Mailer.process()
   end
 end

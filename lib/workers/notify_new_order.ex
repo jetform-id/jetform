@@ -1,6 +1,7 @@
 defmodule Workers.NotifyNewOrder do
   use Oban.Worker, queue: :default, max_attempts: 3
   require Logger
+  alias App.Mailer
   alias App.Orders
 
   def create(%{status: :pending} = order) do
@@ -43,14 +44,14 @@ defmodule Workers.NotifyNewOrder do
 
     invoice_text =
       case status do
-        "pending" -> "Detail pembelian dan cara pembayaran bisa anda lihat di halaman berikut:"
-        _ -> "Detail pembelian bisa anda lihat di halaman berikut:"
+        "pending" -> "Detail order dan cara pembayaran bisa anda lihat di link berikut:"
+        _ -> "Detail order bisa anda lihat di link berikut:"
       end
 
     buyer_text = """
     Halo #{order.customer_name},
 
-    Anda telah melakukan pembelian berikut:
+    Anda telah membuat order berikut:
     No. Invoice: ##{order.invoice_number}
     Produk: #{Orders.product_fullname(order)}
     Total: Rp. #{order.total}
@@ -68,7 +69,7 @@ defmodule Workers.NotifyNewOrder do
     user_text = """
     Halo #{user.email},
 
-    Terdapat pesanan baru atas produk anda:
+    Terdapat order baru atas produk anda:
     No. Invoice: ##{order.invoice_number}
     Produk: #{Orders.product_fullname(order)}
     Total: Rp. #{order.total}
@@ -81,8 +82,7 @@ defmodule Workers.NotifyNewOrder do
     buyer_email =
       %{
         user: %{name: order.customer_name, email: order.customer_email},
-        subject:
-          "Detail pembelian anda ##{order.invoice_number} | #{Orders.product_fullname(order)}",
+        subject: "Detail order anda ##{order.invoice_number} | #{Orders.product_fullname(order)}",
         text: buyer_text,
         html: nil
       }
@@ -90,16 +90,20 @@ defmodule Workers.NotifyNewOrder do
     seller_email =
       %{
         user: %{name: "", email: user.email},
-        subject: "Order Pending ##{order.invoice_number} | #{Orders.product_fullname(order)}",
+        subject:
+          "Terdapat order baru ##{order.invoice_number} | #{Orders.product_fullname(order)}",
         text: user_text,
         html: nil
       }
 
+    # Mailgun doesn't support `deliver_many` so we have to send them one by one
     case status do
       "pending" -> [buyer_email, seller_email]
       "free" -> [buyer_email]
     end
-    |> Enum.map(&App.Mailer.cast/1)
-    |> App.Mailer.deliver_many()
+    |> Enum.map(&Mailer.cast/1)
+    |> Enum.each(&Mailer.process/1)
+
+    :ok
   end
 end

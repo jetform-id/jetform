@@ -54,7 +54,7 @@ defmodule AppWeb.PublicLive.Checkout do
 
         _ ->
           socket
-          |> put_flash(:info, "Pesanan telah dibuat! silahkan melakukan pembayaran")
+          |> put_flash(:info, "Pesanan telah dibuat! silahkan lanjutkan dengan pembayaran.")
           |> push_navigate(to: ~p"/invoice/#{order.id}")
       end
 

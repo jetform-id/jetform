@@ -154,7 +154,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         class="group inline-flex w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-700"
       >
         <%= if @is_free do %>
-          Dapatkan Akses Gratis!
+          Download Gratis!
         <% else %>
           <%= if Products.cta_custom?(@product.cta) do %>
             <%= @product.cta_text %>
@@ -237,10 +237,10 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
             class="mt-6 w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-700"
           >
             <%= if @is_free do
-              "Kirim akses produk via email"
+              "Kirim Link Download via Email"
             else
-              "Pembayaran"
-            end %> <span aria-hidden="true">→</span>
+              "Buat Order"
+            end %>
           </button>
         </:actions>
       </.simple_form>

@@ -67,6 +67,7 @@ defmodule App.Products.Product do
   def changeset(product, attrs) do
     product
     |> cast(attrs, @required_fields ++ @optional_fields)
+    |> validate_length(:name, max: 50, message: "maksimum %{count} karakter")
     |> cast_attachments(attrs, [:cover], allow_paths: true)
     |> validate_required(@required_fields)
     |> validate_number(:price, greater_than_or_equal_to: 0)

@@ -32,6 +32,8 @@ defmodule AppWeb.PaymentController do
     end
   end
 
+  defp handle_status(%{"order_id" => "payment_notif_test_" <> _}), do: {:ok, "test"}
+
   defp handle_status(%{"order_id" => payment_id} = status) do
     case Orders.get_payment(payment_id) do
       nil -> {:error, :payment_not_found}

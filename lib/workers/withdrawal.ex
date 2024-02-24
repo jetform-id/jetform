@@ -1,6 +1,7 @@
 defmodule Workers.Withdrawal do
   use Oban.Worker, queue: :default, max_attempts: 3
   require Logger
+  alias App.Mailer
   alias App.Users
   alias App.Credits
 
@@ -104,8 +105,10 @@ defmodule Workers.Withdrawal do
       text: text,
       html: nil
     }
-    |> App.Mailer.cast()
-    |> App.Mailer.deliver()
+    |> Mailer.cast()
+    |> Mailer.process()
+
+    :ok
   end
 
   defp send_confirmed_email(withdrawal) do
@@ -137,8 +140,10 @@ defmodule Workers.Withdrawal do
       text: text,
       html: nil
     }
-    |> App.Mailer.cast()
-    |> App.Mailer.deliver()
+    |> Mailer.cast()
+    |> Mailer.process()
+
+    :ok
   end
 
   defp send_cancellation_email(withdrawal) do
@@ -167,8 +172,10 @@ defmodule Workers.Withdrawal do
       text: text,
       html: nil
     }
-    |> App.Mailer.cast()
-    |> App.Mailer.deliver()
+    |> Mailer.cast()
+    |> Mailer.process()
+
+    :ok
   end
 
   defp send_rejected_email(withdrawal) do
@@ -199,8 +206,10 @@ defmodule Workers.Withdrawal do
       text: text,
       html: nil
     }
-    |> App.Mailer.cast()
-    |> App.Mailer.deliver()
+    |> Mailer.cast()
+    |> Mailer.process()
+
+    :ok
   end
 
   defp send_success_email(withdrawal) do
@@ -231,7 +240,9 @@ defmodule Workers.Withdrawal do
       text: text,
       html: nil
     }
-    |> App.Mailer.cast()
-    |> App.Mailer.deliver()
+    |> Mailer.cast()
+    |> Mailer.process()
+
+    :ok
   end
 end

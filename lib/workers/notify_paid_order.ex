@@ -1,6 +1,7 @@
 defmodule Workers.NotifyPaidOrder do
   use Oban.Worker, queue: :default, max_attempts: 3
   require Logger
+  alias App.Mailer
   alias App.Orders
 
   def create(%{status: :paid} = order) do
@@ -32,7 +33,7 @@ defmodule Workers.NotifyPaidOrder do
     buyer_text = """
     Halo #{order.customer_name},
 
-    Pembayaran anda atas produk berikut berhasil:
+    Pembayaran anda atas order berikut berhasil:
     No. Invoice: ##{order.invoice_number}
     Produk: #{Orders.product_fullname(order)}
     Total: Rp. #{order.total}
@@ -67,6 +68,7 @@ defmodule Workers.NotifyPaidOrder do
     Tim JetForm
     """
 
+    # Mailgun doesn't support `deliver_many` so we have to send them one by one
     [
       %{
         user: %{name: "", email: user.email},
@@ -82,7 +84,9 @@ defmodule Workers.NotifyPaidOrder do
         html: nil
       }
     ]
-    |> Enum.map(&App.Mailer.cast/1)
-    |> App.Mailer.deliver_many()
+    |> Enum.map(&Mailer.cast/1)
+    |> Enum.each(&Mailer.process/1)
+
+    :ok
   end
 end

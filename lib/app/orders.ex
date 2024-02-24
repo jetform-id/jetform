@@ -267,7 +267,8 @@ defmodule App.Orders do
           "id" => order.product_id,
           "price" => order.total,
           "quantity" => 1,
-          "name" => product_fullname(order)
+          "name" => order.product_name,
+          "brand" => order.product_variant_name
         }
       ],
       "customer_details" => %{

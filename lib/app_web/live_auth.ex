@@ -20,10 +20,10 @@ defmodule AppWeb.LiveAuth do
     else
       socket =
         socket
-        |> put_flash(
-          :error,
-          "Sesi admin anda telah berakhir, silahkan login kembali untuk melanjutkan."
-        )
+        # |> put_flash(
+        #   :error,
+        #   "Sesi anda telah berakhir, silahkan login kembali untuk melanjutkan."
+        # )
         |> redirect(to: ~p"/signin")
 
       {:halt, socket}
