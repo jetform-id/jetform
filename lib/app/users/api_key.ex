@@ -45,8 +45,6 @@ defmodule App.Users.APIKey do
   end
 
   defp validate_user(changeset, attrs) do
-    IO.inspect(changeset)
-
     case Map.get(attrs, "user") do
       nil -> add_error(changeset, :user, "can't be blank")
       user -> put_assoc(changeset, :user, user)
