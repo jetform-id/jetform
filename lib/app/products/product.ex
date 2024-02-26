@@ -12,10 +12,13 @@ defmodule App.Products.Product do
 
   @required_fields ~w(name slug price cta)a
   @optional_fields ~w(is_live description cta_text details)a
+  @cta_enums ~w(buy buy_now get_now free_download i_want_it custom)a
   @ctas [
     {"Beli", :buy},
     {"Beli Sekarang", :buy_now},
+    {"Dapatkan Sekarang", :get_now},
     {"Download Gratis", :free_download},
+    {"Saya Mau", :i_want_it},
     {"Custom...", :custom}
   ]
 
@@ -27,7 +30,11 @@ defmodule App.Products.Product do
     field :price, :integer, default: 0
     field :description, :string
     field :is_live, :boolean, default: false
-    field :cta, Ecto.Enum, values: [:buy, :buy_now, :free_download, :custom], default: :buy
+
+    field :cta, Ecto.Enum,
+      values: @cta_enums,
+      default: :buy
+
     field :cta_text, :string
     field :details, :map, default: %{"items" => []}
     field :cover, App.Products.ProductCover.Type
@@ -56,11 +63,6 @@ defmodule App.Products.Product do
 
   def has_details?(product) do
     !Enum.empty?(Map.get(product.details, "items", %{}))
-  end
-
-  def has_variants?(product) do
-    product = App.Repo.preload(product, :variants)
-    !Enum.empty?(product.variants)
   end
 
   @doc false

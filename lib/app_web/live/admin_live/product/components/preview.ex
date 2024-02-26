@@ -107,14 +107,13 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           <.buy_button
             :if={@step == :cart}
             product={@product}
-            is_free={@selected_variant && @total_price == 0}
             error={@error}
             on_click={JS.push("buy", target: @myself)}
           />
 
           <.checkout_form
             :if={@step == :checkout}
-            is_free={@selected_variant && @total_price == 0}
+            is_free={@total_price == 0}
             changeset={@checkout_changeset}
             submit_event={if @preview, do: "fake_order", else: "create_order"}
             submit_target={@myself}
@@ -134,7 +133,6 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
 
   attr :error, :string, default: nil
   attr :product, :map, required: true
-  attr :is_free, :boolean, default: false
   attr :on_click, JS, default: %JS{}
 
   def buy_button(assigns) do
@@ -153,14 +151,10 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         type="button"
         class="group inline-flex w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-700"
       >
-        <%= if @is_free do %>
-          Download Gratis!
+        <%= if Products.cta_custom?(@product.cta) do %>
+          <%= @product.cta_text %>
         <% else %>
-          <%= if Products.cta_custom?(@product.cta) do %>
-            <%= @product.cta_text %>
-          <% else %>
-            <%= Products.cta_text(@product.cta) %>
-          <% end %>
+          <%= Products.cta_text(@product.cta) %>
         <% end %>
       </button>
     </div>
@@ -237,7 +231,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
             class="mt-6 w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-700"
           >
             <%= if @is_free do
-              "Kirim Link Download via Email"
+              "Kirim Akses via Email"
             else
               "Buat Order"
             end %>

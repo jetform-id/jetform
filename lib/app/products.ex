@@ -8,7 +8,6 @@ defmodule App.Products do
   defdelegate cta_text(cta), to: Product
   defdelegate cta_custom?(cta), to: Product
   defdelegate has_details?(product), to: Product
-  defdelegate has_variants?(product), to: Product
 
   def list_products_by_user!(user, query) do
     Product
@@ -124,6 +123,19 @@ defmodule App.Products do
   end
 
   # --------------- VARIANT ---------------
+
+  def variants_count(product) do
+    from(
+      v in Variant,
+      where: v.product_id == ^product.id,
+      select: count(v.id)
+    )
+    |> Repo.one()
+  end
+
+  def has_variants?(product) do
+    variants_count(product) > 0
+  end
 
   def list_variants_by_product(product) do
     from(
