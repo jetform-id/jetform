@@ -82,3 +82,5 @@ config :phoenix_live_view, :debug_heex_annotations, true
 config :swoosh, :api_client, false
 
 # config :mnesia, :dir, ~c"/data"
+
+config :open_api_spex, :cache_adapter, OpenApiSpex.Plug.NoneCache

@@ -36,7 +36,31 @@ defmodule AppWeb.Router do
     plug AppWeb.Plug.RequireAPIKey
   end
 
-  # -------------------- Scopes --------------------
+  pipeline :openapi do
+    plug :accepts, ["json"]
+    plug OpenApiSpex.Plug.PutApiSpec, module: AppWeb.API.Spec
+  end
+
+  # -------------------- Swagger --------------------
+  @swagger_ui_config [
+    path: "/api/openapi",
+    default_model_expand_depth: 3,
+    display_operation_id: true
+  ]
+
+  scope "/api", OpenApiSpex do
+    scope "/" do
+      pipe_through [:openapi]
+      get "/openapi", Plug.RenderSpec, :show
+    end
+
+    scope "/" do
+      pipe_through [:browser]
+      get "/docs", Plug.SwaggerUI, @swagger_ui_config
+    end
+  end
+
+  # -------------------- App Routes --------------------
   scope "/api", AppWeb do
     pipe_through :api
 
@@ -107,11 +131,6 @@ defmodule AppWeb.Router do
       live "/", AdminLive.Dashboard.Index
     end
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", AppWeb do
-  #   pipe_through :api
-  # end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:app, :dev_routes) do

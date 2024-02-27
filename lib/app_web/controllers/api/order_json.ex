@@ -1,11 +1,22 @@
 defmodule AppWeb.API.OrderJSON do
   alias App.Orders
 
-  def index(%{orders: orders, meta: _meta}) do
-    Enum.map(orders, &transform/1)
+  def index(%{orders: orders, meta: meta}) do
+    %{data: Enum.map(orders, &transform/1), meta: transform_meta(meta)}
   end
 
-  def show(%{order: order}), do: transform(order)
+  def show(%{order: order}), do: %{data: transform(order)}
+
+  defp transform_meta(meta) do
+    Map.take(meta, [
+      :total_pages,
+      :total_count,
+      :current_page,
+      :next_page,
+      :previous_page,
+      :page_size
+    ])
+  end
 
   defp transform(%Orders.Order{} = order) do
     %{

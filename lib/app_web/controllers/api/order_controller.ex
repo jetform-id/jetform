@@ -1,8 +1,23 @@
 defmodule AppWeb.API.OrderController do
   use AppWeb, :controller
-  alias App.Orders
+  use OpenApiSpex.ControllerSpecs
 
-  @result_limit 10
+  alias App.Orders
+  alias AppWeb.API.Schemas
+
+  @result_limit 20
+
+  operation(:index,
+    summary: "List orders",
+    parameters: [
+      status: [in: :query, type: :string, description: "Filter by status"],
+      product_id: [in: :query, type: :string, description: "Filter by Product ID"],
+      product_variant_id: [in: :query, type: :string, description: "Filter by Product Variant ID"]
+    ],
+    responses: [
+      ok: {"Order list", "application/json", Schemas.OrdersResponse}
+    ]
+  )
 
   def index(%{assigns: %{current_user: user}} = conn, params) do
     filters =
@@ -22,6 +37,16 @@ defmodule AppWeb.API.OrderController do
     {orders, meta} = Orders.list_orders!(user, query)
     render(conn, :index, orders: orders, meta: meta)
   end
+
+  operation(:show,
+    summary: "Show order",
+    parameters: [
+      id: [in: :path, type: :string, description: "Order ID"]
+    ],
+    responses: [
+      ok: {"Order", "application/json", Schemas.OrderResponse}
+    ]
+  )
 
   def show(conn, %{"id" => id}) do
     order = Orders.get_order!(id)
