@@ -14,7 +14,7 @@ JetForm bukan ide baru, namun terinspirasi dari beberapa platform yang sudah ada
 
 ## Kenapa JetForm?
 
-**Untuk penjual**: JetForm fokus memberikan pengalaman (User Experience) yang sederhana namun memiliki semua fitur penting yang dibutuhkan penjual. Kreator fokus membuat produk bermanfaat, JetForm akan menjadi partner bisnis yang mengurusi penjualan dan distribusi produk.
+**Untuk penjual**: JetForm fokus memberikan pengalaman (User Experience) yang sederhana namun memiliki semua fitur penting yang dibutuhkan penjual. Kreator fokus membuat produk dan memasaekan, JetForm akan menjadi partner bisnis yang mengurusi penjualan dan distribusi produk.
 
 **Untuk pembeli**: Akses ke produk yang dibeli langsung didapatkan begitu pembayaran selesai. Tidak perlu menunggu lama, karena semua serba otomatis.
 
@@ -32,7 +32,7 @@ Dan berikut detailnya:
 - [x] **Open source (kode sumber terbuka)**. JetForm mengedepankan transparansi, keterbukaan (openess) dan keadilan (fairness). Dikembangkan menggunakan tools open source serta berkontribusi balik ke komunitas open source. JetForm ❤️ open source.
 - [x] **Built-in digital product distribution system**. Produk dijual dan didistribusikan langsung ke pembeli dengan aman tanpa perlu integrasi dengan sistem pihak ketiga.
 - [x] **Fast and secure checkout page**. Pembeli membeli produk yang mereka inginkan dengan proses yang cepat, mudah dan aman.
-- [x] **Flat commision fee. No monthly subscription!** Anda bisa daftar dan langsung jualan, tanpa iuran bulanan. JetForm mendapat komisi 10% dari setiap transaksi penjualan produk.
+- [x] **Simple and flexible pricing!** Anda bisa daftar dan langsung jualan tanpa iuran bulanan dengan sistem Pay As You Go (komisi) atau pilih paket Bulanan kalau penjualan Anda sudah mulai meningkat.
 - [x] **No limits**. Tidak ada batasan dalam jumlah produk ataupun jumlah transaksi.
 - [x] **Product Variants**. Buat produk dengan varian berbeda dengan harga berbeda. Bisa juga untuk produk gratis (Lead Magnet).
 - [x] **Withdraw anytime**. Withdraw hasil penjualan anda kapan saja.
@@ -46,7 +46,7 @@ Anda punya ide menarik? [lets talk](https://github.com/jetform-dev/jetform/discu
 
 ## Detail Teknis
 
-JetForm dibuat dengan [Phoenix framework](https://www.phoenixframework.org/) dengan bahasa [Elixir](https://elixir-lang.org/). Adalah web-framework untuk membuat aplikasi dengan cepat, di-backing dengan bahasa Elixir (berjalan diatas Erlang VM) yang terkenal dengan kemampuannya untuk membangun aplikasi yang highly-concurrent + fault tolerant (dipakai Discord, WhatsApp, Pinterest, dll.) dan merupakan bahasa functional.
+JetForm dibuat dengan [Phoenix framework](https://www.phoenixframework.org/) dengan bahasa [Elixir](https://elixir-lang.org/). Adalah web-framework untuk membuat aplikasi dengan produktif, di-backing dengan bahasa Elixir (berjalan diatas Erlang VM) yang terkenal dengan kemampuannya untuk membangun aplikasi yang highly-concurrent + fault tolerant (dipakai Discord, WhatsApp, Pinterest, dll.) dan merupakan bahasa functional.
 
 ## Development
 
@@ -68,7 +68,7 @@ Permissions of this strongest copyleft license are conditioned on making availab
 
 Yang artinya:
 ```
-Siapa saja boleh mempergunakan, memodifikasi dan mendistribusikan proyek ini tetapi harus tetap menggunakan lisensi yang sama dan kode sumber harus selalu dibuka secara penuh.
+Siapa saja boleh mempergunakan, memodifikasi dan mendistribusikan proyek ini tetapi harus tetap menggunakan lisensi yang sama dan kode sumber yang harus selalu dibuka secara penuh.
 ```
 
-Lebih detail mengenai lisensi ini bisa dibaca [disini](https://github.com/jetform-dev/JetForm/blob/main/LICENSE).
+Lebih detail mengenai lisensi ini bisa dibaca [disini](https://github.com/jetform-dev/jetform/blob/main/LICENSE).
