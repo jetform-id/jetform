@@ -70,6 +70,8 @@ defmodule AppWeb.Router do
     scope "/v1" do
       pipe_through :protected_api
       resources "/orders", API.OrderController, only: [:index, :show]
+      resources "/products", API.ProductController, only: [:index, :show]
+      get "/products/:id/variants", API.ProductController, :list_variants
     end
   end
 

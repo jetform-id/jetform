@@ -12,7 +12,8 @@ defmodule AppWeb.API.OrderController do
     parameters: [
       status: [in: :query, type: :string, description: "Filter by status"],
       product_id: [in: :query, type: :string, description: "Filter by Product ID"],
-      product_variant_id: [in: :query, type: :string, description: "Filter by Product Variant ID"]
+      product_variant_id: [in: :query, type: :string, description: "Filter by Product Variant ID"],
+      page: [in: :query, type: :integer, description: "Page number"]
     ],
     responses: [
       ok: {"Order list", "application/json", Schemas.OrdersResponse}
@@ -20,6 +21,9 @@ defmodule AppWeb.API.OrderController do
   )
 
   def index(%{assigns: %{current_user: user}} = conn, params) do
+    # this is to support API clients that expect an array e.g Zapier
+    as_array = params["as_array"] == "true"
+
     filters =
       []
       |> maybe_put_filter(params, "status")
@@ -35,7 +39,7 @@ defmodule AppWeb.API.OrderController do
     }
 
     {orders, meta} = Orders.list_orders!(user, query)
-    render(conn, :index, orders: orders, meta: meta)
+    render(conn, :index, orders: orders, meta: meta, as_array: as_array)
   end
 
   operation(:show,

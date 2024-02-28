@@ -205,7 +205,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           <div class="border border-yellow-300 bg-yellow-100 rounded p-2 text-center">
             <p class="pl-6 mt-1 text-xs text-yellow-600">
               <.icon name="hero-exclamation-triangle" />
-              Harap pastikan data di atas sudah benar. Pihak penjual dan JetForm tidak bertanggung jawab atas akibat dari kesalahan data yang dimasukan.
+              Harap pastikan data di atas sudah benar. Pihak penjual dan JetForm tidak bertanggung jawab atas akibat dari kesalahan data yang dimasukkan.
             </p>
           </div>
 

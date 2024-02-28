@@ -15,15 +15,20 @@ defmodule App.Products do
     |> Flop.validate_and_run!(query)
   end
 
-  def list_products_by_user_scope(q, %{role: :admin}), do: q
+  defp list_products_by_user_scope(q, %{role: :admin}), do: q
 
-  def list_products_by_user_scope(q, user) do
+  defp list_products_by_user_scope(q, user) do
     where(q, [p], p.user_id == ^user.id)
   end
 
   def get_product(id) do
     Product
     |> Repo.get(id)
+  end
+
+  def get_product!(id) do
+    Product
+    |> Repo.get!(id)
   end
 
   def get_product_by_slug(slug) do
