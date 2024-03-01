@@ -3,8 +3,8 @@ defmodule App.Plans.Commission5 do
 
   @id "plan-comm-5"
   @name "JetForm 5"
-  @description "JetForm fee (komisi) 5% per transaksi"
-  @commission_percent 5
+  @description "JetForm fee = 5% (komisi) + 0.7% (QRIS) per transaksi"
+  @commission_percent 5 + 0.7
 
   def id(), do: @id
   def name(), do: @name

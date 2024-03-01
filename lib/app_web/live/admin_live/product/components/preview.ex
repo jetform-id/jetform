@@ -205,14 +205,14 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           <div class="border border-yellow-300 bg-yellow-100 rounded p-2 text-center">
             <p class="pl-6 mt-1 text-xs text-yellow-600">
               <.icon name="hero-exclamation-triangle" />
-              Harap pastikan data di atas sudah benar. Pihak penjual dan JetForm tidak bertanggung jawab atas akibat dari kesalahan data yang dimasukkan.
+              Harap pastikan data di atas sudah benar. Kami tidak bertanggung jawab atas akibat dari kesalahan data yang dimasukkan.
             </p>
           </div>
 
           <label class="flex items-center">
             <.input field={f[:confirm]} type="checkbox" required />
             <span class="text-sm text-slate-500 ml-2">
-              Saya menyatakan data di atas sudah sesuai dan benar adanya.
+              Saya menyatakan data di atas sudah benar.
             </span>
           </label>
 

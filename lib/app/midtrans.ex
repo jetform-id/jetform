@@ -44,37 +44,11 @@ defmodule App.Midtrans do
     |> handle_response()
   end
 
-  def test_create_transaction do
-    payload = %{
-      "transaction_details" => %{
-        "order_id" => "test_order_id",
-        "gross_amount" => 10000
-      },
-      "item_details" => [
-        %{
-          "id" => "test_item_id",
-          "price" => 10000,
-          "quantity" => 1,
-          "name" => "Test Item",
-          "brand" => "Test Brand",
-          "merchant_name" => "Test Merchant"
-        }
-      ],
-      "customer_details" => %{
-        "first_name" => "test name",
-        "email" => "test@example.com"
-      },
-      "expiry" => %{
-        "unit" => "minutes",
-        "duration" => 5
-      },
-      "page_expiry" => %{
-        "duration" => 5,
-        "unit" => "minutes"
-      }
-    }
-
-    create_transaction(payload)
+  def charge(%{} = payload) do
+    get_api_base_url()
+    |> get_http_client()
+    |> Tesla.post("/v2/charge", payload)
+    |> handle_response()
   end
 
   @doc """
@@ -166,4 +140,49 @@ defmodule App.Midtrans do
   end
 
   defp handle_response({:error, _} = error), do: error
+end
+
+defmodule App.Midtrans.Test do
+  @transaction_payload %{
+    "transaction_details" => %{
+      "order_id" => "test_order_id",
+      "gross_amount" => 10000
+    },
+    "item_details" => [
+      %{
+        "id" => "test_item_id",
+        "price" => 10000,
+        "quantity" => 1,
+        "name" => "Test Item",
+        "brand" => "Test Brand",
+        "merchant_name" => "Test Merchant"
+      }
+    ],
+    "customer_details" => %{
+      "first_name" => "test name",
+      "email" => "test@example.com"
+    },
+    "expiry" => %{
+      "unit" => "minutes",
+      "duration" => 5
+    },
+    "page_expiry" => %{
+      "duration" => 5,
+      "unit" => "minutes"
+    },
+    # "enabled_payments" => ["other_qris"]
+  }
+
+  def create_transaction do
+    App.Midtrans.create_transaction(@transaction_payload)
+  end
+
+  def create_gopay_charge do
+    payload = ewallet_payload("gopay")
+    App.Midtrans.charge(payload)
+  end
+
+  defp ewallet_payload(payment_type) do
+    Map.put(@transaction_payload, "payment_type", payment_type)
+  end
 end

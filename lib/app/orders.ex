@@ -243,19 +243,8 @@ defmodule App.Orders do
   To simplify payment time management, we strictly enforce te payment page expiry time as
   well as the transaction expiry time to the value of `expiry_in_minutes`.
   """
-  def midtrans_payload(%Order{} = order, %Payment{} = payment, expiry_in_minutes) do
-    # Payment channels that we enable are based on the service fee,
-    # this is to prevent the Midtrans fees to be higher than our service fee.
-    enabled_payments =
-      cond do
-        order.service_fee < 5_000 ->
-          Midtrans.config_value(:payment_channels_qris)
-
-        true ->
-          Midtrans.config_value(:payment_channels_cc) ++
-            Midtrans.config_value(:payment_channels_va) ++
-            Midtrans.config_value(:payment_channels_qris)
-      end
+  def midtrans_payload(%Order{} = order, %Payment{} = payment, expiry_in_minutes \\ 30) do
+    order = Repo.preload(order, :product)
 
     %{
       "transaction_details" => %{
@@ -283,7 +272,8 @@ defmodule App.Orders do
         "duration" => expiry_in_minutes,
         "unit" => "minutes"
       },
-      "enabled_payments" => enabled_payments
+      "enabled_payments" => Midtrans.config_value(:enabled_payments),
+      "custom_field1" => order.product.user_id
     }
   end
 
@@ -313,10 +303,11 @@ defmodule App.Orders do
     |> Ecto.Multi.insert(:new_payment, Payment.create_changeset(%Payment{}, %{"order" => order}))
     |> Ecto.Multi.run(:redirect_url, fn _repo,
                                         %{
-                                          expiry_in_minutes: expiry,
+                                          expiry_in_minutes: _expiry,
                                           new_payment: payment
                                         } ->
-      payload = midtrans_payload(order, payment, expiry)
+      # since we'll only enable QRIS, we'll ignore `expiry_in_minutes` and use the default value (30 minutes)
+      payload = midtrans_payload(order, payment)
 
       case Midtrans.create_transaction(payload) do
         {:ok, %{"redirect_url" => redirect_url}} ->
