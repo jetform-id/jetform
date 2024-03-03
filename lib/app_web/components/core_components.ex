@@ -30,6 +30,10 @@ defmodule AppWeb.CoreComponents do
     Application.fetch_env!(:app, :app_tagline)
   end
 
+  def captcha_sitekey() do
+    Application.fetch_env!(:app, :captcha)[:site_key]
+  end
+
   attr :page_info, :map, default: %{}
 
   def seo_tags(assigns) do

@@ -9,7 +9,7 @@ defmodule App.Orders.Order do
 
   @mail_regex ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/
   @required_fields ~w(invoice_number valid_until customer_name customer_email)a
-  @optional_fields ~w(customer_phone status payment_type paid_at confirm)a
+  @optional_fields ~w(customer_phone status payment_type paid_at)a
   @statuses ~w(pending paid expired cancelled free)a
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -31,7 +31,6 @@ defmodule App.Orders.Order do
     field :paid_at, :utc_datetime
     field :service_fee, :integer
 
-    field :confirm, :boolean, virtual: true
     field :plan, :map, virtual: true
 
     belongs_to :user, App.Users.User
@@ -66,7 +65,6 @@ defmodule App.Orders.Order do
   def create_changeset(order, attrs) do
     order
     |> changeset(attrs)
-    |> validate_acceptance(:confirm)
     |> validate_format(:customer_email, @mail_regex)
     |> validate_product(attrs)
     # need to be after validate_product

@@ -34,6 +34,11 @@ config :app, :midtrans,
   merchant_id: System.get_env("MIDTRANS_MERCHANT_ID"),
   mode: System.get_env("MIDTRANS_MODE", "sandbox")
 
+config :app, :captcha,
+  provider: System.get_env("CAPTCHA_PROVIDER", "cloudflare"),
+  site_key: System.get_env("CAPTCHA_SITE_KEY"),
+  secret_key: System.get_env("CAPTCHA_SECRET_KEY")
+
 if System.get_env("WAFFLE_AWS_S3_BUCKET") do
   config :waffle,
     storage: Waffle.Storage.S3,

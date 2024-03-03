@@ -5,12 +5,13 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
   require Integer
   alias App.{Products, Orders}
   alias App.Orders.Order
+  alias App.Captcha
 
   @impl true
   def render(assigns) do
     ~H"""
     <%!-- preview --%>
-    <div class="p-6">
+    <div class="p-1 md:p-6">
       <div class="mx-auto max-w-xl rounded-lg bg-white shadow-md">
         <img src={Products.cover_url(@product, :standard)} class="rounded-t-lg" />
         <hr />
@@ -117,6 +118,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
             changeset={@checkout_changeset}
             submit_event={if @preview, do: "fake_order", else: "create_order"}
             submit_target={@myself}
+            enable_captcha={@enable_captcha}
             error={@error}
           />
         </div>
@@ -165,6 +167,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
   attr :changeset, :map, required: true
   attr :submit_event, :string, required: true
   attr :submit_target, :any, required: true
+  attr :enable_captcha, :boolean, default: true
   attr :error, :string, default: nil
 
   def checkout_form(assigns) do
@@ -186,7 +189,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
       >
         <div class="space-y-6">
           <.input field={f[:customer_name]} type="text" label="Nama *" required />
-          <div class="flex gap-4">
+          <div class="md:flex gap-4">
             <.input
               field={f[:customer_email]}
               type="email"
@@ -198,7 +201,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
               field={f[:customer_phone]}
               type="text"
               label="No. HP / WhatsApp"
-              wrapper_class="flex-1"
+              wrapper_class="flex-1 mt-4 md:mt-0"
             />
           </div>
 
@@ -209,12 +212,14 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
             </p>
           </div>
 
-          <label class="flex items-center">
+          <div :if={@enable_captcha} id="cf-turnstile" phx-hook="RenderCaptcha" phx-update="ignore" />
+
+          <%!-- <label class="flex items-center">
             <.input field={f[:confirm]} type="checkbox" required />
             <span class="text-sm text-slate-500 ml-2">
               Saya menyatakan data di atas sudah benar.
             </span>
-          </label>
+          </label> --%>
 
           <div
             :if={@error}
@@ -253,6 +258,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
 
           socket
           |> assign(assigns)
+          |> assign(:enable_captcha, true)
           |> assign(:product, product)
           |> assign(:preview, false)
           |> assign(:has_variants, Products.has_variants?(product))
@@ -263,6 +269,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
 
           socket
           |> assign(:preview, true)
+          |> assign(:enable_captcha, false)
           |> assign(:product, product)
           |> assign(:has_variants, Products.has_variants?(product))
           |> assign(:total_price, product.price)
@@ -304,7 +311,11 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
   end
 
   @impl true
-  def handle_event("fake_order", %{"order" => order_params}, socket) do
+  def handle_event(
+        "fake_order",
+        %{"order" => order_params},
+        socket
+      ) do
     order_params =
       order_params
       |> Map.put("product", socket.assigns.product)
@@ -334,7 +345,14 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
   end
 
   @impl true
-  def handle_event("create_order", %{"order" => order_params}, socket) do
+  def handle_event(
+        "create_order",
+        %{"order" => order_params, "cf-turnstile-response" => captcha_token},
+        socket
+      ) do
+    # verify captcha token
+    :ok = Captcha.verify_token(captcha_token)
+
     order_params =
       order_params
       |> Map.put("product", socket.assigns.product)

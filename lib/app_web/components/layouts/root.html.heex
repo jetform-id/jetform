@@ -5,6 +5,7 @@
     <meta name="generator" content={"JetForm v#{Application.spec(:app, :vsn)}"} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
+    <meta name="captcha-sitekey" content={captcha_sitekey()} />
     <.live_title suffix={" | " <> app_info(:tagline)}>
       <%= assigns[:page_title] || app_info(:name) %>
     </.live_title>
@@ -15,16 +16,18 @@
       rel="stylesheet"
     />
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
-    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
-    </script>
-    <script
-      defer
-      src="https://us.umami.is/script.js"
-      data-website-id="485c1c0f-007f-42a6-ae6a-8f4881cd2f7c"
-    >
-    </script>
   </head>
   <body class={assigns[:body_class] || "bg-gray-50"}>
     <%= @inner_content %>
   </body>
+  <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+  </script>
+  <script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit">
+  </script>
+  <script
+    defer
+    src="https://us.umami.is/script.js"
+    data-website-id="485c1c0f-007f-42a6-ae6a-8f4881cd2f7c"
+  >
+  </script>
 </html>

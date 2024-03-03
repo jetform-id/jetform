@@ -10,4 +10,12 @@ let Hooks = {}
 // }
 
 
+Hooks.RenderCaptcha = {
+    mounted() {
+        turnstile.render('#cf-turnstile', {
+            sitekey: document.querySelector("meta[name='captcha-sitekey']").getAttribute("content")
+        });
+    }
+}
+
 export default Hooks
