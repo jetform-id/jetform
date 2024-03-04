@@ -8,7 +8,7 @@ defmodule App.Orders do
   alias App.Orders.{Order, Payment}
   alias App.Contents
   alias App.Credits
-  alias App.Midtrans
+  alias App.PaymentGateway.Midtrans
 
   # ------------- ORDERS -------------
 

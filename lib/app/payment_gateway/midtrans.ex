@@ -1,4 +1,4 @@
-defmodule App.Midtrans do
+defmodule App.PaymentGateway.Midtrans do
   @app_sandbox_base_url "https://app.sandbox.midtrans.com"
   @app_production_base_url "https://app.midtrans.com"
 
@@ -142,7 +142,7 @@ defmodule App.Midtrans do
   defp handle_response({:error, _} = error), do: error
 end
 
-defmodule App.Midtrans.Test do
+defmodule App.PaymentGateway.Midtrans.Test do
   @transaction_payload %{
     "transaction_details" => %{
       "order_id" => "test_order_id",
@@ -169,17 +169,17 @@ defmodule App.Midtrans.Test do
     "page_expiry" => %{
       "duration" => 5,
       "unit" => "minutes"
-    },
+    }
     # "enabled_payments" => ["other_qris"]
   }
 
   def create_transaction do
-    App.Midtrans.create_transaction(@transaction_payload)
+    App.PaymentGateway.Midtrans.create_transaction(@transaction_payload)
   end
 
   def create_gopay_charge do
     payload = ewallet_payload("gopay")
-    App.Midtrans.charge(payload)
+    App.PaymentGateway.Midtrans.charge(payload)
   end
 
   defp ewallet_payload(payment_type) do

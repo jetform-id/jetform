@@ -2,7 +2,7 @@ defmodule AppWeb.PaymentController do
   use AppWeb, :controller
   require Logger
 
-  alias App.Midtrans
+  alias App.PaymentGateway.Midtrans
   alias App.Orders
 
   def midtrans_redirect(conn, %{"order_id" => payment_id} = params) do
