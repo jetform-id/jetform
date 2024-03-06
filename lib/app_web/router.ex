@@ -36,6 +36,11 @@ defmodule AppWeb.Router do
     plug AppWeb.Plug.RequireAPIKey
   end
 
+  pipeline :admin_api do
+    plug :accepts, ["json"]
+    plug AppWeb.Plug.RequireAPIKey, role: :admin
+  end
+
   pipeline :openapi do
     plug :accepts, ["json"]
     plug OpenApiSpex.Plug.PutApiSpec, module: AppWeb.API.Spec
@@ -72,6 +77,11 @@ defmodule AppWeb.Router do
       resources "/orders", API.OrderController, only: [:index, :show]
       resources "/products", API.ProductController, only: [:index, :show]
       get "/products/:id/variants", API.ProductController, :list_variants
+    end
+
+    scope "/v1" do
+      pipe_through :admin_api
+      resources "/users", API.UserController, only: [:index, :show]
     end
   end
 

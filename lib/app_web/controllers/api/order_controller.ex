@@ -3,7 +3,7 @@ defmodule AppWeb.API.OrderController do
   use OpenApiSpex.ControllerSpecs
 
   alias App.Orders
-  alias AppWeb.API.Schemas
+  alias AppWeb.API.{Schemas, Utils}
 
   @result_limit 20
 
@@ -26,9 +26,9 @@ defmodule AppWeb.API.OrderController do
 
     filters =
       []
-      |> maybe_put_filter(params, "status")
-      |> maybe_put_filter(params, "product_id")
-      |> maybe_put_filter(params, "product_variant_id")
+      |> Utils.maybe_put_string_filter(params, "status")
+      |> Utils.maybe_put_string_filter(params, "product_id")
+      |> Utils.maybe_put_string_filter(params, "product_variant_id")
 
     query = %{
       order_by: [:inserted_at],
@@ -55,12 +55,5 @@ defmodule AppWeb.API.OrderController do
   def show(conn, %{"id" => id}) do
     order = Orders.get_order!(id)
     render(conn, :show, order: order)
-  end
-
-  defp maybe_put_filter(filters, params, filter, op \\ :==) do
-    case Map.get(params, filter) do
-      nil -> filters
-      value -> [%{field: String.to_atom(filter), op: op, value: value} | filters]
-    end
   end
 end

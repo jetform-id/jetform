@@ -7,6 +7,18 @@ defmodule App.Users do
   defdelegate tz_select_options(), to: User
   defdelegate tz_label(tz), to: User
 
+  def list_users!(user, query) do
+    User
+    |> list_users_scope(user)
+    |> Flop.validate_and_run!(query)
+  end
+
+  defp list_users_scope(q, %{role: :admin}), do: q
+
+  defp list_users_scope(q, user) do
+    where(q, [u], u.id == ^user.id)
+  end
+
   def set_role(user, role) do
     user
     |> User.changeset_role(%{role: role})

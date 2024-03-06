@@ -3,7 +3,7 @@ defmodule AppWeb.API.ProductController do
   use OpenApiSpex.ControllerSpecs
 
   alias App.Products
-  alias AppWeb.API.Schemas
+  alias AppWeb.API.{Schemas, Utils}
 
   @result_limit 20
 
@@ -11,6 +11,7 @@ defmodule AppWeb.API.ProductController do
     summary: "List products",
     parameters: [
       is_live: [in: :query, type: :string, description: "Filter by is_live status"],
+      is_public: [in: :query, type: :string, description: "Filter by is_public status"],
       page: [in: :query, type: :integer, description: "Page number"]
     ],
     responses: [
@@ -23,11 +24,9 @@ defmodule AppWeb.API.ProductController do
     as_array = params["as_array"] == "true"
 
     filters =
-      case params["is_live"] do
-        "true" -> [%{field: :is_live, op: :==, value: true}]
-        "false" -> [%{field: :is_live, op: :==, value: false}]
-        _ -> []
-      end
+      []
+      |> Utils.maybe_put_boolean_filter(params, "is_live")
+      |> Utils.maybe_put_boolean_filter(params, "is_public")
 
     query = %{
       order_by: [:inserted_at],

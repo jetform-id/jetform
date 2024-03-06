@@ -7,11 +7,11 @@ defmodule App.Products.Product do
 
   @derive {
     Flop.Schema,
-    filterable: [:is_live], sortable: [:inserted_at]
+    filterable: [:is_live, :is_public], sortable: [:inserted_at]
   }
 
   @required_fields ~w(name slug price cta)a
-  @optional_fields ~w(is_live description cta_text details)a
+  @optional_fields ~w(is_live is_public description cta_text details)a
   @cta_enums ~w(buy buy_now get_now free_download i_want_it custom)a
   @ctas [
     {"Beli", :buy},
@@ -30,6 +30,7 @@ defmodule App.Products.Product do
     field :price, :integer, default: 0
     field :description, :string
     field :is_live, :boolean, default: false
+    field :is_public, :boolean, default: false
 
     field :cta, Ecto.Enum,
       values: @cta_enums,

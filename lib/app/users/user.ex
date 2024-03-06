@@ -7,6 +7,11 @@ defmodule App.Users.User do
   use Pow.Extension.Ecto.Schema,
     extensions: [PowResetPassword, PowEmailConfirmation]
 
+  @derive {
+    Flop.Schema,
+    filterable: [:email_confirmed_at], sortable: [:email_confirmed_at]
+  }
+
   # alias App.Utils.ReservedWords
 
   @default_tz "Asia/Jakarta"
