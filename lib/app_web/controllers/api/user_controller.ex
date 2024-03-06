@@ -4,6 +4,9 @@ defmodule AppWeb.API.UserController do
 
   @result_limit 20
 
+  @moduledoc """
+  Only returns confirmed users.
+  """
   def index(%{assigns: %{current_user: user}} = conn, params) do
     # this is to support API clients that expect an array e.g Zapier
     as_array = params["as_array"] == "true"
@@ -13,7 +16,7 @@ defmodule AppWeb.API.UserController do
       order_directions: [:desc],
       page_size: @result_limit,
       page: Map.get(params, "page", "1"),
-      filters: [%{field: :email_confirmed_at, op: :==, value: nil}]
+      filters: [%{field: :email_confirmed_at, op: :not_empty, value: true}]
     }
 
     {users, meta} = Users.list_users!(user, query)
