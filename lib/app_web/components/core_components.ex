@@ -60,13 +60,26 @@ defmodule AppWeb.CoreComponents do
   end
 
   @doc """
-  Renders formatted price.
+  Renders delimited number.
+  5000 become `5,000`
+  """
+  attr :value, :integer, required: true
+
+  def delimited_number(assigns) do
+    ~H"""
+    <%= App.Utils.Commons.delimited_number(@value) %>
+    """
+  end
+
+  @doc """
+  Renders delimited price with currency prefix.
+  5000 become `Rp. 5,000`
   """
   attr :value, :integer, required: true
 
   def price(assigns) do
     ~H"""
-    <%= Number.Delimit.number_to_delimited(@value, precision: 0) %>
+    <%= App.Utils.Commons.format_price(@value) %>
     """
   end
 

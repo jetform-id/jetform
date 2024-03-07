@@ -53,6 +53,7 @@ defmodule AppWeb.API.ProductJSON do
       :updated_at
     ])
     |> Map.put(:cover, cover)
+    |> Map.put(:price_display, App.Products.price_display(product))
   end
 
   defp transform_variant(%Products.Variant{} = variant) do

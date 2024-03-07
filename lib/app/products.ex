@@ -146,7 +146,17 @@ defmodule App.Products do
     from(
       v in Variant,
       where: v.product_id == ^product.id,
-      order_by: [asc: v.inserted_at]
+      order_by: [asc: v.price]
+    )
+    |> Repo.all()
+  end
+
+  def list_variants_price_by_product(product) do
+    from(
+      v in Variant,
+      where: v.product_id == ^product.id,
+      order_by: [asc: v.price],
+      select: v.price
     )
     |> Repo.all()
   end
@@ -173,5 +183,16 @@ defmodule App.Products do
 
   def delete_variant(variant) do
     Repo.delete(variant)
+  end
+
+  def price_display(product) do
+    with true <- has_variants?(product),
+         [_ | _] = prices <- list_variants_price_by_product(product) do
+      min_price = Enum.min(prices) |> App.Utils.Commons.format_price()
+      max_price = Enum.max(prices) |> App.Utils.Commons.delimited_number()
+      min_price <> " - " <> max_price
+    else
+      _ -> App.Utils.Commons.format_price(product.price)
+    end
   end
 end

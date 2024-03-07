@@ -27,7 +27,7 @@
           <div data-popper-arrow></div>
         </div>
         <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">
-          <.price value={@product_sold_this_month} />
+          <.delimited_number value={@product_sold_this_month} />
         </span>
         <p class="flex items-center text-base text-sm font-normal text-gray-400 dark:text-gray-400">
           <.indo_datetime value={Timex.now()} tz={@current_user.timezone} compact_fmt="%B %Y" />
@@ -61,7 +61,7 @@
           <div data-popper-arrow></div>
         </div>
         <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">
-          Rp. <.price value={@nett_sales_this_month} />
+          <.delimited_number value={@nett_sales_this_month} />
         </span>
         <p class="flex items-center text-base text-sm font-normal text-gray-400 dark:text-gray-400">
           <.indo_datetime value={Timex.now()} tz={@current_user.timezone} compact_fmt="%B %Y" />
@@ -102,7 +102,7 @@
           <div data-popper-arrow></div>
         </div>
         <span class="text-2xl font-bold leading-none text-green-500 sm:text-3xl dark:text-white">
-          Rp. <.price value={@withdrawable_credits} />
+          <.price value={@withdrawable_credits} />
         </span>
         <p class="flex items-center text-base font-normal text-sm text-gray-400 dark:text-gray-400">
           Siap ditransfer ke bank anda
@@ -143,7 +143,7 @@
           <div data-popper-arrow></div>
         </div>
         <span class="text-2xl font-bold leading-none text-orange-500 sm:text-3xl dark:text-white">
-          Rp. <.price value={@pending_credits} />
+          <.price value={@pending_credits} />
         </span>
         <p class="flex items-center text-base font-normal text-sm text-gray-400 dark:text-gray-400">
           Sedang diproses
@@ -244,9 +244,9 @@
                     <%= order.customer_name %>
                   </td>
                   <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-white">
-                    Rp. <.price value={order.total} />
+                    <.price value={order.total} />
                     <p class="text-xs text-gray-400 font-normal">
-                      JetForm fee Rp. <.price value={order.service_fee} />
+                      JetForm fee <.price value={order.service_fee} />
                     </p>
                   </td>
                   <td class="p-4 text-sm font-normal text-primary-500 whitespace-nowrap dark:text-gray-400">

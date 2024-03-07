@@ -139,7 +139,10 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
       </div>
 
       <:actions>
-        <div class="mt-8 text-right">
+        <div class="mt-8 flex items-end justify-between">
+          <div class="text-xs text-gray-400 font-normal">
+            <span :if={@changeset.data.id}>ID Varian: <%= @changeset.data.id %></span>
+          </div>
           <.button
             phx-disable-with={@loading_text}
             class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
@@ -167,7 +170,7 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
           <%= @variant.name %>
         </span>
         <span class="flex-none items-center">
-          <span class="font-semibold me-4">Rp. <.price value={@variant.price} /></span>
+          <span class="font-semibold me-4"><.price value={@variant.price} /></span>
           <.button
             phx-click={JS.push(@on_edit, value: %{id: @variant.id}, target: @target)}
             type="button"

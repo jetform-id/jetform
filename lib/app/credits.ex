@@ -193,8 +193,7 @@ defmodule App.Credits do
   end
 
   # admin don't see pending and cancelled withdrawals
-  defp list_withdrawals_by_user_scope(q, %{role: :admin}),
-    do: where(q, [w], w.status not in [:pending])
+  defp list_withdrawals_by_user_scope(q, %{role: :admin}), do: q
 
   # user see all withdrawals
   defp list_withdrawals_by_user_scope(q, user), do: where(q, user_id: ^user.id)

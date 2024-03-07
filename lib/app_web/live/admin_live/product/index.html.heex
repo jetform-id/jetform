@@ -110,12 +110,7 @@
                 <.indo_datetime value={product.inserted_at} tz={@current_user.timezone} />
               </td>
               <td class="p-4 text-sm text-sm text-gray-600 whitespace-nowrap dark:text-white">
-                <%= case App.Products.variants_count(product) do %>
-                  <% 0 -> %>
-                    Rp. <.price value={product.price} />
-                  <% count -> %>
-                    <%= count %> varian
-                <% end %>
+                <%= App.Products.price_display(product) %>
               </td>
               <td class="p-4 space-x-2 whitespace-nowrap">
                 <.link

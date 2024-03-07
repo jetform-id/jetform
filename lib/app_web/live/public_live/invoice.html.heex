@@ -125,7 +125,7 @@
             <div>
               <h5 class="sm:hidden text-xs font-medium text-gray-500 uppercase">Harga</h5>
               <p class="sm:text-end text-gray-800 dark:text-gray-200">
-                Rp. <.price value={@order.sub_total} />
+                <.price value={@order.sub_total} />
               </p>
             </div>
           </div>
@@ -140,20 +140,20 @@
           <div class="grid grid-cols-2 sm:grid-cols-1 gap-3 sm:gap-2">
             <dl :if={@order.discount_name} class="grid sm:grid-cols-5 gap-x-3">
               <dt class="col-span-3 font-semibold text-gray-800 dark:text-gray-200">Subtotal:</dt>
-              <dd class="col-span-2 text-gray-500">Rp. <.price value={@order.sub_total} /></dd>
+              <dd class="col-span-2 text-gray-500"><.price value={@order.sub_total} /></dd>
             </dl>
 
             <dl :if={@order.discount_name} class="grid sm:grid-cols-5 gap-x-3">
               <dt class="col-span-3 font-semibold text-gray-800 dark:text-gray-200">Diskon:</dt>
               <dd class="col-span-2 text-gray-500">
-                Rp. <.price value={@order.discount_value} />
+                <.price value={@order.discount_value} />
               </dd>
             </dl>
 
             <dl class="grid sm:grid-cols-5 gap-x-3">
               <dt class="col-span-3 font-semibold text-gray-800 dark:text-gray-200">Total:</dt>
               <dd class="col-span-2 text-gray-900 font-bold">
-                Rp. <.price value={@order.total} />
+                <.price value={@order.total} />
               </dd>
             </dl>
           </div>

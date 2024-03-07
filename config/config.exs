@@ -14,7 +14,7 @@ config :app,
   default_tz_label: "WIB",
   order_validity_hours: 2,
   access_validity_days: 7,
-  withdrawal_fee: 5_000,
+  withdrawal_fee: 0,
   default_plan: App.Plans.Commission5
 
 config :app, :midtrans, enabled_payments: ["other_qris"]

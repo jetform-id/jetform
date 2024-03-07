@@ -54,7 +54,7 @@ defmodule Workers.NotifyNewOrder do
     Anda telah membuat order berikut:
     No. Invoice: ##{order.invoice_number}
     Produk: #{Orders.product_fullname(order)}
-    Total: Rp. #{order.total}
+    Total: #{App.Utils.Commons.format_price(order.total)}
     Status: #{order.status} #{status_text}
 
     #{invoice_text}
@@ -72,7 +72,7 @@ defmodule Workers.NotifyNewOrder do
     Terdapat order baru atas produk anda:
     No. Invoice: ##{order.invoice_number}
     Produk: #{Orders.product_fullname(order)}
-    Total: Rp. #{order.total}
+    Total: #{App.Utils.Commons.format_price(order.total)}
     Status: #{order.status} #{status_text}
 
     --

@@ -5,7 +5,7 @@ defmodule AppWeb.API.OrderController do
   alias App.Orders
   alias AppWeb.API.{Schemas, Utils}
 
-  @result_limit 20
+  @max_page_size 20
 
   operation(:index,
     summary: "List orders",
@@ -13,7 +13,8 @@ defmodule AppWeb.API.OrderController do
       status: [in: :query, type: :string, description: "Filter by status"],
       product_id: [in: :query, type: :string, description: "Filter by Product ID"],
       product_variant_id: [in: :query, type: :string, description: "Filter by Product Variant ID"],
-      page: [in: :query, type: :integer, description: "Page number"]
+      page: [in: :query, type: :integer, description: "Page number"],
+      limit: [in: :query, type: :integer, description: "Page size (max. 20)"]
     ],
     responses: [
       ok: {"Order list", "application/json", Schemas.OrdersResponse}
@@ -33,7 +34,7 @@ defmodule AppWeb.API.OrderController do
     query = %{
       order_by: [:inserted_at],
       order_directions: [:desc],
-      page_size: @result_limit,
+      page_size: Utils.set_limit(params, "limit", @max_page_size),
       page: Map.get(params, "page", "1"),
       filters: filters
     }

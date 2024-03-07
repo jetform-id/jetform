@@ -48,7 +48,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           </div>
 
           <div :if={@has_variants} class="mt-10 grid gap-2">
-            <div :for={variant <- @product.variants} class="relative">
+            <div :for={variant <- @product_variants} class="relative">
               <input
                 class="peer hidden"
                 id={"radio_" <> variant.id}
@@ -66,7 +66,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
                 <div class="w-full">
                   <div class="font-semibold flex pr-12">
                     <span class="flex-1"><%= variant.name %></span>
-                    Rp. <.price value={variant.price} />
+                    <.price value={variant.price} />
                   </div>
                   <p class="text-slate-600 text-sm mt-1 pr-10">
                     <%= variant.description %>
@@ -85,13 +85,13 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
                 <div class="flex items-center justify-between">
                   <p class="text-sm text-gray-400">Subtotal</p>
                   <p class="text-lg font-semibold text-gray-900">
-                    <span class="text-xs font-normal text-gray-400">Rp.</span>
+                    <span class="text-xs font-normal text-gray-400"></span>
                     <.price value={Products.final_price(@product)} />
                   </p>
                 </div>
                 <div class="flex items-center justify-between">
                   <p class="text-sm text-gray-400">Fedex Delivery Enterprise</p>
-                  <p class="text-lg font-semibold text-gray-900">Rp. 8.00</p>
+                  <p class="text-lg font-semibold text-gray-900">8.00</p>
                 </div>
               </div> --%>
           <div
@@ -100,7 +100,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           >
             <p class="text-sm font-medium text-gray-900">Total</p>
             <p class="text-2xl font-semibold text-gray-900">
-              <span class="text-xs font-normal text-gray-400">Rp.</span>
+              <span class="text-xs font-normal text-gray-400"></span>
               <.price value={@total_price} />
             </p>
           </div>
@@ -262,6 +262,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           |> assign(:product, product)
           |> assign(:preview, false)
           |> assign(:has_variants, Products.has_variants?(product))
+          |> assign(:product_variants, App.Products.list_variants_by_product(product))
           |> assign(:total_price, product.price)
 
         changeset ->
@@ -272,6 +273,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           |> assign(:enable_captcha, false)
           |> assign(:product, product)
           |> assign(:has_variants, Products.has_variants?(product))
+          |> assign(:product_variants, App.Products.list_variants_by_product(product))
           |> assign(:total_price, product.price)
       end
       |> assign(:selected_variant, nil)

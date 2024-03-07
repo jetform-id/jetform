@@ -29,6 +29,10 @@ defmodule AppWeb.API.Utils do
     end
   end
 
+  def set_limit(params, field \\ "limit", max \\ 20) do
+    String.to_integer(Map.get(params, field, to_string(max))) |> min(max)
+  end
+
   def transform_flop_meta(meta) do
     Map.take(meta, [
       :total_pages,

@@ -1,8 +1,9 @@
 defmodule AppWeb.API.UserController do
   use AppWeb, :controller
   alias App.Users
+  alias AppWeb.API.Utils
 
-  @result_limit 20
+  @max_page_size 20
 
   @moduledoc """
   Only returns confirmed users.
@@ -14,7 +15,7 @@ defmodule AppWeb.API.UserController do
     query = %{
       order_by: [:email_confirmed_at],
       order_directions: [:desc],
-      page_size: @result_limit,
+      page_size: Utils.set_limit(params, "limit", @max_page_size),
       page: Map.get(params, "page", "1"),
       filters: [%{field: :email_confirmed_at, op: :not_empty, value: true}]
     }

@@ -36,7 +36,7 @@ defmodule Workers.NotifyPaidOrder do
     Pembayaran anda atas order berikut berhasil:
     No. Invoice: ##{order.invoice_number}
     Produk: #{Orders.product_fullname(order)}
-    Total: Rp. #{order.total}
+    Total: #{App.Utils.Commons.format_price(order.total)}
     Status: #{order.status} (LUNAS)
 
     *** PENTING ***
@@ -58,7 +58,7 @@ defmodule Workers.NotifyPaidOrder do
     Pembelian atas produk anda telah LUNAS:
     No. Invoice: #{order.invoice_number}
     Produk: #{Orders.product_fullname(order)}
-    Harga: Rp. #{order.total}
+    Harga: #{App.Utils.Commons.format_price(order.total)}
     Status: #{order.status} (LUNAS)
 
     Detail pembelian bisa anda lihat di halaman berikut:
