@@ -12,6 +12,7 @@ defmodule AppWeb.AccessController do
       conn =
         conn
         |> assign(:page_title, "Akses " <> Orders.product_fullname(order))
+        |> assign(:body_class, "bg-slate-300")
         |> assign(:order, order)
         |> assign(:access, access)
         |> assign(:contents, order.contents)
