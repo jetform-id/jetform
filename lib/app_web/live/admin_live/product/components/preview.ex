@@ -12,8 +12,8 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
     ~H"""
     <%!-- preview --%>
     <div class="p-1 md:p-6">
-      <div class="mx-auto max-w-xl rounded-lg bg-white shadow-md">
-        <img src={Products.cover_url(@product, :standard)} class="rounded-t-lg" />
+      <div class="mx-auto max-w-xl rounded-md bg-white shadow-md">
+        <img src={Products.cover_url(@product, :standard)} class="rounded-t-md" />
         <hr />
         <div class="p-6">
           <h2 class="text-2xl font-semibold" id="preview" phx-update="replace">
@@ -95,10 +95,10 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
                 </div>
               </div> --%>
           <div
-            :if={!@has_variants || (@has_variants && @selected_variant)}
+            :if={(!@has_variants && @total_price > 0) || (@has_variants && @selected_variant)}
             class="mt-6 flex items-center justify-between"
           >
-            <p class="text-sm font-medium text-gray-900">Total</p>
+            <p class="text-lg font-medium text-gray-900">Total</p>
             <p class="text-2xl font-semibold text-gray-900">
               <span class="text-xs font-normal text-gray-400"></span>
               <.price value={@total_price} />
@@ -125,7 +125,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
       </div>
       <p class="text-center p-3 text-sm text-gray-400">
         <.link href={AppWeb.Utils.marketing_site()} target="_blank">
-          powered by JetForm
+          Powered by JetForm
         </.link>
       </p>
     </div>
@@ -205,13 +205,6 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
             />
           </div>
 
-          <div class="border border-yellow-300 bg-yellow-100 rounded p-2 text-center">
-            <p class="pl-6 mt-1 text-xs text-yellow-600">
-              <.icon name="hero-exclamation-triangle" />
-              Harap pastikan data di atas sudah benar. Kami tidak bertanggung jawab atas akibat dari kesalahan data yang dimasukkan.
-            </p>
-          </div>
-
           <div :if={@enable_captcha} id="cf-turnstile" phx-hook="RenderCaptcha" phx-update="ignore" />
 
           <%!-- <label class="flex items-center">
@@ -243,6 +236,13 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           </button>
         </:actions>
       </.simple_form>
+
+      <div class="border border-yellow-300 bg-yellow-100 rounded p-2 text-center">
+        <p class="pl-6 mt-1 text-xs text-yellow-600">
+          <.icon name="hero-exclamation-triangle" />
+          Harap pastikan data di atas sudah benar. Kami tidak bertanggung jawab atas akibat dari kesalahan data yang dimasukkan.
+        </p>
+      </div>
     </div>
     """
   end

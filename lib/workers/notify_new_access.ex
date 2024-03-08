@@ -39,6 +39,18 @@ defmodule Workers.NotifyNewAccess do
 
     base_url = AppWeb.Utils.base_url()
 
+    order_detail_text =
+      case order.status do
+        :paid ->
+          """
+          Dan berikut adalah detail order anda:
+          #{base_url}/invoice/#{order.id}
+          """
+
+        _ ->
+          ""
+      end
+
     text = """
     Halo #{order.customer_name},
 
@@ -47,13 +59,14 @@ defmodule Workers.NotifyNewAccess do
 
     *** PENTING ***
     Link di atas hanya berlaku sampai #{valid_until} (7 hari dari sekarang).
-    Kami sarankan anda download semua file yang ada dan menyimpannya di tempat yang aman.
+    Kami sarankan anda unduh semua file yang ada dan menyimpannya di tempat yang aman.
 
-    Dan berikut detail order anda:
-    #{base_url}/invoice/#{order.id}
+    #{order_detail_text}
 
     --
-    Tim JetForm
+    JetForm
+    Bisnis produk digital praktis & otomatis!
+    https://www.jetform.me
     """
 
     %{

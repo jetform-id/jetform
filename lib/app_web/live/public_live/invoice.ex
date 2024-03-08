@@ -78,20 +78,10 @@ defmodule AppWeb.PublicLive.Invoice do
 
     case order.status do
       :free ->
-        {:noreply,
-         put_flash(
-           socket,
-           :info,
-           "Link untuk mengakses produk telah dikirim ke email anda: #{order.customer_email}"
-         )}
+        {:noreply, redirect(socket, to: ~p"/invoice/#{order.id}/thanks")}
 
       :paid ->
-        {:noreply,
-         put_flash(
-           socket,
-           :info,
-           "Pembayaran berhasil! Link untuk mengakses produk telah dikirim ke email anda: #{order.customer_email}"
-         )}
+        {:noreply, redirect(socket, to: ~p"/invoice/#{order.id}/thanks")}
 
       :expired ->
         {:noreply, put_flash(socket, :error, "Order telah kadaluarsa!")}

@@ -97,6 +97,7 @@ defmodule AppWeb.Router do
       layout: {AppWeb.Layouts, :checkout} do
       live "/p/:slug", PublicLive.Checkout
       live "/invoice/:id", PublicLive.Invoice
+      live "/invoice/:id/thanks", PublicLive.Thanks
     end
   end
 

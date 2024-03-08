@@ -11,8 +11,14 @@ defmodule AppWeb.PaymentController do
       |> Map.drop(["order_id"])
       |> Map.put("payment_id", payment_id)
 
-    payment = Orders.get_payment!(payment_id)
-    redirect(conn, to: ~p"/invoice/#{payment.order_id}?#{params}")
+    payment = Orders.get_payment!(payment_id) |> App.Repo.preload(:order)
+    order = payment.order
+
+    if order.status == :paid do
+      redirect(conn, to: ~p"/invoice/#{order.id}/thanks")
+    else
+      redirect(conn, to: ~p"/invoice/#{order.id}?#{params}")
+    end
   end
 
   def midtrans_notification(conn, params) do

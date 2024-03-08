@@ -33,7 +33,7 @@ defmodule Workers.NotifyPaidOrder do
     buyer_text = """
     Halo #{order.customer_name},
 
-    Pembayaran anda atas order berikut berhasil:
+    Pembayaran Anda berhasil:
     No. Invoice: ##{order.invoice_number}
     Produk: #{Orders.product_fullname(order)}
     Total: #{App.Utils.Commons.format_price(order.total)}
@@ -47,7 +47,9 @@ defmodule Workers.NotifyPaidOrder do
     #{base_url}/invoice/#{order.id}
 
     --
-    Tim JetForm
+    JetForm
+    Bisnis produk digital praktis & otomatis!
+    https://www.jetform.me
     """
 
     user = order.user
@@ -55,7 +57,7 @@ defmodule Workers.NotifyPaidOrder do
     user_text = """
     Halo #{user.email},
 
-    Pembelian atas produk anda telah LUNAS:
+    Pembelian atas produk Anda telah LUNAS:
     No. Invoice: #{order.invoice_number}
     Produk: #{Orders.product_fullname(order)}
     Harga: #{App.Utils.Commons.format_price(order.total)}
@@ -65,7 +67,9 @@ defmodule Workers.NotifyPaidOrder do
     #{base_url}/invoice/#{order.id}
 
     --
-    Tim JetForm
+    JetForm
+    Bisnis produk digital praktis & otomatis!
+    https://www.jetform.me
     """
 
     # Mailgun doesn't support `deliver_many` so we have to send them one by one

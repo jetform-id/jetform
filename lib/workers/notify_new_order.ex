@@ -5,13 +5,7 @@ defmodule Workers.NotifyNewOrder do
   alias App.Orders
 
   def create(%{status: :pending} = order) do
-    %{id: order.id, status: order.status}
-    |> __MODULE__.new()
-    |> Oban.insert()
-  end
-
-  def create(%{status: :free} = order) do
-    %{id: order.id, status: order.status}
+    %{id: order.id}
     |> __MODULE__.new()
     |> Oban.insert()
   end
@@ -21,7 +15,7 @@ defmodule Workers.NotifyNewOrder do
   end
 
   @impl true
-  def perform(%{args: %{"id" => id, "status" => status}}) do
+  def perform(%{args: %{"id" => id}}) do
     case Orders.get_order(id) do
       nil ->
         Logger.warning("#{__MODULE__} warning: order=#{id} not found")
@@ -29,24 +23,14 @@ defmodule Workers.NotifyNewOrder do
         :ok
 
       order ->
-        send_email(order |> App.Repo.preload(:user), status)
+        send_email(order |> App.Repo.preload(:user))
     end
   end
 
-  defp send_email(order, status) do
+  defp send_email(order) do
     base_url = AppWeb.Utils.base_url()
-
-    status_text =
-      case status do
-        "pending" -> "(Menunggu Pembayaran)"
-        "free" -> "(Gratis)"
-      end
-
-    invoice_text =
-      case status do
-        "pending" -> "Detail order dan cara pembayaran bisa anda lihat di link berikut:"
-        _ -> "Detail order bisa anda lihat di link berikut:"
-      end
+    status_text = "(Menunggu Pembayaran)"
+    invoice_text = "Detail order dan cara pembayaran bisa anda lihat di link berikut:"
 
     buyer_text = """
     Halo #{order.customer_name},
@@ -61,7 +45,9 @@ defmodule Workers.NotifyNewOrder do
     #{base_url}/invoice/#{order.id}
 
     --
-    Tim JetForm
+    JetForm
+    Bisnis produk digital praktis & otomatis!
+    https://www.jetform.me
     """
 
     user = order.user
@@ -76,7 +62,9 @@ defmodule Workers.NotifyNewOrder do
     Status: #{order.status} #{status_text}
 
     --
-    Tim JetForm
+    JetForm
+    Bisnis produk digital praktis & otomatis!
+    https://www.jetform.me
     """
 
     buyer_email =
@@ -97,10 +85,7 @@ defmodule Workers.NotifyNewOrder do
       }
 
     # Mailgun doesn't support `deliver_many` so we have to send them one by one
-    case status do
-      "pending" -> [buyer_email, seller_email]
-      "free" -> [buyer_email]
-    end
+    [buyer_email, seller_email]
     |> Enum.map(&Mailer.cast/1)
     |> Enum.each(&Mailer.process/1)
 
