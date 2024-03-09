@@ -22,12 +22,14 @@
   </body>
   <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
   </script>
-  <script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit">
-  </script>
-  <script
-    defer
-    src="https://us.umami.is/script.js"
-    data-website-id="485c1c0f-007f-42a6-ae6a-8f4881cd2f7c"
-  >
-  </script>
+  <%= if assigns[:enable_tracking] do %>
+    <script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit">
+    </script>
+    <script
+      defer
+      src="https://us.umami.is/script.js"
+      data-website-id="485c1c0f-007f-42a6-ae6a-8f4881cd2f7c"
+    >
+    </script>
+  <% end %>
 </html>
