@@ -161,7 +161,7 @@ defmodule AppWeb.CoreComponents do
       <.link
         navigate={@menu.path}
         id={@menu.icon}
-        class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 dark:bg-gray-700"
+        class="flex items-center p-2 text-base text-gray-900 rounded-md hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 dark:bg-gray-700"
       >
         <.icon
           :if={@menu.icon}
@@ -179,7 +179,7 @@ defmodule AppWeb.CoreComponents do
     <li>
       <button
         type="button"
-        class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+        class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-md group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
         aria-controls="dropdown-playground"
         data-collapse-toggle="dropdown-playground"
       >
@@ -210,7 +210,7 @@ defmodule AppWeb.CoreComponents do
         <%= for child <- @menu.children do %>
           <.link
             navigate={child.path}
-            class="text-base text-gray-900 rounded-lg flex items-center p-2 group hover:bg-gray-100 transition duration-75 pl-11 dark:text-gray-200 dark:hover:bg-gray-700 xbg-gray-100 xdark:bg-gray-700"
+            class="text-base text-gray-900 rounded-md flex items-center p-2 group hover:bg-gray-100 transition duration-75 pl-11 dark:text-gray-200 dark:hover:bg-gray-700 xbg-gray-100 xdark:bg-gray-700"
           >
             <%= child.title %>
           </.link>
@@ -303,7 +303,7 @@ defmodule AppWeb.CoreComponents do
     ~H"""
     <div
       :if={@user.role == :admin}
-      class="p-4 mb-4 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-2 border-dashed border-red-600"
+      class="p-4 mb-4 rounded-md bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-2 border-dashed border-red-600"
     >
       <%= render_slot(@inner_block) %>
     </div>
@@ -406,7 +406,7 @@ defmodule AppWeb.CoreComponents do
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
       class={[
-        "fixed top-2 right-2 mr-2 w-80 sm:w-96 z-50 rounded-lg p-3 ring-1",
+        "fixed top-2 right-2 mr-2 w-80 sm:w-96 z-50 rounded-md p-3 ring-1",
         @kind == :info && "bg-green-50 text-green-800 ring-emerald-500 fill-cyan-900",
         @kind == :warning && "bg-yellow-50 text-yellow-800 shadow-md ring-yellow-500 fill-yellow-900",
         @kind == :error && "bg-red-50 text-red-900 shadow-md ring-red-500 fill-red-900"
@@ -678,7 +678,7 @@ defmodule AppWeb.CoreComponents do
         id={@id}
         name={@name}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
+          "mt-2 block w-full rounded-md text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
           "min-h-[6rem] phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
           @errors == [] && "border-zinc-300 focus:border-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400",
@@ -703,7 +703,7 @@ defmodule AppWeb.CoreComponents do
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
+          "mt-2 block w-full rounded-md text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
           "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
           @errors == [] && "border-zinc-300 focus:border-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400",

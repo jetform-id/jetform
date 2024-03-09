@@ -23,21 +23,21 @@
       <%= if @bank_account do %>
         <div
           :if={@withdrawable_credits == 0}
-          class="text-gray-400 bg-gray-200 font-medium rounded-lg text-sm px-5 py-2.5"
+          class="text-gray-400 bg-gray-200 font-medium rounded-md text-sm px-5 py-2.5"
         >
           Tarik Dana
         </div>
         <button
           :if={@withdrawable_credits > 0}
           phx-click={JS.push("new_withdrawal", page_loading: true)}
-          class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-600 focus:outline-none dark:focus:ring-primary-800"
+          class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 font-medium rounded-md text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-600 focus:outline-none dark:focus:ring-primary-800"
         >
           Tarik Dana
         </button>
       <% else %>
         <.link
           navigate={~p"/account"}
-          class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-600 focus:outline-none dark:focus:ring-primary-800"
+          class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 font-medium rounded-md text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-600 focus:outline-none dark:focus:ring-primary-800"
         >
           <.icon name="hero-plus" /> Akun Bank Penerima
         </.link>
@@ -318,7 +318,7 @@
     </p>
     <div
       :if={!@withdrawal}
-      class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
+      class="p-4 mb-4 text-sm text-yellow-800 rounded-md bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
       role="alert"
     >
       <span class="font-medium">
@@ -330,7 +330,7 @@
       <.button
         phx-click={JS.push("create_withdrawal", value: @withdrawal_params, page_loading: true)}
         phx-disable-with="Loading..."
-        class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
+        class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-md hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
       >
         Tarik Dana
       </.button>
@@ -377,7 +377,7 @@
           <div class="mt-2 text-right">
             <.button
               phx-disable-with="Loading..."
-              class="w-full px-5 py-2 text-base font-medium text-center text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
+              class="w-full px-5 py-2 text-base font-medium text-center text-white bg-primary-600 rounded-md hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
             >
               Submit
             </.button>

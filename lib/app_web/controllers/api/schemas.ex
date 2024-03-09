@@ -36,6 +36,24 @@ defmodule AppWeb.API.Schemas do
     })
   end
 
+  defmodule ProductCover do
+    OpenApiSpex.schema(%{
+      title: "ProductCover",
+      description: "Product cover urls",
+      type: :object,
+      properties: %{
+        thumb_url: %Schema{
+          type: :string,
+          description: "Product cover thumb url"
+        },
+        standard_url: %Schema{
+          type: :string,
+          description: "Product cover standard url"
+        }
+      }
+    })
+  end
+
   defmodule Product do
     OpenApiSpex.schema(%{
       title: "Product",
@@ -67,6 +85,10 @@ defmodule AppWeb.API.Schemas do
           type: :boolean,
           description: "Product live status"
         },
+        is_public: %Schema{
+          type: :boolean,
+          description: "Product public status"
+        },
         cta: %Schema{
           type: :string,
           description: "Product CTA"
@@ -83,6 +105,23 @@ defmodule AppWeb.API.Schemas do
           type: :string,
           description: "Product user ID",
           format: "uuid"
+        },
+        description_html: %Schema{
+          type: :string,
+          description: "Product description in HTML"
+        },
+        description_plain: %Schema{
+          type: :string,
+          description: "Product description in plain text"
+        },
+        cover: ProductCover,
+        price_display: %Schema{
+          type: :string,
+          description: "Product price display"
+        },
+        checkout_url: %Schema{
+          type: :string,
+          description: "Product checkout page URL"
         },
         inserted_at: %Schema{
           type: :string,

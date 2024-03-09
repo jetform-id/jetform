@@ -145,7 +145,7 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
           </div>
           <.button
             phx-disable-with={@loading_text}
-            class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
+            class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-md hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
           >
             <%= @btn_text %>
             <span aria-hidden="true">→</span>
@@ -164,7 +164,7 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
 
   def variant_item(assigns) do
     ~H"""
-    <div id={@id} class="w-full bg-gray-50 shadow-sm rounded-lg border border-gray-300 p-4">
+    <div id={@id} class="w-full bg-gray-50 shadow-sm rounded-md border border-gray-300 p-4">
       <div class="flex mb-4 items-center">
         <span class="flex-1 font-semibold">
           <%= @variant.name %>
@@ -174,14 +174,14 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
           <.button
             phx-click={JS.push(@on_edit, value: %{id: @variant.id}, target: @target)}
             type="button"
-            class="text-primary-700 hover:text-white border border-primary-700 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-2 py-1 text-center dark:border-primary-500 dark:text-primary-500 dark:hover:text-white dark:hover:bg-primary-600 dark:focus:ring-primary-800"
+            class="text-primary-700 hover:text-white border border-primary-700 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-md text-sm px-2 py-1 text-center dark:border-primary-500 dark:text-primary-500 dark:hover:text-white dark:hover:bg-primary-600 dark:focus:ring-primary-800"
           >
             Edit
           </.button>
           <.button
             phx-click={JS.push(@on_delete, value: %{id: @variant.id}, target: @target)}
             type="button"
-            class="text-red-600 hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-2 py-1 text-center dark:border-red-600 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-500 dark:focus:ring-red-600"
+            class="text-red-600 hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-md text-sm px-2 py-1 text-center dark:border-red-600 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-500 dark:focus:ring-red-600"
           >
             <.icon name="hero-trash w-4 h-4" />
           </.button>
@@ -275,7 +275,7 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
         <div class="mt-8 text-right">
           <.button
             phx-disable-with={@loading_text}
-            class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
+            class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-md hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
           >
             <%= @btn_text %>
             <span aria-hidden="true">→</span>
@@ -294,7 +294,7 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
 
   def content_item(assigns) do
     ~H"""
-    <div id={@id} class="w-full bg-gray-50 shadow-sm rounded-lg border border-gray-300 p-4">
+    <div id={@id} class="w-full bg-gray-50 shadow-sm rounded-md border border-gray-300 p-4">
       <div class="flex mb-4 items-center">
         <span class="flex-1 font-semibold flex items-center">
           <%= if @content.type == :text do %>
@@ -308,14 +308,14 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
           <.button
             phx-click={JS.push(@on_edit, value: %{id: @content.id}, target: @target)}
             type="button"
-            class="text-primary-700 hover:text-white border border-primary-700 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-2 py-1 text-center dark:border-primary-500 dark:text-primary-500 dark:hover:text-white dark:hover:bg-primary-600 dark:focus:ring-primary-800"
+            class="text-primary-700 hover:text-white border border-primary-700 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-md text-sm px-2 py-1 text-center dark:border-primary-500 dark:text-primary-500 dark:hover:text-white dark:hover:bg-primary-600 dark:focus:ring-primary-800"
           >
             Edit
           </.button>
           <.button
             phx-click={JS.push(@on_delete, value: %{id: @content.id}, target: @target)}
             type="button"
-            class="text-red-600 hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-2 py-1 text-center dark:border-red-600 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-500 dark:focus:ring-red-600"
+            class="text-red-600 hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-md text-sm px-2 py-1 text-center dark:border-red-600 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-500 dark:focus:ring-red-600"
           >
             <.icon name="hero-trash w-4 h-4" />
           </.button>

@@ -55,7 +55,7 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
           </.input>
           <div
             :if={@has_variants}
-            class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
+            class="p-4 mb-4 text-sm text-yellow-800 rounded-md bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
             role="alert"
           >
             <span class="font-medium">
@@ -133,7 +133,7 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
 
           <div
             :if={@has_variants}
-            class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
+            class="p-4 mb-4 text-sm text-yellow-800 rounded-md bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
             role="alert"
           >
             <span class="font-medium"><.icon name="hero-hand-raised" />Perhatian!</span>
@@ -196,7 +196,7 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
 
           <.button
             phx-disable-with="Menyimpan..."
-            class="px-8 py-3 text-base font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
+            class="px-8 py-3 text-base font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
           >
             Simpan <span aria-hidden="true">→</span>
           </.button>
@@ -240,7 +240,7 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
         <.button
           phx-click={JS.push(@on_delete, value: detail)}
           type="button"
-          class="self-center flex-none text-red-600 hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 mt-2 text-center dark:border-red-600 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-500 dark:focus:ring-red-600"
+          class="self-center flex-none text-red-600 hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-md text-sm px-3 py-2 mt-2 text-center dark:border-red-600 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-500 dark:focus:ring-red-600"
         >
           <.icon name="hero-trash w-4 h-4" />
         </.button>
@@ -249,7 +249,7 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
       <.button
         phx-click={@on_add}
         type="button"
-        class="mt-2 w-full bg-primary-600 hover:bg-primary-700 text-white border focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-3 text-center me-2 mb-2"
+        class="mt-2 w-full bg-primary-600 hover:bg-primary-700 text-white border focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-md text-sm px-5 py-3 text-center me-2 mb-2"
       >
         <.icon name="hero-plus-small w-4 h-4" />Tambah detail
       </.button>

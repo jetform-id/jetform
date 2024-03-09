@@ -1,10 +1,10 @@
 <div class="px-4 pt-6">
   <div class="grid gap-4 xl:grid-cols-2 2xl:grid-cols-3">
     <%!-- user form --%>
-    <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+    <div class="p-4 bg-white border border-gray-200 rounded-md shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="flex items-center justify-between mb-4">
         <div class="flex-shrink-0">
-          <h3 class="text-xl font-semibold leading-none text-gray-900 sm:text-2xl dark:text-white">
+          <h3 class="text-xl font-semibold leading-none text-gray-600 sm:text-2xl dark:text-white">
             Edit Akun
           </h3>
         </div>
@@ -12,7 +12,7 @@
       <div id="main-chart">
         <div
           id="alert-additional-content-1"
-          class="p-4 mb-4 text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800"
+          class="p-4 mb-4 text-blue-800 border border-blue-300 rounded-md bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800"
           role="alert"
         >
           <div class="flex items-center">
@@ -82,7 +82,7 @@
               label="Konfirmasi password baru"
             />
             <div
-              class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
+              class="p-4 mb-4 text-sm text-yellow-800 rounded-md bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
               role="alert"
             >
               <span class="font-medium">
@@ -103,7 +103,7 @@
             <div class="mt-8 text-right">
               <.button
                 phx-disable-with="Menyimpan..."
-                class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
+                class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-md hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
               >
                 Simpan <span aria-hidden="true">→</span>
               </.button>
@@ -114,10 +114,10 @@
     </div>
 
     <%!-- bank account form --%>
-    <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+    <div class="p-4 bg-white border border-gray-200 rounded-md shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="flex items-center justify-between mb-4">
         <div class="flex-shrink-0">
-          <h3 class="text-xl font-semibold leading-none text-gray-900 sm:text-2xl dark:text-white">
+          <h3 class="text-xl font-semibold leading-none text-gray-600 sm:text-2xl dark:text-white">
             Akun Bank
           </h3>
         </div>
@@ -144,7 +144,7 @@
             <.input field={f[:account_number]} type="text" label="Nomer Rekening" required />
             <.input field={f[:account_name]} type="text" label="Nama Pemilik Rekening" required />
             <div
-              class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
+              class="p-4 mb-4 text-sm text-yellow-800 rounded-md bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
               role="alert"
             >
               <span class="font-medium">
@@ -167,7 +167,7 @@
             <div class="mt-8 text-right">
               <.button
                 phx-disable-with="Menyimpan..."
-                class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
+                class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-md hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
               >
                 Simpan <span aria-hidden="true">→</span>
               </.button>

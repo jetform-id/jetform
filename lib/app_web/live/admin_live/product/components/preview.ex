@@ -60,7 +60,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
               <span class="peer-checked:border-primary-700 absolute right-4 top-7 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white">
               </span>
               <label
-                class="peer-checked:border-2 peer-checked:border-primary-700 peer-checked:bg-primary-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4"
+                class="peer-checked:border-2 peer-checked:border-primary-700 peer-checked:bg-primary-50 flex cursor-pointer select-none rounded-md border border-gray-300 p-4"
                 for={"radio_" <> variant.id}
               >
                 <div class="w-full">
@@ -142,7 +142,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
     <div class="mt-6 text-center">
       <div
         :if={@error}
-        class="p-4 mb-4 text-sm font-medium text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-dashed border-red-800"
+        class="p-4 mb-4 text-sm font-medium text-red-800 rounded-md bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-dashed border-red-800"
         role="alert"
       >
         <.icon name="hero-exclamation-triangle" /> <%= @error %>
@@ -216,7 +216,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
 
           <div
             :if={@error}
-            class="p-4 mb-4 text-sm font-medium text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-dashed border-red-800"
+            class="p-4 mb-4 text-sm font-medium text-red-800 rounded-md bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-dashed border-red-800"
             role="alert"
           >
             <.icon name="hero-exclamation-triangle" /> <%= @error %>

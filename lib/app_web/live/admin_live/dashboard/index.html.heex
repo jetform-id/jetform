@@ -1,6 +1,6 @@
 <div class="px-4 py-6">
   <div class="grid w-full grid-cols-1 gap-4 mb-4 xl:grid-cols-2 2xl:grid-cols-2">
-    <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+    <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="w-full">
         <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
           Produk terjual bulan ini
@@ -17,7 +17,7 @@
           data-popover
           id="popover-sale-month"
           role="tooltip"
-          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
+          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
         >
           <div class="p-3 space-y-2">
             <p class="text-sm">
@@ -34,7 +34,7 @@
         </p>
       </div>
     </div>
-    <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+    <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="w-full">
         <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
           Penjualan bulan ini
@@ -51,7 +51,7 @@
           data-popover
           id="popover-sale-total"
           role="tooltip"
-          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
+          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
         >
           <div class="p-3 space-y-2">
             <p class="text-sm">
@@ -61,14 +61,14 @@
           <div data-popper-arrow></div>
         </div>
         <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">
-          <.delimited_number value={@nett_sales_this_month} />
+          <.price value={@nett_sales_this_month} />
         </span>
         <p class="flex items-center text-base text-sm font-normal text-gray-400 dark:text-gray-400">
           <.indo_datetime value={Timex.now()} tz={@current_user.timezone} compact_fmt="%B %Y" />
         </p>
       </div>
     </div>
-    <div class="items-center justify-between p-4 bg-green-50 border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+    <div class="items-center justify-between p-4 bg-green-50 border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="w-full">
         <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
           Dana cair
@@ -85,7 +85,7 @@
           data-popover
           id="popover-credits-liquid"
           role="tooltip"
-          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
+          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
         >
           <div class="p-3 space-y-2">
             <h3 class="font-semibold text-gray-900 dark:text-white">Withdrawable fund</h3>
@@ -109,7 +109,7 @@
         </p>
       </div>
     </div>
-    <div class="items-center justify-between p-4 bg-orange-50 border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+    <div class="items-center justify-between p-4 bg-orange-50 border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="w-full">
         <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
           Dana pending
@@ -126,7 +126,7 @@
           data-popover
           id="popover-credits-pending"
           role="tooltip"
-          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
+          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
         >
           <div class="p-3 space-y-2">
             <h3 class="font-semibold text-gray-900 dark:text-white">Pending fund</h3>
@@ -152,11 +152,11 @@
     </div>
   </div>
 
-  <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+  <div class="p-4 bg-white border border-gray-200 rounded-md shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
     <!-- Card header -->
     <div class="items-center justify-between lg:flex">
       <div class="mb-4 lg:mb-0">
-        <h3 class="mb-2 text-xl font-semibold text-gray-900 dark:text-white">Penjualan</h3>
+        <h3 class="mb-2 text-xl font-semibold text-gray-600 dark:text-white">Penjualan</h3>
       </div>
       <div class="items-center sm:flex">
         <div class="flex items-center">
@@ -175,7 +175,7 @@
                 {"Pending", "pending"},
                 {"Expired", "expired"}
               ]}
-              class="mb-4 sm:mb-0 mr-4 inline-flex items-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+              class="mb-4 sm:mb-0 mr-4 inline-flex items-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-md text-sm px-4 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
             />
           </.simple_form>
         </div>
@@ -183,9 +183,9 @@
     </div>
     <!-- Table -->
     <div class="flex flex-col mt-6">
-      <div class="overflow-x-auto rounded-lg">
+      <div class="overflow-x-auto rounded-md">
         <div class="inline-block min-w-full align-middle">
-          <div class="overflow-hidden shadow sm:rounded-lg">
+          <div class="overflow-hidden shadow sm:rounded-md">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
               <thead class="bg-gray-50 dark:bg-gray-700">
                 <tr>
