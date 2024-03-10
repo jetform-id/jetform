@@ -51,7 +51,7 @@ defmodule AppWeb.PublicLive.Checkout do
   defp return_product(socket, product) do
     socket =
       socket
-      |> assign(:enable_tracking, true)
+      |> assign(:enable_tracking, product.is_live)
       |> assign(:body_class, "bg-slate-300")
       |> assign(:page_title, product.name)
       |> assign(:page_info, AppWeb.PageInfo.new(product))

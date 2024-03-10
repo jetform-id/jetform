@@ -249,12 +249,10 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
 
   @impl true
   def update(assigns, socket) do
-    variants = assigns.product.variants |> Enum.sort_by(& &1.inserted_at, :asc)
-
     socket =
       case Map.get(assigns, :changeset) do
         nil ->
-          product = Map.put(assigns.product, :variants, variants)
+          product = assigns.product
 
           socket
           |> assign(assigns)
@@ -266,7 +264,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           |> assign(:total_price, product.price)
 
         changeset ->
-          product = Ecto.Changeset.apply_changes(changeset) |> Map.put(:variants, variants)
+          product = Ecto.Changeset.apply_changes(changeset)
 
           socket
           |> assign(:preview, true)
@@ -285,7 +283,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
 
   @impl true
   def handle_event("select_variant", %{"id" => id}, socket) do
-    variant = Enum.find(socket.assigns.product.variants, fn v -> v.id == id end)
+    variant = Enum.find(socket.assigns.product_variants, fn v -> v.id == id end)
 
     socket =
       socket

@@ -57,12 +57,17 @@ defmodule AppWeb.AdminLive.Dashboard.Index do
   def handle_params(params, _uri, socket) do
     {orders, pagination} = fetch_orders(socket.assigns.current_user, params)
 
+    orders_with_index =
+      orders
+      |> Enum.with_index()
+      |> Enum.map(fn {order, index} -> Map.put(order, :index, index) end)
+
     socket =
       socket
       |> assign(:params, params)
       |> assign(:status_filter_form, to_form(%{"status" => Map.get(params, "status")}))
       |> assign(:pagination, pagination)
-      |> stream(:orders, orders, reset: true)
+      |> stream(:orders, orders_with_index, reset: true)
 
     {:noreply, socket}
   end

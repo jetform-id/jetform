@@ -104,7 +104,10 @@
             <tr
               :for={{dom_id, w} <- @streams.withdrawals}
               id={dom_id}
-              class={"hover:bg-gray-100 dark:hover:bg-gray-700 " <> if w.status in [:cancelled], do: "opacity-60 dark:opacity-60", else: ""}
+              class={[
+                "hover:bg-gray-100 dark:hover:bg-gray-700",
+                if(w.status in [:cancelled], do: "opacity-60 dark:opacity-60", else: "")
+              ]}
             >
               <td class="max-w-sm p-4 overflow-hidden text-sm font-normal text-gray-500 truncate xl:max-w-xs dark:text-gray-400">
                 <Commons.status_badge status={w.status} />

@@ -66,6 +66,7 @@ defmodule App.MixProject do
       {:tesla, "~> 1.4.0"},
       {:html_sanitize_ex, "~> 1.4"},
       {:redix, "~> 1.3.0"},
+      {:cachex, "~> 3.6"},
       {:open_api_spex, "~> 3.18"}
     ]
   end

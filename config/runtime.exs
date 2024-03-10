@@ -39,6 +39,10 @@ config :app, :captcha,
   site_key: System.get_env("CAPTCHA_SITE_KEY"),
   secret_key: System.get_env("CAPTCHA_SECRET_KEY")
 
+config :app, :umami,
+  website_id: System.get_env("UMAMI_WEBSITE_ID", ""),
+  api_key: System.get_env("UMAMI_API_KEY", "")
+
 if System.get_env("WAFFLE_AWS_S3_BUCKET") do
   config :waffle,
     storage: Waffle.Storage.S3,

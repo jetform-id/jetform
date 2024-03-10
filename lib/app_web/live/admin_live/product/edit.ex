@@ -5,20 +5,14 @@ defmodule AppWeb.AdminLive.Product.Edit do
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
-    socket =
-      case Products.get_product(id) do
-        nil ->
-          socket
-          |> put_flash(:error, "Product not found.")
-          |> redirect(to: ~p"/products")
+    product = Products.get_product!(id)
 
-        product ->
-          socket
-          |> assign(:page_title, "Edit: #{product.name}")
-          |> assign(:product, App.Repo.preload(product, :variants))
-          |> assign(:changeset, Products.change_product(product, %{}))
-          |> allow_upload(:cover, accept: ~w(.jpg .jpeg .png), max_file_size: 1_000_000)
-      end
+    socket =
+      socket
+      |> assign(:page_title, "Edit: #{product.name}")
+      |> assign(:product, product)
+      |> assign(:changeset, Products.change_product(product, %{}))
+      |> allow_upload(:cover, accept: ~w(.jpg .jpeg .png), max_file_size: 1_000_000)
 
     {:ok, socket}
   end

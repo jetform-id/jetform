@@ -18,6 +18,7 @@ defmodule App.Application do
       {Redix,
        {Application.get_env(:app, :redis_url),
         [name: :redix, socket_opts: Application.get_env(:app, :redis_socket_opts)]}},
+      {Cachex, name: :cache},
       # Start a worker by calling: App.Worker.start_link(arg)
       # {App.Worker, arg},
       # Start to serve requests, typically the last entry

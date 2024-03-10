@@ -27,6 +27,45 @@ defmodule App.Orders do
     end
   end
 
+  def stats_by_product_and_time(product, start_at \\ nil) do
+    start_at = start_at || product.inserted_at
+
+    from(o in Order,
+      select: {
+        fragment("sum(case when status = 'free' then 1 else 0 end) as free_count"),
+        fragment("sum(case when status = 'paid' then 1 else 0 end) as paid_count"),
+        fragment("sum(case when status = 'paid' then total else 0 end) as paid_gross_amount"),
+        fragment("sum(case when status = 'paid' then service_fee else 0 end) as paid_fee_amount")
+      },
+      where: o.product_id == ^product.id,
+      where: o.inserted_at >= ^start_at
+    )
+    |> Repo.one()
+    |> then(fn {a, b, c, d} ->
+      %{
+        free_count: a || 0,
+        paid_count: b || 0,
+        paid_gross_amount: c || 0,
+        paid_fee_amount: d || 0
+      }
+    end)
+  end
+
+  def list_buckets_daily(product, start_at \\ nil) do
+    start_at = start_at || product.inserted_at
+
+    from(o in Order,
+      select: {
+        fragment("date_trunc('day', inserted_at) as date"),
+        fragment("sum(case when status = 'paid' then 1 else 0 end) as count")
+      },
+      where: o.product_id == ^product.id,
+      where: o.inserted_at >= ^start_at,
+      group_by: fragment("date")
+    )
+    |> Repo.all()
+  end
+
   @doc """
   Returns the list of orders.
 

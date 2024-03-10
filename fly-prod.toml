@@ -27,6 +27,7 @@ kill_signal = "SIGTERM"
   REDIS_IPV6 = "true"
   MAILGUN_DOMAIN = "mg.jetform.me"
   DNS_CLUSTER_QUERY = "jetform-app.internal"
+  UMAMI_WEBSITE_ID = "485c1c0f-007f-42a6-ae6a-8f4881cd2f7c"
 
 [http_service]
   internal_port = 8080

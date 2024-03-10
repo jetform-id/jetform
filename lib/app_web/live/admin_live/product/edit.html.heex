@@ -1,8 +1,19 @@
 <div class="px-4 pt-6">
+  <div class="pb-4 md:flex md:justify-between">
+    <div>
+      <.link navigate={~p"/products"} class="text-primary-500 font-semibold">
+        <span aria-hidden="true">←</span> Semua produk
+      </.link>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+        <%= Map.get(@changeset.changes, :name, @changeset.data.name) %>
+      </h2>
+    </div>
+  </div>
+
   <div class="grid gap-4 xl:grid-cols-2">
-    <div class="bg-white border border-gray-200 rounded-md shadow dark:bg-gray-800 dark:border-gray-700">
+    <div class="bg-white border border-gray-200 rounded-md shadow-sm dark:bg-gray-800 dark:border-gray-700">
       <ul
-        class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 rounded-t-lg bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800"
+        class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 rounded-t-md bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800"
         role="tablist"
       >
         <li>
@@ -70,10 +81,10 @@
         </div>
       </div>
     </div>
-    
-    <div class="border rounded-md shadow bg-slate-300 dark:bg-gray-800 dark:border-gray-700">
+
+    <div class="border rounded-md shadow-sm bg-slate-300 dark:bg-gray-800 dark:border-gray-700">
       <ul
-        class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 rounded-t-lg bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800"
+        class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 rounded-t-md bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800"
         role="tablist"
       >
         <li class="me-2">

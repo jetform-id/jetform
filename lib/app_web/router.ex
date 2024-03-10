@@ -132,6 +132,7 @@ defmodule AppWeb.Router do
       # products
       live "/products", AdminLive.Product.Index
       live "/products/:id/edit", AdminLive.Product.Edit
+      live "/products/:id/stats", AdminLive.Product.Stats
 
       # withdrawals
       live "/withdrawals", AdminLive.Withdrawal.Index
