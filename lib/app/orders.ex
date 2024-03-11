@@ -118,8 +118,8 @@ defmodule App.Orders do
       select: [
         o.product_id,
         o.product_variant_id,
-        fragment("ANY_VALUE(?)", o.product_name),
-        fragment("ANY_VALUE(?)", o.product_variant_name),
+        fragment("MIN(?)", o.product_name),
+        fragment("MIN(?)", o.product_variant_name),
         count(o.id)
       ],
       where: o.user_id == ^user.id,
