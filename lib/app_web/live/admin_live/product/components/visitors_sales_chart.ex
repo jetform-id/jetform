@@ -27,8 +27,6 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsSalesChart do
     sales = sales_buckets(product, start_time)
     pageviews = cached_pageviews_buckets(product)
 
-    IO.inspect(sales)
-    IO.inspect(pageviews)
     # create the buckets and fill it with the data
     buckets =
       Timex.Interval.new(
