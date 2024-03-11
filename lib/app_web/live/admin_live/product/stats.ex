@@ -85,9 +85,10 @@ defmodule AppWeb.AdminLive.Product.Stats do
     product = socket.assigns.product
 
     time_filter = Map.get(params, "time", @default_time_filter)
-    {start_time, _end_time} = time_range(user, product, time_filter)
+    {start_time, end_time} = time_range(user, product, time_filter)
 
     order_stats = Orders.stats_by_product_and_time(product, start_time)
+    free_download_buckets = free_download_buckets(product, start_time, end_time)
     {orders, pagination} = fetch_orders(user, product, start_time, params)
 
     orders_with_index =
@@ -106,9 +107,30 @@ defmodule AppWeb.AdminLive.Product.Stats do
       |> assign(:pagination, pagination)
       |> stream(:orders, orders_with_index, reset: true)
       |> assign(:order_stats, order_stats)
+      |> assign(:free_download_buckets, Jason.encode!(free_download_buckets))
       |> assign(:start_time, start_time)
 
     {:noreply, socket}
+  end
+
+  defp free_download_buckets(product, start_time, end_time) do
+    data =
+      Orders.daily_counts_by_product(product, start_time)
+      |> Enum.map(fn {date, free_count, _paid_count} ->
+        {Timex.format!(date, "{YYYY}{M}{D}"), free_count}
+      end)
+      |> Enum.into(%{})
+
+    Timex.Interval.new(
+      from: start_time,
+      until: end_time,
+      steps: [days: 1]
+    )
+    |> Enum.to_list()
+    |> Enum.map(fn date ->
+      date_str = Timex.format!(date, "{YYYY}{M}{D}")
+      %{x: date, y: Map.get(data, date_str, 0)}
+    end)
   end
 
   defp fetch_orders(user, product, start_time, params) do

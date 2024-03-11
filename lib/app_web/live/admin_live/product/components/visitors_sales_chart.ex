@@ -8,8 +8,7 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsSalesChart do
   @impl true
   def render(assigns) do
     ~H"""
-    <div id={@id} phx-hook="VisitorsSalesChart" class="visitors-sales-chart" data-buckets={@buckets}>
-    </div>
+    <div id="VisitorsSalesChart" phx-hook="VisitorsSalesChart" data-buckets={@buckets}></div>
     """
   end
 
@@ -28,6 +27,8 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsSalesChart do
     sales = sales_buckets(product, start_time)
     pageviews = cached_pageviews_buckets(product)
 
+    IO.inspect(sales)
+    IO.inspect(pageviews)
     # create the buckets and fill it with the data
     buckets =
       Timex.Interval.new(
@@ -36,9 +37,9 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsSalesChart do
         steps: [days: 1]
       )
       |> Enum.to_list()
-      |> Enum.map(&Timex.format!(&1, "%d %b", :strftime))
       |> Enum.map(fn date ->
-        %{x: date, y1: Map.get(pageviews, date, 0), y2: Map.get(sales, date, 0)}
+        date_str = Timex.format!(date, "%Y-%m-%d", :strftime)
+        %{x: date, y1: Map.get(pageviews, date_str, 0), y2: Map.get(sales, date_str, 0)}
       end)
 
     socket =
@@ -50,8 +51,10 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsSalesChart do
   end
 
   defp sales_buckets(product, start_time) do
-    Orders.list_buckets_daily(product, start_time)
-    |> Enum.map(fn {date, count} -> {Timex.format!(date, "%d %b", :strftime), count} end)
+    Orders.daily_counts_by_product(product, start_time)
+    |> Enum.map(fn {date, _free_count, paid_count} ->
+      {Timex.format!(date, "%Y-%m-%d", :strftime), paid_count}
+    end)
     |> Enum.into(%{})
   end
 
@@ -85,11 +88,7 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsSalesChart do
     case pageviews do
       {:ok, %{"pageviews" => pageviews}} ->
         pageviews
-        |> Enum.map(fn %{"x" => date_str, "y" => count} ->
-          date =
-            Timex.parse!(date_str, "%Y-%m-%d", :strftime)
-            |> Timex.format!("%d %b", :strftime)
-
+        |> Enum.map(fn %{"x" => date, "y" => count} ->
           {date, count}
         end)
         |> Enum.into(%{})

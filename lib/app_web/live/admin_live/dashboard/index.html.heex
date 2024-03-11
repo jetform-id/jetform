@@ -3,7 +3,7 @@
     <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="w-full">
         <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
-          Produk terjual bulan ini
+          Produk terjual
           <button
             data-popover-target="popover-sale-month"
             data-popover-placement="bottom-end"
@@ -21,23 +21,23 @@
         >
           <div class="p-3 space-y-2">
             <p class="text-sm">
-              Jumlah produk yang terjual dari awal bulan sampai sekarang (tidak termasuk produk gratis).
+              Jumlah produk yang terjual dalam 30 hari terakhir.
             </p>
           </div>
           <div data-popper-arrow></div>
         </div>
         <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">
-          <.delimited_number value={@product_sold_this_month} />
+          <.delimited_number value={@order_stats[:paid_count]} />
         </span>
         <p class="flex items-center text-base text-sm font-normal text-gray-400 dark:text-gray-400">
-          <.indo_datetime value={Timex.now()} tz={@current_user.timezone} compact_fmt="%B %Y" />
+          30 hari terakhir
         </p>
       </div>
     </div>
     <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="w-full">
         <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
-          Penjualan bulan ini
+          Penjualan
           <button
             data-popover-target="popover-sale-total"
             data-popover-placement="bottom-end"
@@ -55,16 +55,16 @@
         >
           <div class="p-3 space-y-2">
             <p class="text-sm">
-              Total penjualan dari awal bulan sampai sekarang.
+              Total penjualan dalam 30 hari terakhir.
             </p>
           </div>
           <div data-popper-arrow></div>
         </div>
         <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">
-          <.price value={@nett_sales_this_month} />
+          <.price value={@order_stats[:gross_revenue] - @order_stats[:service_fee]} />
         </span>
         <p class="flex items-center text-base text-sm font-normal text-gray-400 dark:text-gray-400">
-          <.indo_datetime value={Timex.now()} tz={@current_user.timezone} compact_fmt="%B %Y" />
+          30 hari terakhir
         </p>
       </div>
     </div>
@@ -92,12 +92,6 @@
             <p class="text-sm">
               Dana yang sudah bisa di withdraw ke rekening bank anda.
             </p>
-            <a
-              href="#"
-              class="flex items-center font-normal text-sm text-primary-500 dark:text-primary-500 dark:hover:text-primary-500 hover:text-primary-700"
-            >
-              Selengkapnya...
-            </a>
           </div>
           <div data-popper-arrow></div>
         </div>
@@ -133,12 +127,6 @@
             <p class="text-sm">
               Dana setiap penjualan perlu waktu paling tidak 3 hari kerja sebelum bisa di withdraw.
             </p>
-            <a
-              href="#"
-              class="flex items-center font-normal text-sm text-primary-500 dark:text-primary-500 dark:hover:text-primary-500 hover:text-primary-700"
-            >
-              Selengkapnya...
-            </a>
           </div>
           <div data-popper-arrow></div>
         </div>
@@ -148,6 +136,67 @@
         <p class="flex items-center text-base font-normal text-sm text-gray-400 dark:text-gray-400">
           Sedang diproses
         </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid w-full grid-cols-1 gap-4 mb-4 md:grid-cols-2 xl:grid-cols-4">
+    <div class="md:col-span-2 xl:col-span-3 p-2 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 dark:bg-gray-800">
+      <div class="w-full p-2">
+        <div
+          id="SalesChart"
+          phx-hook="SalesChart"
+          phx-update="ignore"
+          data-height="300"
+          data-buckets={@daily_counts}
+        >
+        </div>
+      </div>
+    </div>
+
+    <div class="md:col-span-2 xl:col-span-1 p-4 bg-white border border-gray-200 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div class="w-full">
+        <h3 class="text-base font-semibold text-gray-600 dark:text-gray-400">
+          Top Products
+          <div class="text-xs text-gray-400 font-normal">
+            Penjualan/download terbanyak dalam 30 hari terakhir.
+          </div>
+        </h3>
+        <div
+          :if={Enum.empty?(@top_products)}
+          class="flex flex-col items-center justify-center py-16 text-gray-100 font-light"
+        >
+          <.icon name="hero-face-frown" class="w-40 h-40" />
+        </div>
+        <table
+          :if={!Enum.empty?(@top_products)}
+          class="w-full mt-4 text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
+        >
+          <tbody>
+            <tr
+              :for={{product, index} <- Enum.with_index(@top_products)}
+              class="bg-white dark:bg-gray-800 dark:border-gray-700 border-b"
+            >
+              <th
+                scope="row"
+                class="py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+              >
+                <.link
+                  navigate={~p"/products/#{product.product_id}/stats"}
+                  class="text-primary-500"
+                >
+                  <div class="inline-flex items-center justify-center w-6 h-6 text-xs mr-1 font-semibold text-white bg-primary-500 border-2 border-white rounded-full dark:border-gray-900">
+                    <%= index + 1 %>
+                  </div>
+                  <%= product.product_name %>
+                </.link>
+                <div class="text-xs text-gray-400 font-normal ml-8">
+                  <%= product.product_variant_name %>
+                </div>
+              </th>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

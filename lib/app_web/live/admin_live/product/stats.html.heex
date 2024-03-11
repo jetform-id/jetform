@@ -23,7 +23,7 @@
     <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="w-full">
         <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
-          Produk terjual
+          Jumlah terjual
         </h3>
         <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">
           <.delimited_number value={@order_stats[:paid_count]} />
@@ -33,17 +33,17 @@
     <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="w-full">
         <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
-          Nilai penjualan
+          Keuntungan Bersih
         </h3>
-        <span class="text-2xl font-bold leading-none sm:text-3xl dark:text-white">
-          <.price value={@order_stats[:paid_gross_amount] - @order_stats[:paid_fee_amount]} />
+        <span class="text-2xl text-green-500 font-bold leading-none sm:text-3xl dark:text-white">
+          <.price value={@order_stats[:gross_revenue] - @order_stats[:service_fee]} />
         </span>
       </div>
     </div>
-    <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-      <div class="w-full">
+    <div class="items-center relative justify-between bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 dark:bg-gray-800">
+      <div class="p-6">
         <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
-          Free Download
+          Free Downloads
           <button
             data-popover-target="popover-download-counts"
             data-popover-placement="bottom-end"
@@ -70,6 +70,14 @@
         <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">
           <.delimited_number value={@order_stats[:free_count]} />
         </span>
+      </div>
+      <div
+        id="DownloadsChart"
+        phx-hook="DownloadsChart"
+        class="hidden md:block absolute z-0 w-full bottom-0"
+        data-height="60"
+        data-buckets={@free_download_buckets}
+      >
       </div>
     </div>
   </div>

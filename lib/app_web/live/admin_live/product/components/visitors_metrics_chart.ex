@@ -55,11 +55,11 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsMetricsChart do
             >
               <th
                 scope="row"
-                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               >
                 <%= if metric["x"] != "", do: metric["x"], else: "(None)" %>
               </th>
-              <td class="px-6 py-4">
+              <td class="px-6 py-2">
                 <%= metric["y"] %>
               </td>
             </tr>

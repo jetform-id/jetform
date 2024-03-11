@@ -13,11 +13,34 @@ defmodule AppWeb.AdminLive.Dashboard.Index do
         _session,
         %{assigns: %{current_user: user}} = socket
       ) do
+    end_time = Timex.now() |> Timex.to_datetime(user.timezone)
+    start_time = end_time |> Timex.shift(days: -30)
+
+    daily_counts =
+      Orders.daily_counts_by_user(user, start_time)
+      |> Enum.map(fn {date, x, y} -> {Timex.format!(date, "{YYYY}{M}{D}"), {x, y}} end)
+      |> Enum.into(%{})
+
+    daily_counts =
+      Timex.Interval.new(
+        from: start_time,
+        until: end_time,
+        steps: [days: 1]
+      )
+      |> Enum.to_list()
+      |> Enum.map(fn date ->
+        date_str = Timex.format!(date, "{YYYY}{M}{D}")
+        {y1, y2} = Map.get(daily_counts, date_str, {0, 0})
+        %{x: date, y1: y1, y2: y2}
+      end)
+      |> Jason.encode!()
+
     socket =
       socket
       |> assign(:page_title, "Dashboard")
-      |> assign(:product_sold_this_month, Credits.product_sold_this_month_by_user(user))
-      |> assign(:nett_sales_this_month, Credits.nett_sales_this_month_by_user(user))
+      |> assign(:daily_counts, daily_counts)
+      |> assign(:top_products, Orders.top_products(user, start_time))
+      |> assign(:order_stats, Orders.stats_by_user_and_time(user, start_time))
       |> assign(:withdrawable_credits, Credits.withdrawable_credits_by_user(user))
       |> assign(:pending_credits, Credits.pending_credits_by_user(user))
       |> assign(:status_filter_form, to_form(%{"status" => nil}))
