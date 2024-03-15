@@ -41,7 +41,8 @@ config :app, :captcha,
 
 config :app, :umami,
   website_id: System.get_env("UMAMI_WEBSITE_ID", ""),
-  api_key: System.get_env("UMAMI_API_KEY", "")
+  url: System.get_env("UMAMI_URL", "umami.local"),
+  token: System.get_env("UMAMI_TOKEN", "")
 
 if System.get_env("WAFFLE_AWS_S3_BUCKET") do
   config :waffle,

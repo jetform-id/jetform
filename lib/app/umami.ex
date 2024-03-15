@@ -17,8 +17,9 @@ defmodule App.Umami do
     end
   end
 
-  @base_url "https://api.umami.is"
   def website_id, do: Application.get_env(:app, :umami)[:website_id]
+  def url, do: Application.get_env(:app, :umami)[:url]
+  def token, do: Application.get_env(:app, :umami)[:token]
 
   def stats(%Params{} = params) do
     get("stats", website_id(), params)
@@ -36,18 +37,18 @@ defmodule App.Umami do
     query = Map.from_struct(params) |> URI.encode_query()
 
     get_http_client()
-    |> Tesla.get("/v1/websites/#{website_id}/#{op}?#{query}")
+    |> Tesla.get("/api/websites/#{website_id}/#{op}?#{query}")
     |> handle_response()
   end
 
   defp get_http_client() do
     headers = [
       {"accept", "application/json"},
-      {"x-umami-api-key", Application.fetch_env!(:app, :umami)[:api_key]}
+      {"authorization", "Bearer #{token()}"}
     ]
 
     middlewares = [
-      {Tesla.Middleware.BaseUrl, @base_url},
+      {Tesla.Middleware.BaseUrl, url()},
       Tesla.Middleware.JSON,
       {Tesla.Middleware.Headers, headers}
     ]
