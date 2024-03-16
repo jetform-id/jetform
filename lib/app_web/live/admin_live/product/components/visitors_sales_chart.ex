@@ -68,11 +68,13 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsSalesChart do
       :cache,
       cache_key,
       fn _key ->
-        {:commit, pageviews_buckets(url, start_time, end_time)}
-      end,
-      ttl: :timer.hours(1)
+        {:commit, pageviews_buckets(url, start_time, end_time), ttl: :timer.hours(1)}
+      end
     )
-    |> then(fn {_, buckets} -> buckets end)
+    |> case do
+      {:ok, pageviews} -> pageviews
+      {_, pageviews, _} -> pageviews
+    end
   end
 
   defp pageviews_buckets(url, start_time, end_time) do

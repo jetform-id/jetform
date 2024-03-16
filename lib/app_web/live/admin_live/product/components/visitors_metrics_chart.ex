@@ -108,13 +108,15 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsMetricsChart do
         |> Map.put(:type, type)
         |> Umami.metrics()
         |> case do
-          {:ok, m} -> {:commit, m}
-          {:error, _} -> {:commit, []}
+          {:ok, m} -> {:commit, m, ttl: :timer.hours(1)}
+          {:error, _} -> {:commit, [], ttl: :timer.hours(1)}
         end
-      end,
-      ttl: :timer.hours(1)
+      end
     )
-    |> then(fn {_, metrics} -> metrics end)
+    |> case do
+      {:ok, metrics} -> metrics
+      {_, metrics, _} -> metrics
+    end
   end
 
   defp time_range(product, start_time) do
