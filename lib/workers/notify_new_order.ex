@@ -3,6 +3,7 @@ defmodule Workers.NotifyNewOrder do
   require Logger
   alias App.Mailer
   alias App.Orders
+  alias Workers.Utils
 
   def create(%{status: :pending} = order) do
     %{id: order.id}
@@ -28,6 +29,8 @@ defmodule Workers.NotifyNewOrder do
   end
 
   defp send_email(order) do
+    user = order.user
+
     base_url = AppWeb.Utils.base_url()
     status_text = "(Menunggu Pembayaran)"
     invoice_text = "Detail order dan cara pembayaran bisa anda lihat di link berikut:"
@@ -44,13 +47,8 @@ defmodule Workers.NotifyNewOrder do
     #{invoice_text}
     #{base_url}/invoice/#{order.id}
 
-    --
-    JetForm
-    Bisnis produk digital praktis & otomatis!
-    https://www.jetform.me
+    #{Utils.email_signature(user)}
     """
-
-    user = order.user
 
     user_text = """
     Halo #{user.email},
@@ -60,11 +58,6 @@ defmodule Workers.NotifyNewOrder do
     Produk: #{Orders.product_fullname(order)}
     Total: #{App.Utils.Commons.format_price(order.total)}
     Status: #{order.status} #{status_text}
-
-    --
-    JetForm
-    Bisnis produk digital praktis & otomatis!
-    https://www.jetform.me
     """
 
     buyer_email =

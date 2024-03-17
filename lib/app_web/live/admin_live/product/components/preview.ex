@@ -19,7 +19,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           <h2 class="text-2xl font-semibold" id="preview" phx-update="replace">
             <%= @product.name %>
           </h2>
-          <div class="mt-2 trix-content preview text-gray-600">
+          <div class="mt-4 trix-content preview text-gray-600">
             <%= raw(@product.description) %>
           </div>
 
@@ -121,6 +121,16 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
             enable_captcha={@enable_captcha}
             error={@error}
           />
+          <%!-- <div class="text-center pt-4 mt-6">
+            <p class="text-sm text-slate-400 items-center">
+              Produk ini disediakan oleh
+              <span class="font-semibold text-primary-500">UpKoding</span>
+              <.icon
+                name="hero-arrow-top-right-on-square"
+                class="w-4 h-4 inline-block text-primary-500"
+              />
+            </p>
+          </div> --%>
         </div>
       </div>
       <p class="text-center p-3 text-sm text-gray-400">

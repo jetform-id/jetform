@@ -168,35 +168,38 @@
         >
           <.icon name="hero-face-frown" class="w-40 h-40" />
         </div>
-        <table
-          :if={!Enum.empty?(@top_products)}
-          class="w-full mt-4 text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
-        >
-          <tbody>
-            <tr
-              :for={{product, index} <- Enum.with_index(@top_products)}
-              class="bg-white dark:bg-gray-800 dark:border-gray-700 border-b"
-            >
-              <th
-                scope="row"
-                class="py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+
+        <div class="overflow-x-auto">
+          <table
+            :if={!Enum.empty?(@top_products)}
+            class="w-full mt-4 text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
+          >
+            <tbody>
+              <tr
+                :for={{product, index} <- Enum.with_index(@top_products)}
+                class="bg-white dark:bg-gray-800 dark:border-gray-700 border-b"
               >
-                <.link
-                  navigate={~p"/products/#{product.product_id}/stats"}
-                  class="text-primary-500"
+                <th
+                  scope="row"
+                  class="py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
-                  <div class="inline-flex items-center justify-center w-6 h-6 text-xs mr-1 font-semibold text-white bg-primary-500 border-2 border-white rounded-full dark:border-gray-900">
-                    <%= index + 1 %>
+                  <.link
+                    navigate={~p"/products/#{product.product_id}/stats"}
+                    class="text-primary-500"
+                  >
+                    <div class="inline-flex items-center justify-center w-6 h-6 text-xs mr-1 font-semibold text-white bg-primary-500 border-2 border-white rounded-full dark:border-gray-900">
+                      <%= index + 1 %>
+                    </div>
+                    <%= product.product_name %>
+                  </.link>
+                  <div class="text-xs text-gray-400 font-normal ml-8">
+                    <%= product.product_variant_name %>
                   </div>
-                  <%= product.product_name %>
-                </.link>
-                <div class="text-xs text-gray-400 font-normal ml-8">
-                  <%= product.product_variant_name %>
-                </div>
-              </th>
-            </tr>
-          </tbody>
-        </table>
+                </th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

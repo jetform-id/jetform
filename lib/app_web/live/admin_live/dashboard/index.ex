@@ -13,12 +13,14 @@ defmodule AppWeb.AdminLive.Dashboard.Index do
         _session,
         %{assigns: %{current_user: user}} = socket
       ) do
-    end_time = Timex.now() |> Timex.to_datetime(user.timezone)
+    end_time = Timex.now()
     start_time = end_time |> Timex.shift(days: -30)
 
     daily_counts =
       Orders.daily_counts_by_user(user, start_time)
-      |> Enum.map(fn {date, x, y} -> {Timex.format!(date, "{YYYY}{M}{D}"), {x, y}} end)
+      |> Enum.map(fn {date, x, y} ->
+        {Timex.format!(date, "{ISOdate}"), {x, y}}
+      end)
       |> Enum.into(%{})
 
     daily_counts =
@@ -29,7 +31,7 @@ defmodule AppWeb.AdminLive.Dashboard.Index do
       )
       |> Enum.to_list()
       |> Enum.map(fn date ->
-        date_str = Timex.format!(date, "{YYYY}{M}{D}")
+        date_str = Timex.format!(date, "{ISOdate}")
         {y1, y2} = Map.get(daily_counts, date_str, {0, 0})
         %{x: date, y1: y1, y2: y2}
       end)

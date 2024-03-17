@@ -62,11 +62,6 @@ defmodule Workers.NotifyNewAccess do
     Kami sarankan anda unduh semua file yang ada dan menyimpannya di tempat yang aman.
 
     #{order_detail_text}
-
-    --
-    JetForm
-    Bisnis produk digital praktis & otomatis!
-    https://www.jetform.me
     """
 
     %{

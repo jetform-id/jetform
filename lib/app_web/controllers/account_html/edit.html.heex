@@ -1,5 +1,5 @@
 <div class="px-4 pt-6">
-  <div class="grid gap-4 xl:grid-cols-2 2xl:grid-cols-3">
+  <div class="grid gap-4 xl:grid-cols-2">
     <%!-- user form --%>
     <div class="p-4 bg-white border border-gray-200 rounded-md shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="flex items-center justify-between mb-4">
@@ -33,6 +33,7 @@
           as={:user}
           action={~p"/account"}
           phx-update="ignore"
+          multipart
         >
           <div class="mt-8 space-y-6">
             <.error :if={
@@ -54,7 +55,13 @@
               }
               label={Phoenix.Naming.humanize(Pow.Ecto.Schema.user_id_field(@user_changeset))}
               required
-            />
+            >
+              <:help>
+                <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  Email ini digunakan untuk login dan menerima notifikasi.
+                </div>
+              </:help>
+            </.input>
             <%!-- <.input
               field={f[:username]}
               type="text"
@@ -74,6 +81,54 @@
               options={App.Users.tz_select_options()}
               label="Zona Waktu"
             />
+            <.input field={f[:brand_name]} type="text" label="Nama (public)">
+              <:help>
+                <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  Ditampilkan pada invoice dan notifikasi email ke pembeli <i>(Optional)</i>.
+                </div>
+              </:help>
+            </.input>
+            <.input field={f[:brand_email]} type="email" label="Email (public)">
+              <:help>
+                <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  Ditampilkan pada invoice dan notifikasi email ke pembeli <i>(Optional)</i>.
+                </div>
+              </:help>
+            </.input>
+            <.input field={f[:brand_phone]} type="text" label="No. Telepon (public)">
+              <:help>
+                <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  Ditampilkan pada invoice dan notifikasi email ke pembeli <i>(Optional)</i>.
+                </div>
+              </:help>
+            </.input>
+            <.input field={f[:brand_website]} type="text" label="Website URL (public)">
+              <:help>
+                <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  Ditampilkan pada invoice dan notifikasi email ke pembeli <i>(Optional)</i>.
+                </div>
+              </:help>
+            </.input>
+            <div class="flex justify-between items-center">
+              <.input
+                name="user[brand_logo]"
+                value=""
+                type="file"
+                accept=".jpg,.jpeg,.png"
+                label="Logo (public)"
+              >
+                <:help>
+                  <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    Ditampilkan pada invoice <i>(Optional)</i>.
+                  </div>
+                </:help>
+              </.input>
+              <img
+                src={App.Users.brand_logo_url(@user, :thumb)}
+                alt="Brand logo"
+                class="w-40 rounded-full"
+              />
+            </div>
             <hr />
             <.input field={f[:password]} type="password" label="Password baru" />
             <.input

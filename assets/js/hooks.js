@@ -62,7 +62,7 @@ Hooks.SalesChart = {
             },
             xaxis: {
                 type: 'datetime',
-                categories: x
+                categories: x,
             },
             yaxis: {
                 min: 0,
@@ -76,6 +76,11 @@ Hooks.SalesChart = {
                 y: {
                     formatter: function (val) {
                         return Math.round(val)
+                    }
+                },
+                x: {
+                    formatter: function (value, { series, seriesIndex, dataPointIndex, w }) {
+                        return new Date(value).toLocaleDateString()
                     }
                 }
             },
@@ -156,6 +161,11 @@ Hooks.VisitorsSalesChart = {
                 y: {
                     formatter: function (val) {
                         return Math.round(val)
+                    }
+                },
+                x: {
+                    formatter: function (value, { series, seriesIndex, dataPointIndex, w }) {
+                        return new Date(value).toLocaleDateString()
                     }
                 }
             },

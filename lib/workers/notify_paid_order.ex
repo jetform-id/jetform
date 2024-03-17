@@ -3,6 +3,7 @@ defmodule Workers.NotifyPaidOrder do
   require Logger
   alias App.Mailer
   alias App.Orders
+  alias Workers.Utils
 
   def create(%{status: :paid} = order) do
     %{id: order.id}
@@ -28,6 +29,7 @@ defmodule Workers.NotifyPaidOrder do
   end
 
   defp send_email(order) do
+    user = order.user
     base_url = AppWeb.Utils.base_url()
 
     buyer_text = """
@@ -46,13 +48,8 @@ defmodule Workers.NotifyPaidOrder do
     Detail pembelian bisa anda lihat di halaman berikut:
     #{base_url}/invoice/#{order.id}
 
-    --
-    JetForm
-    Bisnis produk digital praktis & otomatis!
-    https://www.jetform.me
+    #{Utils.email_signature(user)}
     """
-
-    user = order.user
 
     user_text = """
     Halo #{user.email},
@@ -65,11 +62,6 @@ defmodule Workers.NotifyPaidOrder do
 
     Detail pembelian bisa anda lihat di halaman berikut:
     #{base_url}/invoice/#{order.id}
-
-    --
-    JetForm
-    Bisnis produk digital praktis & otomatis!
-    https://www.jetform.me
     """
 
     # Mailgun doesn't support `deliver_many` so we have to send them one by one

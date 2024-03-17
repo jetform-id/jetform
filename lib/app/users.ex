@@ -7,6 +7,24 @@ defmodule App.Users do
   defdelegate tz_select_options(), to: User
   defdelegate tz_label(tz), to: User
 
+  def brand_logo_url(user, version, opts \\ []) do
+    App.Users.BrandLogo.url({user.brand_logo, user}, version, opts)
+  end
+
+  def brand_info_complete?(user) do
+    not is_nil(user.brand_name) and not is_nil(user.brand_email || user.brand_phone)
+  end
+
+  def get_brand_info(user) do
+    %{
+      name: user.brand_name,
+      email: user.brand_email,
+      phone: user.brand_phone,
+      website: user.brand_website,
+      logo: if(user.brand_logo, do: brand_logo_url(user, :thumb), else: nil)
+    }
+  end
+
   def list_users!(user, query) do
     User
     |> list_users_scope(user)
@@ -21,7 +39,7 @@ defmodule App.Users do
 
   def set_role(user, role) do
     user
-    |> User.changeset_role(%{role: role})
+    |> User.role_changeset(%{role: role})
     |> Repo.update()
   end
 

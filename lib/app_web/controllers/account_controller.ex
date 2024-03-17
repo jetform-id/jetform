@@ -10,6 +10,7 @@ defmodule AppWeb.AccountController do
 
     render(conn, :edit,
       page_title: "Edit Akun",
+      user: user,
       user_changeset: Pow.Plug.change_user(conn),
       bank_acc_changeset: bank_acc_changeset(user.bank_account),
       plan: plan
