@@ -58,7 +58,8 @@ if System.get_env("AWS_S3_HOST") do
       scheme: "https://",
       host: System.get_env("AWS_S3_HOST")
     ],
-    debug_requests: false
+    debug_requests: false,
+    hackney_opts: [recv_timeout: 60_000, follow_redirect: true]
 end
 
 if config_env() == :prod do
