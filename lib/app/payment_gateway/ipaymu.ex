@@ -3,7 +3,7 @@ defmodule App.PaymentGateway.Ipaymu do
 
   alias App.Repo
   alias App.Orders.{Order, Payment}
-  alias App.PaymentGateway.CreateTransactionResult
+  alias App.PaymentGateway.{CreateTransactionResult, GetTransactionResult}
 
   @sandbox_base_url "https://sandbox.ipaymu.com"
   @production_base_url "https://my.ipaymu.com"
@@ -22,6 +22,84 @@ defmodule App.PaymentGateway.Ipaymu do
   def config_value(key) when is_binary(key) do
     config_value(String.to_atom(key))
   end
+
+  @doc """
+  ```elixir
+  %{
+    "Amount" => 50000,
+    "BuyerEmail" => "seller@jetform.local",
+    "BuyerName" => "Eka Putra",
+    "BuyerPhone" => "081000000",
+    "CreatedDate" => "2024-07-27 16:37:27",
+    "ExpiredDate" => "2024-07-28 04:37:26",
+    "Fee" => 4000,
+    "IsLocked" => false,
+    "Notes" => nil,
+    "PaidStatus" => "unpaid",
+    "PaymentChannel" => "bca",
+    "PaymentCode" => "5634010000014021",
+    "PaymentMethod" => "va",
+    "PaymentName" => "OTTOPAY",
+    "Receiver" => "JetForm",
+    "ReferenceId" => "fecf5db1-a461-4db6-be9b-df9daccb0025",
+    "RelatedId" => nil,
+    "Sender" => "System",
+    "SessionId" => "20f07c39-59fd-40e6-82e2-d2bbb1708f49",
+    "SettlementDate" => nil,
+    "Status" => 0,
+    "StatusDesc" => "Menunggu Pembayaran",
+    "SubTotal" => 50000,
+    "SuccessDate" => nil,
+    "TransactionId" => 139385,
+    "Type" => 7,
+    "TypeDesc" => "VA & Transfer Bank"
+  }
+  ```
+  """
+  @impl true
+  def get_transaction(id) do
+    payload = %{
+      transactionId: id,
+      account: config_value(:va)
+    }
+
+    signature = compute_signature("POST", payload)
+
+    get_http_client(signature)
+    |> Tesla.post("/api/v2/transaction", payload)
+    |> case do
+      {:ok,
+       %Tesla.Env{
+         status: 200,
+         body: %{"Success" => true, "Data" => %{"Status" => status} = data}
+       }} ->
+        trx_status =
+          case status do
+            0 -> "pending"
+            1 -> "paid"
+            -2 -> "expired"
+            _ -> "unknown"
+          end
+
+        result = %GetTransactionResult{
+          payload: Jason.encode!(data),
+          type: Map.get(data, "TypeDesc"),
+          trx_id: Map.get(data, "TransactionId") |> to_string(),
+          trx_status: trx_status,
+          status_code: to_string(status),
+          gross_amount: Map.get(data, "Amount"),
+          service_fee: Map.get(data, "Fee")
+        }
+
+        {:ok, result}
+
+      {_, %Tesla.Env{status: status, body: body}} ->
+        {:error, %{"status" => status, "body" => body}}
+    end
+  end
+
+  @impl true
+  def cancel_transaction(_id), do: {:ok, :noop}
 
   @impl true
   def create_transaction(%{} = payload) do
@@ -43,71 +121,29 @@ defmodule App.PaymentGateway.Ipaymu do
   end
 
   @impl true
-  def get_transaction(_id), do: {:ok, %{}}
-
-  @impl true
-  def cancel_transaction(_id), do: {:ok, :noop}
-
-  @impl true
-  def create_transaction_payload(%Order{} = order, %Payment{} = payment, options \\ []) do
+  def create_transaction_payload(%Order{} = order, %Payment{} = payment, _options \\ []) do
     order = Repo.preload(order, :product)
-    expiry_in_minutes = Keyword.get(options, :expiry_in_minutes, 30)
 
-    %{
-      "transaction_details" => %{
-        "order_id" => payment.id,
-        "gross_amount" => order.total
-      },
-      "item_details" => [
-        %{
-          "id" => order.product_id,
-          "price" => order.total,
-          "quantity" => 1,
-          "name" => order.product_name,
-          "brand" => order.product_variant_name
-        }
-      ],
-      "customer_details" => %{
-        "first_name" => order.customer_name,
-        "email" => order.customer_email
-      },
-      "expiry" => %{
-        "unit" => "minutes",
-        "duration" => expiry_in_minutes
-      },
-      "page_expiry" => %{
-        "duration" => expiry_in_minutes,
-        "unit" => "minutes"
-      },
-      "enabled_payments" => config_value(:enabled_payments),
-      "custom_field1" => order.product.user_id
+    payload = %{
+      referenceId: payment.id,
+      product: [order.product_name],
+      description: [order.product_variant_name],
+      qty: [1],
+      price: [order.total],
+      returnUrl: "#{AppWeb.Utils.base_url()}/api/payment/ipaymu/#{payment.id}/redirect",
+      notifyUrl: "#{AppWeb.Utils.base_url()}/api/payment/ipaymu/#{payment.id}/notification",
+      cancelUrl: "#{AppWeb.Utils.base_url()}/api/payment/ipaymu/#{payment.id}/redirect",
+      buyerName: order.customer_name,
+      buyerPhone: order.customer_phone,
+      buyerEmail: order.customer_email
     }
-  end
 
-  def create_direct_payment_qris(%{} = payload) do
-    payload =
-      payload
-      |> Map.put("paymentMethod", "qris")
-      |> Map.put("paymentChannel", "qris")
+    case config_value(:payment_method) do
+      "auto" ->
+        payload
 
-    signature = compute_signature("POST", payload)
-
-    get_http_client(signature)
-    |> Tesla.post("/api/v2/payment/direct", payload)
-    |> case do
-      {:ok,
-       %Tesla.Env{
-         status: 200,
-         body:
-           %{
-             "Success" => true,
-             "Data" => %{"TransactionId" => trx_id, "Fee" => fee, "QrImage" => qr_image}
-           } = body
-       }} ->
-        {:ok, %{channel: "QRIS", trx_id: to_string(trx_id), qr_image: qr_image, fee: fee}, body}
-
-      {_, %Tesla.Env{status: status, body: body}} ->
-        {:error, %{"status" => status, "body" => body}}
+      method ->
+        Map.put(payload, "paymentMethod", method)
     end
   end
 
@@ -159,23 +195,6 @@ defmodule App.PaymentGateway.Ipaymu do
 end
 
 defmodule App.PaymentGateway.Ipaymu.Test do
-  def direct_payment_qris do
-    payload = %{
-      referenceId: "testRefId",
-      product: ["JetForm Test Product"],
-      qty: [1],
-      price: [100_000],
-      amount: 100_000,
-      description: ["JetForm Test Product Description"],
-      notifyUrl: "http://localhost:4000/notify",
-      name: "John Doe",
-      phone: "081234567890",
-      email: "support@jetform.local"
-    }
-
-    App.PaymentGateway.Ipaymu.create_direct_payment_qris(payload)
-  end
-
   def create_transaction do
     payload = %{
       referenceId: "testRefId",
@@ -193,5 +212,9 @@ defmodule App.PaymentGateway.Ipaymu.Test do
     }
 
     App.PaymentGateway.Ipaymu.create_transaction(payload)
+  end
+
+  def get_transaction(id) do
+    App.PaymentGateway.Ipaymu.get_transaction(id)
   end
 end

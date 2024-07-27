@@ -346,10 +346,6 @@ defmodule App.Orders do
     Payment.changeset(payment, attrs)
   end
 
-  def change_payment_from_status(%Payment{} = payment, status) do
-    Payment.changeset_from_status(payment, status)
-  end
-
   @doc """
   Get active payment provider.
   """
@@ -412,8 +408,10 @@ defmodule App.Orders do
   end
 
   # custom guards
-  defguard is_paid(transaction_status) when transaction_status in ["capture", "settlement"]
-  defguard is_ok(status_code) when status_code == "200"
+  defguard is_paid(transaction_status)
+           when transaction_status in ["capture", "settlement", "paid"]
+
+  defguard is_ok(status_code) when status_code in ["200", "1"]
   defguard is_safe(fraud_status) when fraud_status in [nil, "accept"]
 
   def update_payment(
@@ -422,7 +420,7 @@ defmodule App.Orders do
           status_code: status_code,
           fraud_status: fraud_status
         } = payment,
-        _status
+        _trx
       )
       when is_paid(old_status) and is_ok(status_code) and is_safe(fraud_status) do
     # alread paid, do nothing
@@ -432,11 +430,11 @@ defmodule App.Orders do
   def update_payment(
         %{trx_status: old_status} = payment,
         %{
-          "transaction_status" => new_status,
-          "status_code" => status_code,
-          "fraud_status" => fraud_status,
-          "payment_type" => payment_type
-        } = status
+          trx_status: new_status,
+          status_code: status_code,
+          fraud_status: fraud_status,
+          type: payment_type
+        } = trx
       )
       when not is_paid(old_status) and is_paid(new_status) and is_ok(status_code) and
              is_safe(fraud_status) do
@@ -450,7 +448,7 @@ defmodule App.Orders do
     # - broadcast order:updated event
     # - create Oban job to deliver (create content access, send email to buyer) content
     Ecto.Multi.new()
-    |> Ecto.Multi.update(:payment, change_payment_from_status(payment, status))
+    |> Ecto.Multi.update(:payment, Payment.changeset(payment, trx))
     |> Ecto.Multi.update(
       :order,
       change_order(payment.order, %{
@@ -492,14 +490,14 @@ defmodule App.Orders do
     end
   end
 
-  def update_payment(%Payment{} = payment, %{} = status) do
+  def update_payment(%Payment{} = payment, %{} = trx) do
     # other status, just update payment status
-    change_payment_from_status(payment, status) |> Repo.update()
+    Payment.changeset(payment, trx) |> Repo.update()
   end
 
   def refresh_payment(%Payment{} = payment) do
-    with {:ok, status} <- payment_provider().get_transaction(payment.id),
-         {:ok, payment} <- update_payment(payment, status) do
+    with {:ok, trx} <- payment_provider().get_transaction(payment.id),
+         {:ok, payment} <- update_payment(payment, Map.from_struct(trx)) do
       {:ok, payment}
     else
       err -> err

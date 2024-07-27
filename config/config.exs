@@ -16,9 +16,10 @@ config :app,
   access_validity_days: 7,
   withdrawal_fee: 5_000,
   default_plan: App.Plans.Commission5,
-  payment_provider: App.PaymentGateway.Midtrans
+  payment_provider: App.PaymentGateway.Ipaymu
 
 config :app, :midtrans, enabled_payments: ["other_qris"]
+config :app, :ipaymu, payment_method: "auto"
 
 config :app,
   ecto_repos: [App.Repo],

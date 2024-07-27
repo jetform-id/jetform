@@ -41,20 +41,6 @@ defmodule App.Orders.Payment do
     |> validate_order(attrs)
   end
 
-  def changeset_from_status(payment, status) do
-    attrs = %{
-      "payload" => Jason.encode!(status),
-      "type" => Map.get(status, "payment_type"),
-      "trx_id" => Map.get(status, "transaction_id"),
-      "trx_status" => Map.get(status, "transaction_status"),
-      "fraud_status" => Map.get(status, "fraud_status"),
-      "status_code" => Map.get(status, "status_code"),
-      "gross_amount" => Map.get(status, "gross_amount")
-    }
-
-    changeset(payment, attrs)
-  end
-
   defp validate_order(changeset, attrs) do
     case Map.get(attrs, "order") do
       nil -> add_error(changeset, :order, "can't be blank")

@@ -19,8 +19,6 @@ defmodule App.Repo.Migrations.CreateOrderPayments do
       add :status_code, :string
       add :gross_amount, :float
       add :redirect_url, :text
-      # add :api_create_response, :text
-      # add :callback_response, :text
 
       timestamps(type: :utc_datetime)
     end

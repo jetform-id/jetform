@@ -3,7 +3,7 @@ defmodule App.PaymentGateway.Midtrans do
 
   alias App.Repo
   alias App.Orders.{Order, Payment}
-  alias App.PaymentGateway.CreateTransactionResult
+  alias App.PaymentGateway.{CreateTransactionResult, GetTransactionResult}
 
   @app_sandbox_base_url "https://app.sandbox.midtrans.com"
   @app_production_base_url "https://app.midtrans.com"
@@ -31,7 +31,16 @@ defmodule App.PaymentGateway.Midtrans do
     get_app_base_url()
     |> get_http_client()
     |> Tesla.post("/snap/v1/transactions", payload)
-    |> handle_response()
+    |> case do
+      {:ok, %{body: %{"token" => token, "redirect_url" => redirect_url}}} ->
+        {:ok, CreateTransactionResult.new(token, redirect_url)}
+
+      {:ok, %{body: %{"error_messages" => errors}}} ->
+        {:error, errors}
+
+      error ->
+        error
+    end
   end
 
   @impl true
@@ -39,7 +48,10 @@ defmodule App.PaymentGateway.Midtrans do
     get_api_base_url()
     |> get_http_client()
     |> Tesla.post("/v2/#{id}/cancel", %{})
-    |> handle_response()
+    |> case do
+      {:ok, body} -> {:ok, body}
+      error -> error
+    end
   end
 
   @impl true
@@ -47,7 +59,26 @@ defmodule App.PaymentGateway.Midtrans do
     get_api_base_url()
     |> get_http_client()
     |> Tesla.get("/v2/#{id}/status")
-    |> handle_response()
+    |> case do
+      {:ok, %{body: %{"transaction_id" => _} = body}} ->
+        result = %GetTransactionResult{
+          payload: Jason.encode!(body),
+          type: Map.get(body, "payment_type"),
+          trx_id: Map.get(body, "transaction_id"),
+          trx_status: Map.get(body, "transaction_status"),
+          fraud_status: Map.get(body, "fraud_status"),
+          status_code: Map.get(body, "status_code"),
+          gross_amount: Map.get(body, "gross_amount")
+        }
+
+        {:ok, result}
+
+      {:ok, %{body: %{"status_message" => status_message}}} ->
+        {:error, status_message}
+
+      error ->
+        error
+    end
   end
 
   @doc """
@@ -155,32 +186,6 @@ defmodule App.PaymentGateway.Midtrans do
 
     Tesla.client(middlewares)
   end
-
-  defp handle_response({:ok, %{body: %{"token" => token, "redirect_url" => redirect_url}}}) do
-    # create_transaction response
-    {:ok, CreateTransactionResult.new(token, redirect_url)}
-  end
-
-  defp handle_response({:ok, %{body: %{"error_messages" => errors}}}) do
-    # create_transaction response
-    {:error, errors}
-  end
-
-  defp handle_response({:ok, %{body: %{"transaction_id" => _} = body}}) do
-    # get_status response
-    {:ok, body}
-  end
-
-  defp handle_response({:ok, %{body: %{"status_message" => status_message}}}) do
-    # get_status response
-    {:error, status_message}
-  end
-
-  defp handle_response({:ok, %{status: status, body: body}}) do
-    {:error, %{status_code: status, body: body}}
-  end
-
-  defp handle_response({:error, _} = error), do: error
 end
 
 defmodule App.PaymentGateway.Midtrans.Test do
