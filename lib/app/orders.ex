@@ -8,7 +8,7 @@ defmodule App.Orders do
   alias App.Orders.{Order, Payment}
   alias App.Contents
   alias App.Credits
-  alias App.PaymentGateway.Midtrans
+  alias App.PaymentGateway.CreateTransactionResult
 
   # ------------- ORDERS -------------
 
@@ -238,51 +238,18 @@ defmodule App.Orders do
   end
 
   @doc """
-  Generate payload for Midtrans transactions API.
-
-  To simplify payment time management, we strictly enforce te payment page expiry time as
-  well as the transaction expiry time to the value of `expiry_in_minutes`.
+  Get active payment provider.
   """
-  def midtrans_payload(%Order{} = order, %Payment{} = payment, expiry_in_minutes \\ 30) do
-    order = Repo.preload(order, :product)
-
-    %{
-      "transaction_details" => %{
-        "order_id" => payment.id,
-        "gross_amount" => order.total
-      },
-      "item_details" => [
-        %{
-          "id" => order.product_id,
-          "price" => order.total,
-          "quantity" => 1,
-          "name" => order.product_name,
-          "brand" => order.product_variant_name
-        }
-      ],
-      "customer_details" => %{
-        "first_name" => order.customer_name,
-        "email" => order.customer_email
-      },
-      "expiry" => %{
-        "unit" => "minutes",
-        "duration" => expiry_in_minutes
-      },
-      "page_expiry" => %{
-        "duration" => expiry_in_minutes,
-        "unit" => "minutes"
-      },
-      "enabled_payments" => Midtrans.config_value(:enabled_payments),
-      "custom_field1" => order.product.user_id
-    }
+  def payment_provider() do
+    Application.get_env(:app, :payment_provider)
   end
 
   @doc """
-  Create a payment for an order and generate Midtrans payment URL.
+  Create a payment for an order and generate payment URL.
     0. cancel all pending payments for this order before creating new one
     1. calculate the expiry time in minutes
     2. create payment record
-    3. create midtrans transaction and get `redirect_url`
+    3. create transaction and get `redirect_url`
     4. update payment record with `redirect_url`
   """
   def create_payment(%Order{} = order, minimum_expiry_minutes \\ 5) do
@@ -307,15 +274,15 @@ defmodule App.Orders do
                                           new_payment: payment
                                         } ->
       # since we'll only enable QRIS, we'll ignore `expiry_in_minutes` and use the default value (30 minutes)
-      payload = midtrans_payload(order, payment)
+      payload = payment_provider().create_transaction_payload(order, payment)
 
-      case Midtrans.create_transaction(payload) do
-        {:ok, %{"redirect_url" => redirect_url}} ->
-          {:ok, redirect_url}
+      case payment_provider().create_transaction(payload) do
+        {:ok, %CreateTransactionResult{} = result} ->
+          {:ok, result.redirect_url}
 
         {:error, err} ->
-          Logger.error("Midtrans.create_transaction/1 error: #{inspect(err)}")
-          {:error, :midtrans_error}
+          Logger.error("#{payment_provider()}.create_transaction/1 error: #{inspect(err)}")
+          {:error, :payment_gateway_error}
       end
     end)
     |> Ecto.Multi.update(:updated_payment, fn %{new_payment: payment, redirect_url: redirect_url} ->
@@ -418,7 +385,7 @@ defmodule App.Orders do
   end
 
   def refresh_payment(%Payment{} = payment) do
-    with {:ok, status} <- Midtrans.get_transaction_status(payment.id),
+    with {:ok, status} <- payment_provider().get_transaction(payment.id),
          {:ok, payment} <- update_payment(payment, status) do
       {:ok, payment}
     else
@@ -430,7 +397,7 @@ defmodule App.Orders do
     Ecto.Multi.new()
     |> Ecto.Multi.update(:payment, change_payment(payment, %{"trx_status" => "cancel"}))
     |> Ecto.Multi.run(:cancel, fn _repo, %{payment: payment} ->
-      Midtrans.cancel_transaction(payment.id)
+      payment_provider().cancel_transaction(payment.id)
     end)
     |> Repo.transaction()
   end

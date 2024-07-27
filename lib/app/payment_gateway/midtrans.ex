@@ -1,14 +1,20 @@
 defmodule App.PaymentGateway.Midtrans do
+  @behaviour App.PaymentGateway.Provider
+
+  alias App.Repo
+  alias App.Orders.{Order, Payment}
+  alias App.PaymentGateway.CreateTransactionResult
+
   @app_sandbox_base_url "https://app.sandbox.midtrans.com"
   @app_production_base_url "https://app.midtrans.com"
 
   @api_sandbox_base_url "https://api.sandbox.midtrans.com"
   @api_production_base_url "https://api.midtrans.com"
 
-  def config_value(key) when is_binary(key) do
-    config_value(String.to_atom(key))
-  end
+  @impl true
+  def name(), do: "midtrans"
 
+  @impl true
   def config_value(key) when is_atom(key) do
     case Application.get_env(:app, :midtrans)[key] do
       nil -> raise "Missing config :app, :midtrans, :#{key}"
@@ -16,6 +22,11 @@ defmodule App.PaymentGateway.Midtrans do
     end
   end
 
+  def config_value(key) when is_binary(key) do
+    config_value(String.to_atom(key))
+  end
+
+  @impl true
   def create_transaction(%{} = payload) do
     get_app_base_url()
     |> get_http_client()
@@ -23,32 +34,62 @@ defmodule App.PaymentGateway.Midtrans do
     |> handle_response()
   end
 
-  def cancel_transaction(order_id) do
+  @impl true
+  def cancel_transaction(id) do
     get_api_base_url()
     |> get_http_client()
-    |> Tesla.post("/v2/#{order_id}/cancel", %{})
+    |> Tesla.post("/v2/#{id}/cancel", %{})
     |> handle_response()
   end
 
-  def get_transaction_status(order_id) do
+  @impl true
+  def get_transaction(id) do
     get_api_base_url()
     |> get_http_client()
-    |> Tesla.get("/v2/#{order_id}/status")
+    |> Tesla.get("/v2/#{id}/status")
     |> handle_response()
   end
 
-  def get_banks_list() do
-    get_app_base_url()
-    |> get_http_client()
-    |> Tesla.get("/iris/api/v1/beneficiary_banks")
-    |> handle_response()
-  end
+  @doc """
+  Generate payload for Midtrans transactions API.
 
-  def charge(%{} = payload) do
-    get_api_base_url()
-    |> get_http_client()
-    |> Tesla.post("/v2/charge", payload)
-    |> handle_response()
+  To simplify payment time management, we strictly enforce te payment page expiry time as
+  well as the transaction expiry time to the value of `expiry_in_minutes`.
+  """
+  @impl true
+  def create_transaction_payload(%Order{} = order, %Payment{} = payment, options \\ []) do
+    order = Repo.preload(order, :product)
+    expiry_in_minutes = Keyword.get(options, :expiry_in_minutes, 30)
+
+    %{
+      "transaction_details" => %{
+        "order_id" => payment.id,
+        "gross_amount" => order.total
+      },
+      "item_details" => [
+        %{
+          "id" => order.product_id,
+          "price" => order.total,
+          "quantity" => 1,
+          "name" => order.product_name,
+          "brand" => order.product_variant_name
+        }
+      ],
+      "customer_details" => %{
+        "first_name" => order.customer_name,
+        "email" => order.customer_email
+      },
+      "expiry" => %{
+        "unit" => "minutes",
+        "duration" => expiry_in_minutes
+      },
+      "page_expiry" => %{
+        "duration" => expiry_in_minutes,
+        "unit" => "minutes"
+      },
+      "enabled_payments" => config_value(:enabled_payments),
+      "custom_field1" => order.product.user_id
+    }
   end
 
   @doc """
@@ -115,9 +156,9 @@ defmodule App.PaymentGateway.Midtrans do
     Tesla.client(middlewares)
   end
 
-  defp handle_response({:ok, %{body: %{"token" => _, "redirect_url" => _} = body}}) do
+  defp handle_response({:ok, %{body: %{"token" => token, "redirect_url" => redirect_url}}}) do
     # create_transaction response
-    {:ok, body}
+    {:ok, CreateTransactionResult.new(token, redirect_url)}
   end
 
   defp handle_response({:ok, %{body: %{"error_messages" => errors}}}) do
@@ -145,7 +186,7 @@ end
 defmodule App.PaymentGateway.Midtrans.Test do
   @transaction_payload %{
     "transaction_details" => %{
-      "order_id" => "test_order_id",
+      "order_id" => "test_order_id_101",
       "gross_amount" => 10000
     },
     "item_details" => [
@@ -175,14 +216,5 @@ defmodule App.PaymentGateway.Midtrans.Test do
 
   def create_transaction do
     App.PaymentGateway.Midtrans.create_transaction(@transaction_payload)
-  end
-
-  def create_gopay_charge do
-    payload = ewallet_payload("gopay")
-    App.PaymentGateway.Midtrans.charge(payload)
-  end
-
-  defp ewallet_payload(payment_type) do
-    Map.put(@transaction_payload, "payment_type", payment_type)
   end
 end

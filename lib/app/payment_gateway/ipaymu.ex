@@ -1,8 +1,30 @@
 defmodule App.PaymentGateway.Ipaymu do
+  @behaviour App.PaymentGateway.Provider
+
+  alias App.Repo
+  alias App.Orders.{Order, Payment}
+  alias App.PaymentGateway.CreateTransactionResult
+
   @sandbox_base_url "https://sandbox.ipaymu.com"
   @production_base_url "https://my.ipaymu.com"
 
-  def create_redirect_payment(%{} = payload) do
+  @impl true
+  def name(), do: "ipaymu"
+
+  @impl true
+  def config_value(key) when is_atom(key) do
+    case Application.get_env(:app, :ipaymu)[key] do
+      nil -> raise "Missing config :app, :ipaymu, :#{key}"
+      value -> value
+    end
+  end
+
+  def config_value(key) when is_binary(key) do
+    config_value(String.to_atom(key))
+  end
+
+  @impl true
+  def create_transaction(%{} = payload) do
     signature = compute_signature("POST", payload)
 
     get_http_client(signature)
@@ -11,13 +33,55 @@ defmodule App.PaymentGateway.Ipaymu do
       {:ok,
        %Tesla.Env{
          status: 200,
-         body: %{"Success" => true, "Data" => %{"SessionID" => sess_id, "Url" => url}} = body
+         body: %{"Success" => true, "Data" => %{"SessionID" => sess_id, "Url" => url}}
        }} ->
-        {:ok, %{trx_id: sess_id, payment_url: url}, body}
+        {:ok, CreateTransactionResult.new(sess_id, url)}
 
       {_, %Tesla.Env{status: status, body: body}} ->
         {:error, %{"status" => status, "body" => body}}
     end
+  end
+
+  @impl true
+  def get_transaction(_id), do: {:ok, %{}}
+
+  @impl true
+  def cancel_transaction(_id), do: {:ok, :noop}
+
+  @impl true
+  def create_transaction_payload(%Order{} = order, %Payment{} = payment, options \\ []) do
+    order = Repo.preload(order, :product)
+    expiry_in_minutes = Keyword.get(options, :expiry_in_minutes, 30)
+
+    %{
+      "transaction_details" => %{
+        "order_id" => payment.id,
+        "gross_amount" => order.total
+      },
+      "item_details" => [
+        %{
+          "id" => order.product_id,
+          "price" => order.total,
+          "quantity" => 1,
+          "name" => order.product_name,
+          "brand" => order.product_variant_name
+        }
+      ],
+      "customer_details" => %{
+        "first_name" => order.customer_name,
+        "email" => order.customer_email
+      },
+      "expiry" => %{
+        "unit" => "minutes",
+        "duration" => expiry_in_minutes
+      },
+      "page_expiry" => %{
+        "duration" => expiry_in_minutes,
+        "unit" => "minutes"
+      },
+      "enabled_payments" => config_value(:enabled_payments),
+      "custom_field1" => order.product.user_id
+    }
   end
 
   def create_direct_payment_qris(%{} = payload) do
@@ -52,8 +116,8 @@ defmodule App.PaymentGateway.Ipaymu do
   https://storage.googleapis.com/ipaymu-docs/ipaymu-api/iPaymu-signature-documentation-v2.pdf
   """
   def compute_signature(method, %{} = payload) do
-    va = config(:va)
-    api_key = config(:api_key)
+    va = config_value(:va)
+    api_key = config_value(:api_key)
 
     encrypted_payload =
       :crypto.hash(
@@ -72,13 +136,15 @@ defmodule App.PaymentGateway.Ipaymu do
 
   defp get_http_client(signature) do
     timestamp = Timex.now() |> Timex.format!("%Y%m%d%H%M%S", :strftime)
-    base_url = if config(:mode) == "production", do: @production_base_url, else: @sandbox_base_url
+
+    base_url =
+      if config_value(:mode) == "production", do: @production_base_url, else: @sandbox_base_url
 
     headers = [
       {"accept", "application/json"},
       {"content-type", "application/json"},
       {"signature", signature},
-      {"va", config(:va)},
+      {"va", config_value(:va)},
       {"timestamp", timestamp}
     ]
 
@@ -89,10 +155,6 @@ defmodule App.PaymentGateway.Ipaymu do
     ]
 
     Tesla.client(middlewares)
-  end
-
-  defp config(key) do
-    Application.fetch_env!(:app, :ipaymu)[key]
   end
 end
 
@@ -114,7 +176,7 @@ defmodule App.PaymentGateway.Ipaymu.Test do
     App.PaymentGateway.Ipaymu.create_direct_payment_qris(payload)
   end
 
-  def redirect_payment do
+  def create_transaction do
     payload = %{
       referenceId: "testRefId",
       product: ["JetForm Test Product"],
@@ -126,10 +188,10 @@ defmodule App.PaymentGateway.Ipaymu.Test do
       cancelUrl: "http://localhost:4000/cancel",
       buyerName: "John Doe",
       buyerPhone: "081234567890",
-      buyerEmail: "support@jetform.local",
-      paymentMethod: "qris"
+      buyerEmail: "support@jetform.local"
+      # paymentMethod: "qris"
     }
 
-    App.PaymentGateway.Ipaymu.create_redirect_payment(payload)
+    App.PaymentGateway.Ipaymu.create_transaction(payload)
   end
 end
