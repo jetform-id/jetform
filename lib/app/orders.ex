@@ -27,6 +27,119 @@ defmodule App.Orders do
     end
   end
 
+  def stats_by_user_and_time(user, start_at \\ nil) do
+    start_at = start_at || user.email_confirmed_at
+
+    from(o in Order,
+      select: {
+        fragment("sum(case when status = 'free' then 1 else 0 end) as free_count"),
+        fragment("sum(case when status = 'paid' then 1 else 0 end) as paid_count"),
+        fragment("sum(case when status = 'expired' then 1 else 0 end) as expired_count"),
+        fragment("sum(case when status = 'paid' then total else 0 end) as gross_revenue"),
+        fragment("sum(case when status = 'paid' then service_fee else 0 end) as service_fee")
+      },
+      where: o.user_id == ^user.id,
+      where: o.inserted_at >= ^start_at
+    )
+    |> Repo.one()
+    |> then(fn {free_count, paid_count, expired_count, gross_revenue, service_fee} ->
+      %{
+        free_count: free_count || 0,
+        paid_count: paid_count || 0,
+        expired_count: expired_count || 0,
+        gross_revenue: gross_revenue || 0,
+        service_fee: service_fee || 0
+      }
+    end)
+  end
+
+  def stats_by_product_and_time(product, start_at \\ nil) do
+    start_at = start_at || product.inserted_at
+
+    from(o in Order,
+      select: {
+        fragment("sum(case when status = 'free' then 1 else 0 end) as free_count"),
+        fragment("sum(case when status = 'paid' then 1 else 0 end) as paid_count"),
+        fragment("sum(case when status = 'expired' then 1 else 0 end) as expired_count"),
+        fragment("sum(case when status = 'paid' then total else 0 end) as gross_revenue"),
+        fragment("sum(case when status = 'paid' then service_fee else 0 end) as service_fee")
+      },
+      where: o.product_id == ^product.id,
+      where: o.inserted_at >= ^start_at
+    )
+    |> Repo.one()
+    |> then(fn {free_count, paid_count, expired_count, gross_revenue, service_fee} ->
+      %{
+        free_count: free_count || 0,
+        paid_count: paid_count || 0,
+        expired_count: expired_count || 0,
+        gross_revenue: gross_revenue || 0,
+        service_fee: service_fee || 0
+      }
+    end)
+  end
+
+  def daily_counts_by_user(user, start_at \\ nil) do
+    start_at = start_at || user.email_confirmed_at
+
+    from(o in Order,
+      select: {
+        fragment("date_trunc('day', inserted_at) as date"),
+        fragment("sum(case when status = 'free' then 1 else 0 end) as free_count"),
+        fragment("sum(case when status = 'paid' then 1 else 0 end) as paid_count")
+      },
+      where: o.user_id == ^user.id,
+      where: o.inserted_at >= ^start_at,
+      group_by: fragment("date")
+    )
+    |> Repo.all()
+  end
+
+  def daily_counts_by_product(product, start_at \\ nil) do
+    start_at = start_at || product.inserted_at
+
+    from(o in Order,
+      select: {
+        fragment("date_trunc('day', inserted_at) as date"),
+        fragment("sum(case when status = 'free' then 1 else 0 end) as free_count"),
+        fragment("sum(case when status = 'paid' then 1 else 0 end) as paid_count")
+      },
+      where: o.product_id == ^product.id,
+      where: o.inserted_at >= ^start_at,
+      group_by: fragment("date")
+    )
+    |> Repo.all()
+  end
+
+  def top_products(user, start_at \\ nil) do
+    start_at = start_at || user.email_confirmed_at
+
+    from(o in Order,
+      select: [
+        o.product_id,
+        o.product_variant_id,
+        fragment("MIN(?)", o.product_name),
+        fragment("MIN(?)", o.product_variant_name),
+        count(o.id)
+      ],
+      where: o.user_id == ^user.id,
+      where: o.inserted_at >= ^start_at,
+      group_by: [o.product_id, o.product_variant_id],
+      order_by: [desc: count(o.id)],
+      limit: 5
+    )
+    |> Repo.all()
+    |> Enum.map(fn [product_id, product_variant_id, product_name, product_variant_name, count] ->
+      %{
+        product_id: product_id,
+        product_variant_id: product_variant_id,
+        product_name: product_name,
+        product_variant_name: product_variant_name,
+        count: count
+      }
+    end)
+  end
+
   @doc """
   Returns the list of orders.
 

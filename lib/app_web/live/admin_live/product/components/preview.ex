@@ -12,14 +12,14 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
     ~H"""
     <%!-- preview --%>
     <div class="p-1 md:p-6">
-      <div class="mx-auto max-w-xl rounded-lg bg-white shadow-md">
-        <img src={Products.cover_url(@product, :standard)} class="rounded-t-lg" />
+      <div class="mx-auto max-w-xl rounded-md bg-white shadow-md">
+        <img src={Products.cover_url(@product, :standard)} class="rounded-t-md" />
         <hr />
         <div class="p-6">
           <h2 class="text-2xl font-semibold" id="preview" phx-update="replace">
             <%= @product.name %>
           </h2>
-          <div class="mt-2 trix-content preview text-gray-600">
+          <div class="mt-4 trix-content preview text-gray-600">
             <%= raw(@product.description) %>
           </div>
 
@@ -48,7 +48,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           </div>
 
           <div :if={@has_variants} class="mt-10 grid gap-2">
-            <div :for={variant <- @product.variants} class="relative">
+            <div :for={variant <- @product_variants} class="relative">
               <input
                 class="peer hidden"
                 id={"radio_" <> variant.id}
@@ -60,13 +60,13 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
               <span class="peer-checked:border-primary-700 absolute right-4 top-7 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white">
               </span>
               <label
-                class="peer-checked:border-2 peer-checked:border-primary-700 peer-checked:bg-primary-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4"
+                class="peer-checked:border-2 peer-checked:border-primary-700 peer-checked:bg-primary-50 flex cursor-pointer select-none rounded-md border border-gray-300 p-4"
                 for={"radio_" <> variant.id}
               >
                 <div class="w-full">
                   <div class="font-semibold flex pr-12">
                     <span class="flex-1"><%= variant.name %></span>
-                    Rp. <.price value={variant.price} />
+                    <.price value={variant.price} />
                   </div>
                   <p class="text-slate-600 text-sm mt-1 pr-10">
                     <%= variant.description %>
@@ -85,22 +85,22 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
                 <div class="flex items-center justify-between">
                   <p class="text-sm text-gray-400">Subtotal</p>
                   <p class="text-lg font-semibold text-gray-900">
-                    <span class="text-xs font-normal text-gray-400">Rp.</span>
+                    <span class="text-xs font-normal text-gray-400"></span>
                     <.price value={Products.final_price(@product)} />
                   </p>
                 </div>
                 <div class="flex items-center justify-between">
                   <p class="text-sm text-gray-400">Fedex Delivery Enterprise</p>
-                  <p class="text-lg font-semibold text-gray-900">Rp. 8.00</p>
+                  <p class="text-lg font-semibold text-gray-900">8.00</p>
                 </div>
               </div> --%>
           <div
-            :if={!@has_variants || (@has_variants && @selected_variant)}
+            :if={(!@has_variants && @total_price > 0) || (@has_variants && @selected_variant)}
             class="mt-6 flex items-center justify-between"
           >
-            <p class="text-sm font-medium text-gray-900">Total</p>
+            <p class="text-lg font-medium text-gray-900">Total</p>
             <p class="text-2xl font-semibold text-gray-900">
-              <span class="text-xs font-normal text-gray-400">Rp.</span>
+              <span class="text-xs font-normal text-gray-400"></span>
               <.price value={@total_price} />
             </p>
           </div>
@@ -121,11 +121,21 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
             enable_captcha={@enable_captcha}
             error={@error}
           />
+          <%!-- <div class="text-center pt-4 mt-6">
+            <p class="text-sm text-slate-400 items-center">
+              Produk ini disediakan oleh
+              <span class="font-semibold text-primary-500">UpKoding</span>
+              <.icon
+                name="hero-arrow-top-right-on-square"
+                class="w-4 h-4 inline-block text-primary-500"
+              />
+            </p>
+          </div> --%>
         </div>
       </div>
       <p class="text-center p-3 text-sm text-gray-400">
         <.link href={AppWeb.Utils.marketing_site()} target="_blank">
-          powered by JetForm
+          Powered by JetForm
         </.link>
       </p>
     </div>
@@ -142,7 +152,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
     <div class="mt-6 text-center">
       <div
         :if={@error}
-        class="p-4 mb-4 text-sm font-medium text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-dashed border-red-800"
+        class="p-4 mb-4 text-sm font-medium text-red-800 rounded-md bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-dashed border-red-800"
         role="alert"
       >
         <.icon name="hero-exclamation-triangle" /> <%= @error %>
@@ -205,13 +215,6 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
             />
           </div>
 
-          <div class="border border-yellow-300 bg-yellow-100 rounded p-2 text-center">
-            <p class="pl-6 mt-1 text-xs text-yellow-600">
-              <.icon name="hero-exclamation-triangle" />
-              Harap pastikan data di atas sudah benar. Kami tidak bertanggung jawab atas akibat dari kesalahan data yang dimasukkan.
-            </p>
-          </div>
-
           <div :if={@enable_captcha} id="cf-turnstile" phx-hook="RenderCaptcha" phx-update="ignore" />
 
           <%!-- <label class="flex items-center">
@@ -223,7 +226,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
 
           <div
             :if={@error}
-            class="p-4 mb-4 text-sm font-medium text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-dashed border-red-800"
+            class="p-4 mb-4 text-sm font-medium text-red-800 rounded-md bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-dashed border-red-800"
             role="alert"
           >
             <.icon name="hero-exclamation-triangle" /> <%= @error %>
@@ -243,18 +246,23 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           </button>
         </:actions>
       </.simple_form>
+
+      <div class="border border-yellow-300 bg-yellow-100 rounded p-2 text-center">
+        <p class="pl-6 mt-1 text-xs text-yellow-600">
+          <.icon name="hero-exclamation-triangle" />
+          Harap pastikan data di atas sudah benar. Kami tidak bertanggung jawab atas akibat dari kesalahan data yang dimasukkan.
+        </p>
+      </div>
     </div>
     """
   end
 
   @impl true
   def update(assigns, socket) do
-    variants = assigns.product.variants |> Enum.sort_by(& &1.inserted_at, :asc)
-
     socket =
       case Map.get(assigns, :changeset) do
         nil ->
-          product = Map.put(assigns.product, :variants, variants)
+          product = assigns.product
 
           socket
           |> assign(assigns)
@@ -262,16 +270,18 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           |> assign(:product, product)
           |> assign(:preview, false)
           |> assign(:has_variants, Products.has_variants?(product))
+          |> assign(:product_variants, App.Products.list_variants_by_product(product))
           |> assign(:total_price, product.price)
 
         changeset ->
-          product = Ecto.Changeset.apply_changes(changeset) |> Map.put(:variants, variants)
+          product = Ecto.Changeset.apply_changes(changeset)
 
           socket
           |> assign(:preview, true)
           |> assign(:enable_captcha, false)
           |> assign(:product, product)
           |> assign(:has_variants, Products.has_variants?(product))
+          |> assign(:product_variants, App.Products.list_variants_by_product(product))
           |> assign(:total_price, product.price)
       end
       |> assign(:selected_variant, nil)
@@ -283,7 +293,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
 
   @impl true
   def handle_event("select_variant", %{"id" => id}, socket) do
-    variant = Enum.find(socket.assigns.product.variants, fn v -> v.id == id end)
+    variant = Enum.find(socket.assigns.product_variants, fn v -> v.id == id end)
 
     socket =
       socket

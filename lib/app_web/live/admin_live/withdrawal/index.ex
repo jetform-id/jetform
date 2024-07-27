@@ -61,6 +61,7 @@ defmodule AppWeb.AdminLive.Withdrawal.Index do
           |> assign(:show_modal, true)
           |> assign(:withdrawal, nil)
           |> assign(:withdrawal_params, params)
+          |> assign(:admin_form, nil)
 
         _ ->
           socket

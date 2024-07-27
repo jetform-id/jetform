@@ -1,4 +1,5 @@
 defmodule AppWeb.API.ProductJSON do
+  use AppWeb, :verified_routes
   alias App.Products
 
   def index(%{products: products, meta: _meta, as_array: true}) do
@@ -43,8 +44,8 @@ defmodule AppWeb.API.ProductJSON do
       :slug,
       :name,
       :price,
-      :description,
       :is_live,
+      :is_public,
       :cta,
       :cta_text,
       :details,
@@ -52,7 +53,11 @@ defmodule AppWeb.API.ProductJSON do
       :inserted_at,
       :updated_at
     ])
+    |> Map.put(:description_html, product.description)
+    |> Map.put(:description_plain, HtmlSanitizeEx.strip_tags(product.description || ""))
     |> Map.put(:cover, cover)
+    |> Map.put(:price_display, App.Products.price_display(product))
+    |> Map.put(:checkout_url, AppWeb.Utils.base_url() <> ~p"/p/#{product.slug}")
   end
 
   defp transform_variant(%Products.Variant{} = variant) do

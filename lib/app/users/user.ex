@@ -1,11 +1,17 @@
 defmodule App.Users.User do
   use Ecto.Schema
-  import Ecto.Changeset
-
+  use Waffle.Ecto.Schema
   use Pow.Ecto.Schema
 
   use Pow.Extension.Ecto.Schema,
     extensions: [PowResetPassword, PowEmailConfirmation]
+
+  import Ecto.Changeset
+
+  @derive {
+    Flop.Schema,
+    filterable: [:email_confirmed_at], sortable: [:email_confirmed_at]
+  }
 
   # alias App.Utils.ReservedWords
 
@@ -29,10 +35,18 @@ defmodule App.Users.User do
     field :plan, :string
     field :plan_valid_until, :utc_datetime
 
+    # profile / branding
+    field :brand_name, :string
+    field :brand_email, :string
+    field :brand_phone, :string
+    field :brand_website, :string
+    field :brand_logo, App.Users.BrandLogo.Type
+
     # Since we're using Pow's controller, here we define a :action virtual field
     # so that we can control the changeset behaviour based on :action value.
     field :action, :string, virtual: true
 
+    # relationships
     has_one :bank_account, App.Users.BankAccount
     has_many :products, App.Products.Product
     has_many :orders, App.Orders.Order
@@ -72,7 +86,8 @@ defmodule App.Users.User do
     user_or_changeset
     |> pow_changeset(attrs)
     |> pow_extension_changeset(attrs)
-    |> cast(attrs, [:timezone])
+    |> cast(attrs, [:timezone, :brand_name, :brand_email, :brand_phone, :brand_website])
+    |> cast_attachments(attrs, [:brand_logo], allow_paths: true)
   end
 
   def changeset(user_or_changeset, attrs) do
@@ -82,7 +97,7 @@ defmodule App.Users.User do
     |> pow_extension_changeset(attrs)
   end
 
-  def changeset_role(user_or_changeset, attrs) do
+  def role_changeset(user_or_changeset, attrs) do
     user_or_changeset
     |> cast(attrs, [:role])
     |> validate_inclusion(:role, @roles)

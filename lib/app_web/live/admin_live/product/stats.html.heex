@@ -1,45 +1,51 @@
 <div class="px-4 py-6">
-  <div class="grid w-full grid-cols-1 gap-4 mb-4 md:grid-cols-2 xl:grid-cols-4">
+  <div class="pb-4 md:flex md:justify-between">
+    <div>
+      <.link navigate={~p"/products"} class="text-primary-500 font-semibold">
+        <span aria-hidden="true">←</span> Semua produk
+      </.link>
+      <h2 class="text-2xl font-semibold text-gray-900 dark:text-white"><%= @product.name %></h2>
+    </div>
+    <.simple_form
+      for={@time_filter_form}
+      phx-update="replace"
+      phx-change={JS.push("set_time_filter", page_loading: true)}
+    >
+      <.input
+        type="select"
+        field={@time_filter_form[:time]}
+        options={@time_filters}
+        class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-md text-sm px-4 py-2.5"
+      />
+    </.simple_form>
+  </div>
+  <div class="grid w-full grid-cols-1 gap-4 mb-4 md:grid-cols-3">
     <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="w-full">
         <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
-          Produk terjual
-          <button
-            data-popover-target="popover-sale-month"
-            data-popover-placement="bottom-end"
-            type="button"
-          >
-            <.icon name="hero-question-mark-circle-solid text-gray-400" />
-            <span class="sr-only">Show information</span>
-          </button>
+          Jumlah terjual
         </h3>
-        <div
-          data-popover
-          id="popover-sale-month"
-          role="tooltip"
-          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
-        >
-          <div class="p-3 space-y-2">
-            <p class="text-sm">
-              Jumlah produk yang terjual dalam 30 hari terakhir.
-            </p>
-          </div>
-          <div data-popper-arrow></div>
-        </div>
         <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">
           <.delimited_number value={@order_stats[:paid_count]} />
         </span>
-        <p class="flex items-center text-base text-sm font-normal text-gray-400 dark:text-gray-400">
-          30 hari terakhir
-        </p>
       </div>
     </div>
     <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="w-full">
         <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
-          Penjualan
+          Keuntungan Bersih
+        </h3>
+        <span class="text-2xl text-green-500 font-bold leading-none sm:text-3xl dark:text-white">
+          <.price value={@order_stats[:gross_revenue] - @order_stats[:service_fee]} />
+        </span>
+      </div>
+    </div>
+    <div class="items-center relative justify-between bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 dark:bg-gray-800">
+      <div class="p-6">
+        <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
+          Free Downloads
           <button
-            data-popover-target="popover-sale-total"
+            data-popover-target="popover-download-counts"
             data-popover-placement="bottom-end"
             type="button"
           >
@@ -49,157 +55,77 @@
         </h3>
         <div
           data-popover
-          id="popover-sale-total"
+          id="popover-download-counts"
           role="tooltip"
           class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
         >
           <div class="p-3 space-y-2">
+            <h3 class="font-semibold text-gray-900 dark:text-white">Hanya untuk produk gratis</h3>
             <p class="text-sm">
-              Total penjualan dalam 30 hari terakhir.
+              Jumlah unduhan produk gratis oleh pengunjung.
             </p>
           </div>
           <div data-popper-arrow></div>
         </div>
         <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">
-          <.price value={@order_stats[:gross_revenue] - @order_stats[:service_fee]} />
+          <.delimited_number value={@order_stats[:free_count]} />
         </span>
-        <p class="flex items-center text-base text-sm font-normal text-gray-400 dark:text-gray-400">
-          30 hari terakhir
-        </p>
       </div>
-    </div>
-    <div class="items-center justify-between p-4 bg-green-50 border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-      <div class="w-full">
-        <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
-          Dana cair
-          <button
-            data-popover-target="popover-credits-liquid"
-            data-popover-placement="bottom-end"
-            type="button"
-          >
-            <.icon name="hero-question-mark-circle-solid text-gray-400" />
-            <span class="sr-only">Show information</span>
-          </button>
-        </h3>
-        <div
-          data-popover
-          id="popover-credits-liquid"
-          role="tooltip"
-          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
-        >
-          <div class="p-3 space-y-2">
-            <h3 class="font-semibold text-gray-900 dark:text-white">Withdrawable fund</h3>
-            <p class="text-sm">
-              Dana yang sudah bisa di withdraw ke rekening bank anda.
-            </p>
-          </div>
-          <div data-popper-arrow></div>
-        </div>
-        <span class="text-2xl font-bold leading-none text-green-500 sm:text-3xl dark:text-white">
-          <.price value={@withdrawable_credits} />
-        </span>
-        <p class="flex items-center text-base font-normal text-sm text-gray-400 dark:text-gray-400">
-          Siap ditransfer ke bank anda
-        </p>
-      </div>
-    </div>
-    <div class="items-center justify-between p-4 bg-orange-50 border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-      <div class="w-full">
-        <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
-          Dana pending
-          <button
-            data-popover-target="popover-credits-pending"
-            data-popover-placement="bottom-end"
-            type="button"
-          >
-            <.icon name="hero-question-mark-circle-solid text-gray-400" />
-            <span class="sr-only">Show information</span>
-          </button>
-        </h3>
-        <div
-          data-popover
-          id="popover-credits-pending"
-          role="tooltip"
-          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
-        >
-          <div class="p-3 space-y-2">
-            <h3 class="font-semibold text-gray-900 dark:text-white">Pending fund</h3>
-            <p class="text-sm">
-              Dana setiap penjualan perlu waktu paling tidak 3 hari kerja sebelum bisa di withdraw.
-            </p>
-          </div>
-          <div data-popper-arrow></div>
-        </div>
-        <span class="text-2xl font-bold leading-none text-orange-500 sm:text-3xl dark:text-white">
-          <.price value={@pending_credits} />
-        </span>
-        <p class="flex items-center text-base font-normal text-sm text-gray-400 dark:text-gray-400">
-          Sedang diproses
-        </p>
+      <div
+        id="DownloadsChart"
+        phx-hook="DownloadsChart"
+        class="hidden md:block absolute z-0 w-full bottom-0"
+        data-height="60"
+        data-buckets={@free_download_buckets}
+      >
       </div>
     </div>
   </div>
 
-  <div class="grid w-full grid-cols-1 gap-4 mb-4 md:grid-cols-2 xl:grid-cols-4">
-    <div class="md:col-span-2 xl:col-span-3 p-2 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 dark:bg-gray-800">
-      <div class="w-full p-2">
-        <div
-          id="SalesChart"
-          phx-hook="SalesChart"
-          phx-update="ignore"
-          data-height="300"
-          data-buckets={@daily_counts}
-        >
-        </div>
-      </div>
-    </div>
-
-    <div class="md:col-span-2 xl:col-span-1 p-4 bg-white border border-gray-200 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-800">
+  <div class="grid w-full grid-cols-1 gap-4 mb-4 md:grid-cols-3">
+    <div class="col-span-2 p-6 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 dark:bg-gray-800">
       <div class="w-full">
-        <h3 class="text-base font-semibold text-gray-600 dark:text-gray-400">
-          Top Products
-          <div class="text-xs text-gray-400 font-normal">
-            Penjualan/download terbanyak dalam 30 hari terakhir.
-          </div>
+        <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
+          Pageviews Vs. Penjualan
+          <button
+            data-popover-target="popover-visitors-sales-chart"
+            data-popover-placement="bottom-end"
+            type="button"
+          >
+            <.icon name="hero-question-mark-circle-solid text-gray-400" />
+            <span class="sr-only">Show information</span>
+          </button>
         </h3>
         <div
-          :if={Enum.empty?(@top_products)}
-          class="flex flex-col items-center justify-center py-16 text-gray-100 font-light"
+          data-popover
+          id="popover-visitors-sales-chart"
+          role="tooltip"
+          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
         >
-          <.icon name="hero-face-frown" class="w-40 h-40" />
+          <div class="p-3 space-y-2">
+            <h3 class="font-semibold text-gray-900 dark:text-white">Apa itu Pageviews?</h3>
+            <p class="text-sm">
+              Pageviews adalah berapa kali halaman produk Anda dilihat oleh pengunjung.
+            </p>
+          </div>
+          <div data-popper-arrow></div>
         </div>
-
-        <div class="overflow-x-auto">
-          <table
-            :if={!Enum.empty?(@top_products)}
-            class="w-full mt-4 text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
-          >
-            <tbody>
-              <tr
-                :for={{product, index} <- Enum.with_index(@top_products)}
-                class="bg-white dark:bg-gray-800 dark:border-gray-700 border-b"
-              >
-                <th
-                  scope="row"
-                  class="py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                >
-                  <.link
-                    navigate={~p"/products/#{product.product_id}/stats"}
-                    class="text-primary-500"
-                  >
-                    <div class="inline-flex items-center justify-center w-6 h-6 text-xs mr-1 font-semibold text-white bg-primary-500 border-2 border-white rounded-full dark:border-gray-900">
-                      <%= index + 1 %>
-                    </div>
-                    <%= product.product_name %>
-                  </.link>
-                  <div class="text-xs text-gray-400 font-normal ml-8">
-                    <%= product.product_variant_name %>
-                  </div>
-                </th>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <.live_component
+          module={AppWeb.AdminLive.Product.Components.VisitorsSalesChart}
+          id={"visitors-sales-chart-#{@product.id}"}
+          product={@product}
+          start_time={@start_time}
+        />
+      </div>
+    </div>
+    <div class="bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 dark:bg-gray-800">
+      <div class="w-full">
+        <.live_component
+          module={AppWeb.AdminLive.Product.Components.VisitorsMetricsChart}
+          id={"visitors-metrics-chart-#{@product.id}"}
+          product={@product}
+          start_time={@start_time}
+        />
       </div>
     </div>
   </div>
@@ -207,7 +133,7 @@
   <div class="p-4 bg-white border border-gray-200 rounded-md shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
     <!-- Card header -->
     <div class="items-center justify-between lg:flex">
-      <div>
+      <div class="lg:mb-0">
         <h3 class="text-xl font-semibold text-gray-600 dark:text-white">
           Daftar Transaksi (<%= @pagination.total_count %>)
         </h3>
@@ -298,7 +224,7 @@
                   </td>
                   <td class="p-4 text-sm font-normal whitespace-nowrap dark:text-white">
                     <.link
-                      navigate={~p"/products/#{order.product_id}/stats"}
+                      navigate={~p"/products/#{order.product_id}/edit"}
                       class="text-primary-500"
                     >
                       <span class="font-semibold"><%= order.product_name %></span>
@@ -307,7 +233,7 @@
                   <td class="p-4 text-sm font-normal whitespace-nowrap dark:text-white">
                     <.link
                       :if={order.product_variant_name}
-                      navigate={~p"/products/#{order.product_id}/stats"}
+                      navigate={~p"/products/#{order.product_id}/edit"}
                       class="text-primary-500"
                     >
                       <span class="font-semibold"><%= order.product_variant_name %></span>

@@ -67,9 +67,9 @@ defmodule Workers.Withdrawal do
 
     """
     Tanggal & waktu pengajuan: #{withdrawal_time}
-    Jumlah penarikan: Rp. #{withdrawal.amount}
-    Biaya admin: Rp. #{withdrawal.service_fee}
-    Jumlah diterima: Rp. #{withdrawal.amount - withdrawal.service_fee}
+    Jumlah penarikan: #{App.Utils.Commons.format_price(withdrawal.amount)}
+    Biaya admin: #{App.Utils.Commons.format_price(withdrawal.service_fee)}
+    Jumlah diterima: #{App.Utils.Commons.format_price(withdrawal.amount - withdrawal.service_fee)}
     Akun Bank penerima: #{App.Users.bank_name(withdrawal.recipient_bank_name)} / #{withdrawal.recipient_bank_acc_name} / #{withdrawal.recipient_bank_acc_number}
     """
   end
@@ -96,7 +96,9 @@ defmodule Workers.Withdrawal do
     Oleh karena itu mohon pastikan data di atas sudah benar dan segera batalkan penarikan dana apabila ada kesalahan.
 
     --
-    Tim JetForm
+    JetForm
+    Bisnis produk digital praktis & otomatis!
+    https://www.jetform.me
     """
 
     %{
@@ -130,7 +132,9 @@ defmodule Workers.Withdrawal do
     - Apabila dalam 3 hari kerja dana belum juga masuk ke rekening Anda, silahkan hubungi kami dengan membalas email ini.
 
     --
-    Tim JetForm
+    JetForm
+    Bisnis produk digital praktis & otomatis!
+    https://www.jetform.me
     """
 
     %{
@@ -163,7 +167,9 @@ defmodule Workers.Withdrawal do
     #{base_url}/withdrawals
 
     --
-    Tim JetForm
+    JetForm
+    Bisnis produk digital praktis & otomatis!
+    https://www.jetform.me
     """
 
     %{
@@ -197,7 +203,9 @@ defmodule Workers.Withdrawal do
     Apabila ada yang kurang jelas, silahkan hubungi kami dengan membalas email ini.
 
     --
-    Tim JetForm
+    JetForm
+    Bisnis produk digital praktis & otomatis!
+    https://www.jetform.me
     """
 
     %{
@@ -226,12 +234,13 @@ defmodule Workers.Withdrawal do
 
     Silahkan cek rekening Anda untuk memastikan dana telah masuk.
 
-
     *** PENTING ***
     Kami tidak bertanggung jawab atas kesalahan transfer dana yang disebabkan oleh kesalahan nomor rekening, nama rekening, atau nama bank penerima.
 
     --
-    Tim JetForm
+    JetForm
+    Bisnis produk digital praktis & otomatis!
+    https://www.jetform.me
     """
 
     %{

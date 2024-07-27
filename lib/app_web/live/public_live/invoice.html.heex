@@ -1,24 +1,37 @@
 <div id={"invoice-" <> @order.id} class="max-w-2xl mx-auto my-0 md:my-6">
   <div>
     <!-- Card -->
-    <div class="flex flex-col p-4 sm:p-10 bg-white shadow-md rounded-xl dark:bg-gray-800">
+    <div class="flex flex-col p-4 sm:p-10 bg-white shadow-md rounded-xl">
       <!-- Grid -->
       <div class="flex justify-between">
-        <div>
+        <div :if={!@brand_info}>
           <img src={~p"/images/logo.png"} class="h-8" />
-          <%!-- <h1 class="text-lg md:text-xl font-semibold text-blue-600 dark:text-white">
+          <%!-- <h1 class="text-lg md:text-xl font-semibold text-blue-600">
             JetForm
           </h1> --%>
-          <address class="not-italic text-gray-500 dark:text-gray-200">
+          <address class="not-italic text-slate-500">
             support@jetform.me<br />
+          </address>
+        </div>
+        <div :if={@brand_info}>
+          <img :if={@brand_info.logo} src={@brand_info.logo} class="h-20 rounded-full" />
+          <h1 class="text-lg md:text-xl font-semibold text-slate-800">
+            <%= @brand_info.name %>
+          </h1>
+          <address class="not-italic text-slate-500">
+            <div :if={@brand_info.email}><%= @brand_info.email %></div>
+            <div :if={@brand_info.phone}><%= @brand_info.phone %></div>
+            <div :if={@brand_info.website}>
+              <a href={@brand_info.website} target="_blank" class="text-primary-600"><%= @brand_info.website %></a>
+            </div>
           </address>
         </div>
         <!-- Col -->
         <div class="text-end">
-          <h2 class="text-2xl md:text-3xl font-semibold text-gray-800 dark:text-gray-200">
+          <h2 class="text-2xl md:text-3xl font-semibold text-slate-800">
             #<%= @order.invoice_number %>
           </h2>
-          <span class="mt-1 block text-gray-500">
+          <span class="mt-1 block text-slate-500">
             <Commons.order_status_badge status={@order.status} />
           </span>
         </div>
@@ -29,11 +42,11 @@
         <!-- Grid -->
       <div class="mt-8 grid gap-2">
         <div>
-          <div class="text-gray-500">Kepada:</div>
-          <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+          <div class="text-slate-500">Kepada:</div>
+          <h3 class="text-lg font-semibold text-slate-800">
             <%= @order.customer_name %>
           </h3>
-          <address class="not-italic text-gray-500">
+          <address class="not-italic text-slate-800">
             <%= @order.customer_email %><br /> <%= @order.customer_phone %><br />
           </address>
         </div>
@@ -42,10 +55,10 @@
           <!-- Grid -->
           <div class="grid grid-cols-2 gap-3 sm:gap-2">
             <dl class="gap-x-3">
-              <dt class="col-span-3 font-semibold text-gray-800 dark:text-gray-200">
+              <dt class="col-span-3 text-slate-500">
                 Dibuat pada:
               </dt>
-              <dd class="col-span-2 text-gray-500">
+              <dd class="col-span-2 text-slate-800 font-semibold">
                 <.indo_datetime
                   :if={@current_user}
                   value={@order.inserted_at}
@@ -56,10 +69,10 @@
               </dd>
             </dl>
             <dl :if={!(@order.status in [:free, :paid])} class="gap-x-3">
-              <dt class="col-span-3 font-semibold text-gray-800 dark:text-gray-200">
+              <dt class="col-span-3 text-slate-500">
                 Berlaku hingga:
               </dt>
-              <dd class="col-span-2 text-gray-500">
+              <dd class="col-span-2 text-slate-800 font-semibold">
                 <.indo_datetime
                   :if={@current_user}
                   value={@order.valid_until}
@@ -71,10 +84,10 @@
             </dl>
 
             <dl :if={@order.status == :paid} class="gap-x-3">
-              <dt class="col-span-3 font-semibold text-gray-800 dark:text-gray-200">
+              <dt class="col-span-3 text-slate-500">
                 Dibayar pada:
               </dt>
-              <dd class="col-span-2 text-gray-500">
+              <dd class="col-span-2 text-slate-800 font-semibold">
                 <.indo_datetime
                   :if={@current_user}
                   value={@order.paid_at}
@@ -92,7 +105,7 @@
       <!-- End Grid -->
       <span
         :if={@order.status == :pending}
-        class="mt-4 bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-2 rounded dark:bg-gray-700 dark:text-yellow-300 border border-dashed border-yellow-300"
+        class="mt-4 bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-2 rounded  border border-dashed border-yellow-300"
       >
         <.icon name="hero-hand-raised" />
         Harap melakukan pembayaran sebelum order kadaluarsa dalam
@@ -100,32 +113,32 @@
       </span>
       <!-- Table -->
       <div class="mt-6">
-        <div class="border border-gray-300 p-4 rounded-lg space-y-4 dark:border-gray-700">
+        <div class="border border-slate-300 p-4 rounded-md space-y-4">
           <div class="hidden sm:grid sm:grid-cols-4">
-            <div class="col-span-2 text-xs font-medium text-gray-500 uppercase">Produk</div>
-            <div class="text-start text-xs font-medium text-gray-500 uppercase">Varian</div>
-            <div class="text-end text-xs font-medium text-gray-500 uppercase">Harga</div>
+            <div class="col-span-2 text-xs font-medium text-slate-500 uppercase">Produk</div>
+            <div class="text-start text-xs font-medium text-slate-500 uppercase">Varian</div>
+            <div class="text-end text-xs font-medium text-slate-500 uppercase">Harga</div>
           </div>
 
-          <div class="hidden sm:block border-b border-gray-200 dark:border-gray-700"></div>
+          <div class="hidden sm:block border-b border-slate-200"></div>
 
           <div class="grid grid-cols-4 gap-2">
             <div class="col-span-2">
-              <h5 class="sm:hidden text-xs font-medium text-gray-500 uppercase">Produk</h5>
-              <p class="font-medium text-gray-800 dark:text-gray-200">
+              <h5 class="sm:hidden text-xs font-medium text-slate-500 uppercase">Produk</h5>
+              <p class="font-medium text-slate-800">
                 <%= @order.product_name %>
               </p>
             </div>
             <div>
-              <h5 class="sm:hidden text-xs font-medium text-gray-500 uppercase">Varian</h5>
-              <p class="text-gray-800 dark:text-gray-200">
+              <h5 class="sm:hidden text-xs font-medium text-slate-500 uppercase">Varian</h5>
+              <p class="text-slate-800">
                 <%= @order.product_variant_name || "-" %>
               </p>
             </div>
             <div>
-              <h5 class="sm:hidden text-xs font-medium text-gray-500 uppercase">Harga</h5>
-              <p class="sm:text-end text-gray-800 dark:text-gray-200">
-                Rp. <.price value={@order.sub_total} />
+              <h5 class="sm:hidden text-xs font-medium text-slate-500 uppercase">Harga</h5>
+              <p class="sm:text-end text-slate-800">
+                <.price value={@order.sub_total} />
               </p>
             </div>
           </div>
@@ -139,21 +152,21 @@
           <!-- Grid -->
           <div class="grid grid-cols-2 sm:grid-cols-1 gap-3 sm:gap-2">
             <dl :if={@order.discount_name} class="grid sm:grid-cols-5 gap-x-3">
-              <dt class="col-span-3 font-semibold text-gray-800 dark:text-gray-200">Subtotal:</dt>
-              <dd class="col-span-2 text-gray-500">Rp. <.price value={@order.sub_total} /></dd>
+              <dt class="col-span-3 font-semibold text-slate-800">Subtotal:</dt>
+              <dd class="col-span-2 text-slate-500"><.price value={@order.sub_total} /></dd>
             </dl>
 
             <dl :if={@order.discount_name} class="grid sm:grid-cols-5 gap-x-3">
-              <dt class="col-span-3 font-semibold text-gray-800 dark:text-gray-200">Diskon:</dt>
-              <dd class="col-span-2 text-gray-500">
-                Rp. <.price value={@order.discount_value} />
+              <dt class="col-span-3 font-semibold text-slate-800">Diskon:</dt>
+              <dd class="col-span-2 text-slate-500">
+                <.price value={@order.discount_value} />
               </dd>
             </dl>
 
             <dl class="grid sm:grid-cols-5 gap-x-3">
-              <dt class="col-span-3 font-semibold text-gray-800 dark:text-gray-200">Total:</dt>
-              <dd class="col-span-2 text-gray-900 font-bold">
-                Rp. <.price value={@order.total} />
+              <dt class="col-span-3 font-semibold text-slate-800">Total:</dt>
+              <dd class="col-span-2 text-slate-900 font-bold">
+                <.price value={@order.total} />
               </dd>
             </dl>
           </div>
@@ -169,30 +182,26 @@
         >
           PEMBAYARAN <span aria-hidden="true">→</span>
         </button>
-        <%!-- <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Thank you!</h4>
-        <p class="text-gray-500">
+        <%!-- <h4 class="text-lg font-semibold text-slate-800">Thank you!</h4>
+        <p class="text-slate-500">
           If you have any questions concerning this invoice, use the following contact information:
         </p>
         <div class="mt-2">
-          <p class="block text-sm font-medium text-gray-800 dark:text-gray-200">
+          <p class="block text-sm font-medium text-slate-800">
             example@site.com
           </p>
-          <p class="block text-sm font-medium text-gray-800 dark:text-gray-200">
+          <p class="block text-sm font-medium text-slate-800">
             +1 (062) 109-9222
           </p>
         </div> --%>
       </div>
-
-      <p class="mt-5 text-sm text-gray-500">
-        &copy; <%= Date.utc_today().year %> <a href="/" class="hover:underline" target="_blank"><%= app_info(:name) %></a>. All rights reserved.
-      </p>
     </div>
     <!-- End Card -->
 
       <!-- Buttons -->
     <%!-- <div class="mt-6 flex justify-end gap-x-3">
       <a
-        class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-lg border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
+        class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-slate-700 shadow-sm align-middle hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:hover:bg-slate-800 dark:text-slate-400 dark:hover:text-white dark:focus:ring-offset-slate-800"
         href="#"
       >
         <svg
@@ -217,7 +226,7 @@
         Invoice PDF
       </a>
       <a
-        class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+        class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-md border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-slate-600"
         href="#"
       >
         <svg
@@ -244,4 +253,9 @@
     </div> --%>
     <!-- End Buttons -->
   </div>
+  <p class="text-center p-3 text-sm text-slate-400">
+    <.link href={AppWeb.Utils.marketing_site()} target="_blank">
+      Powered by JetForm
+    </.link>
+  </p>
 </div>

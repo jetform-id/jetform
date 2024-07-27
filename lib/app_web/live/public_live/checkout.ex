@@ -35,27 +35,14 @@ defmodule AppWeb.PublicLive.Checkout do
   @impl true
   def handle_info({AppWeb.AdminLive.Product.Components.Preview, order}, socket) do
     socket =
-      case order.status do
-        :free ->
-          socket
-          |> put_flash(
-            :info,
-            "Link untuk mengakses produk telah dikirim ke email anda: #{order.customer_email}"
-          )
-          |> push_navigate(to: ~p"/invoice/#{order.id}")
-
-        :paid ->
-          socket
-          |> put_flash(
-            :info,
-            "Pembelian anda berhasil! Link untuk mengakses produk telah dikirim ke email anda: #{order.customer_email}"
-          )
-          |> push_navigate(to: ~p"/invoice/#{order.id}")
+      case order.status in [:free, :paid] do
+        true ->
+          socket |> redirect(to: ~p"/invoice/#{order.id}/thanks")
 
         _ ->
           socket
           |> put_flash(:info, "Pesanan telah dibuat! silahkan lanjutkan dengan pembayaran.")
-          |> push_navigate(to: ~p"/invoice/#{order.id}")
+          |> redirect(to: ~p"/invoice/#{order.id}")
       end
 
     {:noreply, socket}
@@ -64,6 +51,7 @@ defmodule AppWeb.PublicLive.Checkout do
   defp return_product(socket, product) do
     socket =
       socket
+      |> assign(:enable_tracking, product.is_live)
       |> assign(:body_class, "bg-slate-300")
       |> assign(:page_title, product.name)
       |> assign(:page_info, AppWeb.PageInfo.new(product))

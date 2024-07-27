@@ -21,15 +21,12 @@ defmodule App.Credits do
     Repo.all(Credit)
   end
 
-  def product_sold_this_month_by_user(user) do
-    start_date = Timex.now() |> Timex.beginning_of_month()
-    end_date = Timex.now() |> Timex.end_of_month()
-
+  def count_by_user_timerange(user, start_at, end_at) do
     from(c in Credit,
       select: count(c.id),
       where: c.user_id == ^user.id,
-      where: c.inserted_at >= ^start_date,
-      where: c.inserted_at <= ^end_date
+      where: c.inserted_at >= ^start_at,
+      where: c.inserted_at <= ^end_at
     )
     |> Repo.one()
     |> case do
@@ -38,21 +35,30 @@ defmodule App.Credits do
     end
   end
 
-  def nett_sales_this_month_by_user(user) do
-    start_date = Timex.now() |> Timex.beginning_of_month()
-    end_date = Timex.now() |> Timex.end_of_month()
-
+  def sum_by_user_timerange(user, start_at, end_at) do
     from(c in Credit,
       select: sum(c.user_amount),
       where: c.user_id == ^user.id,
-      where: c.inserted_at >= ^start_date,
-      where: c.inserted_at <= ^end_date
+      where: c.inserted_at >= ^start_at,
+      where: c.inserted_at <= ^end_at
     )
     |> Repo.one()
     |> case do
       nil -> 0
       amount -> amount
     end
+  end
+
+  def product_sold_this_month_by_user(user) do
+    start_at = Timex.now() |> Timex.to_datetime(user.timezone) |> Timex.beginning_of_month()
+    end_at = Timex.now() |> Timex.to_datetime(user.timezone) |> Timex.end_of_month()
+    count_by_user_timerange(user, start_at, end_at)
+  end
+
+  def nett_sales_this_month_by_user(user) do
+    start_at = Timex.now() |> Timex.to_datetime(user.timezone) |> Timex.beginning_of_month()
+    end_at = Timex.now() |> Timex.to_datetime(user.timezone) |> Timex.end_of_month()
+    sum_by_user_timerange(user, start_at, end_at)
   end
 
   def withdrawable_credits_by_user(user, until \\ Timex.now()) do
@@ -193,8 +199,7 @@ defmodule App.Credits do
   end
 
   # admin don't see pending and cancelled withdrawals
-  defp list_withdrawals_by_user_scope(q, %{role: :admin}),
-    do: where(q, [w], w.status not in [:pending])
+  defp list_withdrawals_by_user_scope(q, %{role: :admin}), do: q
 
   # user see all withdrawals
   defp list_withdrawals_by_user_scope(q, user), do: where(q, user_id: ^user.id)

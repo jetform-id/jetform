@@ -3,6 +3,7 @@ defmodule Workers.NotifyPaidOrder do
   require Logger
   alias App.Mailer
   alias App.Orders
+  alias Workers.Utils
 
   def create(%{status: :paid} = order) do
     %{id: order.id}
@@ -28,15 +29,16 @@ defmodule Workers.NotifyPaidOrder do
   end
 
   defp send_email(order) do
+    user = order.user
     base_url = AppWeb.Utils.base_url()
 
     buyer_text = """
     Halo #{order.customer_name},
 
-    Pembayaran anda atas order berikut berhasil:
+    Pembayaran Anda berhasil:
     No. Invoice: ##{order.invoice_number}
     Produk: #{Orders.product_fullname(order)}
-    Total: Rp. #{order.total}
+    Total: #{App.Utils.Commons.format_price(order.total)}
     Status: #{order.status} (LUNAS)
 
     *** PENTING ***
@@ -46,26 +48,20 @@ defmodule Workers.NotifyPaidOrder do
     Detail pembelian bisa anda lihat di halaman berikut:
     #{base_url}/invoice/#{order.id}
 
-    --
-    Tim JetForm
+    #{Utils.email_signature(user)}
     """
-
-    user = order.user
 
     user_text = """
     Halo #{user.email},
 
-    Pembelian atas produk anda telah LUNAS:
+    Pembelian atas produk Anda telah LUNAS:
     No. Invoice: #{order.invoice_number}
     Produk: #{Orders.product_fullname(order)}
-    Harga: Rp. #{order.total}
+    Harga: #{App.Utils.Commons.format_price(order.total)}
     Status: #{order.status} (LUNAS)
 
     Detail pembelian bisa anda lihat di halaman berikut:
     #{base_url}/invoice/#{order.id}
-
-    --
-    Tim JetForm
     """
 
     # Mailgun doesn't support `deliver_many` so we have to send them one by one

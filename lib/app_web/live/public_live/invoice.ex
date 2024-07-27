@@ -7,16 +7,23 @@ defmodule AppWeb.PublicLive.Invoice do
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
-    order = Orders.get_order!(id)
+    order = Orders.get_order!(id) |> App.Repo.preload(:user)
 
     # subscribe for order changes
     Phoenix.PubSub.subscribe(App.PubSub, "order:#{order.id}")
+
+    brand_info =
+      case App.Users.brand_info_complete?(order.user) do
+        true -> App.Users.get_brand_info(order.user)
+        false -> nil
+      end
 
     socket =
       socket
       |> assign(:body_class, "bg-slate-300")
       |> assign(:page_title, "Invoice #" <> order.invoice_number)
       |> assign(:order, order)
+      |> assign(:brand_info, brand_info)
       |> assign(:status, order.status)
 
     socket = if order.status == :pending, do: tick(socket, order), else: socket
@@ -78,20 +85,10 @@ defmodule AppWeb.PublicLive.Invoice do
 
     case order.status do
       :free ->
-        {:noreply,
-         put_flash(
-           socket,
-           :info,
-           "Link untuk mengakses produk telah dikirim ke email anda: #{order.customer_email}"
-         )}
+        {:noreply, redirect(socket, to: ~p"/invoice/#{order.id}/thanks")}
 
       :paid ->
-        {:noreply,
-         put_flash(
-           socket,
-           :info,
-           "Pembayaran berhasil! Link untuk mengakses produk telah dikirim ke email anda: #{order.customer_email}"
-         )}
+        {:noreply, redirect(socket, to: ~p"/invoice/#{order.id}/thanks")}
 
       :expired ->
         {:noreply, put_flash(socket, :error, "Order telah kadaluarsa!")}

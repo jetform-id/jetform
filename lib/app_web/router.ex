@@ -36,6 +36,11 @@ defmodule AppWeb.Router do
     plug AppWeb.Plug.RequireAPIKey
   end
 
+  pipeline :admin_api do
+    plug :accepts, ["json"]
+    plug AppWeb.Plug.RequireAPIKey, role: :admin
+  end
+
   pipeline :openapi do
     plug :accepts, ["json"]
     plug OpenApiSpex.Plug.PutApiSpec, module: AppWeb.API.Spec
@@ -73,6 +78,11 @@ defmodule AppWeb.Router do
       resources "/products", API.ProductController, only: [:index, :show]
       get "/products/:id/variants", API.ProductController, :list_variants
     end
+
+    scope "/v1" do
+      pipe_through :admin_api
+      resources "/users", API.UserController, only: [:index, :show]
+    end
   end
 
   scope "/", AppWeb do
@@ -87,6 +97,7 @@ defmodule AppWeb.Router do
       layout: {AppWeb.Layouts, :checkout} do
       live "/p/:slug", PublicLive.Checkout
       live "/invoice/:id", PublicLive.Invoice
+      live "/invoice/:id/thanks", PublicLive.Thanks
     end
   end
 
@@ -121,6 +132,7 @@ defmodule AppWeb.Router do
       # products
       live "/products", AdminLive.Product.Index
       live "/products/:id/edit", AdminLive.Product.Edit
+      live "/products/:id/stats", AdminLive.Product.Stats
 
       # withdrawals
       live "/withdrawals", AdminLive.Withdrawal.Index

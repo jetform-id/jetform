@@ -10,7 +10,7 @@ defmodule AppWeb.AdminLive.Product.Components.VariantContentItem do
     ~H"""
     <div
       id={"content-for-variant-" <> @id}
-      class="w-full bg-gray-50 shadow-sm rounded-lg border border-gray-300 p-4"
+      class="w-full bg-gray-50 shadow-sm rounded-md border border-gray-300 p-4"
     >
       <div class="flex mb-4 items-center">
         <span class="flex-1 font-semibold">
@@ -20,7 +20,7 @@ defmodule AppWeb.AdminLive.Product.Components.VariantContentItem do
           <.button
             phx-click={JS.push("new", target: @myself)}
             type="button"
-            class="px-2 py-1 bg-primary-600 hover:bg-primary-700 rounded-lg text-white text-sm text-center"
+            class="px-2 py-1 bg-primary-600 hover:bg-primary-700 rounded-md text-white text-sm text-center"
           >
             + Tambah konten
           </.button>

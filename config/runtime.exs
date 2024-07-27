@@ -44,6 +44,11 @@ config :app, :captcha,
   site_key: System.get_env("CAPTCHA_SITE_KEY"),
   secret_key: System.get_env("CAPTCHA_SECRET_KEY")
 
+config :app, :umami,
+  website_id: System.get_env("UMAMI_WEBSITE_ID", ""),
+  url: System.get_env("UMAMI_URL", "umami.local"),
+  token: System.get_env("UMAMI_TOKEN", "")
+
 if System.get_env("WAFFLE_AWS_S3_BUCKET") do
   config :waffle,
     storage: Waffle.Storage.S3,
@@ -58,7 +63,8 @@ if System.get_env("AWS_S3_HOST") do
       scheme: "https://",
       host: System.get_env("AWS_S3_HOST")
     ],
-    debug_requests: false
+    debug_requests: false,
+    hackney_opts: [recv_timeout: 60_000, follow_redirect: true]
 end
 
 if config_env() == :prod do
