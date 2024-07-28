@@ -68,7 +68,8 @@ defmodule App.PaymentGateway.Midtrans do
           trx_status: Map.get(body, "transaction_status"),
           fraud_status: Map.get(body, "fraud_status"),
           status_code: Map.get(body, "status_code"),
-          gross_amount: Map.get(body, "gross_amount")
+          gross_amount: Map.get(body, "gross_amount"),
+          fee: 0
         }
 
         {:ok, result}

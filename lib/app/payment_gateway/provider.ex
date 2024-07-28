@@ -28,7 +28,7 @@ defmodule App.PaymentGateway.GetTransactionResult do
           trx_status: String.t(),
           status_code: String.t(),
           gross_amount: integer(),
-          service_fee: integer()
+          fee: integer()
         }
   defstruct [
     :payload,
@@ -38,7 +38,7 @@ defmodule App.PaymentGateway.GetTransactionResult do
     :fraud_status,
     :status_code,
     :gross_amount,
-    :service_fee
+    :fee
   ]
 end
 

@@ -36,19 +36,21 @@ defmodule App.Orders do
         fragment("sum(case when status = 'paid' then 1 else 0 end) as paid_count"),
         fragment("sum(case when status = 'expired' then 1 else 0 end) as expired_count"),
         fragment("sum(case when status = 'paid' then total else 0 end) as gross_revenue"),
-        fragment("sum(case when status = 'paid' then service_fee else 0 end) as service_fee")
+        fragment("sum(case when status = 'paid' then service_fee else 0 end) as service_fee"),
+        fragment("sum(case when status = 'paid' then gateway_fee else 0 end) as gateway_fee")
       },
       where: o.user_id == ^user.id,
       where: o.inserted_at >= ^start_at
     )
     |> Repo.one()
-    |> then(fn {free_count, paid_count, expired_count, gross_revenue, service_fee} ->
+    |> then(fn {free_count, paid_count, expired_count, gross_revenue, service_fee, gateway_fee} ->
       %{
         free_count: free_count || 0,
         paid_count: paid_count || 0,
         expired_count: expired_count || 0,
         gross_revenue: gross_revenue || 0,
-        service_fee: service_fee || 0
+        service_fee: service_fee || 0,
+        gateway_fee: gateway_fee || 0
       }
     end)
   end
@@ -62,19 +64,21 @@ defmodule App.Orders do
         fragment("sum(case when status = 'paid' then 1 else 0 end) as paid_count"),
         fragment("sum(case when status = 'expired' then 1 else 0 end) as expired_count"),
         fragment("sum(case when status = 'paid' then total else 0 end) as gross_revenue"),
-        fragment("sum(case when status = 'paid' then service_fee else 0 end) as service_fee")
+        fragment("sum(case when status = 'paid' then service_fee else 0 end) as service_fee"),
+        fragment("sum(case when status = 'paid' then gateway_fee else 0 end) as gateway_fee")
       },
       where: o.product_id == ^product.id,
       where: o.inserted_at >= ^start_at
     )
     |> Repo.one()
-    |> then(fn {free_count, paid_count, expired_count, gross_revenue, service_fee} ->
+    |> then(fn {free_count, paid_count, expired_count, gross_revenue, service_fee, gateway_fee} ->
       %{
         free_count: free_count || 0,
         paid_count: paid_count || 0,
         expired_count: expired_count || 0,
         gross_revenue: gross_revenue || 0,
-        service_fee: service_fee || 0
+        service_fee: service_fee || 0,
+        gateway_fee: gateway_fee || 0
       }
     end)
   end
@@ -319,6 +323,14 @@ defmodule App.Orders do
     DateTime.utc_now() |> DateTime.add(value, :hour)
   end
 
+  def total_fee(%Order{} = order) do
+    order.service_fee + order.gateway_fee
+  end
+
+  def net_amount(%Order{} = order) do
+    order.total - total_fee(order)
+  end
+
   # ------------- PAYMENTS -------------
 
   def get_payment(id), do: Repo.get(Payment, id)
@@ -432,14 +444,12 @@ defmodule App.Orders do
         %{
           trx_status: new_status,
           status_code: status_code,
-          fraud_status: fraud_status,
-          type: payment_type
+          fraud_status: fraud_status
         } = trx
       )
       when not is_paid(old_status) and is_paid(new_status) and is_ok(status_code) and
              is_safe(fraud_status) do
     payment = Repo.preload(payment, :order)
-
     # payment successfull:
     # - update payment status
     # - update order status
@@ -451,11 +461,14 @@ defmodule App.Orders do
     |> Ecto.Multi.update(:payment, Payment.changeset(payment, trx))
     |> Ecto.Multi.update(
       :order,
-      change_order(payment.order, %{
-        "status" => "paid",
-        "payment_type" => payment_type,
-        "paid_at" => Timex.now()
-      })
+      fn %{payment: payment} ->
+        change_order(payment.order, %{
+          "status" => "paid",
+          "payment_type" => payment.type,
+          "gateway_fee" => payment.fee,
+          "paid_at" => Timex.now()
+        })
+      end
     )
     |> Ecto.Multi.insert(:credit, fn %{order: order} ->
       Credits.create_changeset_for_order(order)

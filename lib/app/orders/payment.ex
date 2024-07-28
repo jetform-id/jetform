@@ -10,7 +10,8 @@ defmodule App.Orders.Payment do
     :fraud_status,
     :status_code,
     :gross_amount,
-    :redirect_url
+    :redirect_url,
+    :fee
   ]
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -24,6 +25,8 @@ defmodule App.Orders.Payment do
     field :status_code, :string
     field :gross_amount, :float
     field :redirect_url, :string
+    # payment gateway fee
+    field :fee, :integer
 
     belongs_to :order, App.Orders.Order
 

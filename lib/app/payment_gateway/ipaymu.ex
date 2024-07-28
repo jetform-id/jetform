@@ -88,7 +88,7 @@ defmodule App.PaymentGateway.Ipaymu do
           trx_status: trx_status,
           status_code: to_string(status),
           gross_amount: Map.get(data, "Amount"),
-          service_fee: Map.get(data, "Fee")
+          fee: Map.get(data, "Fee")
         }
 
         {:ok, result}

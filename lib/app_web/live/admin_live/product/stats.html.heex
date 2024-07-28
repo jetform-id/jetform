@@ -36,7 +36,9 @@
           Keuntungan Bersih
         </h3>
         <span class="text-2xl text-green-500 font-bold leading-none sm:text-3xl dark:text-white">
-          <.price value={@order_stats[:gross_revenue] - @order_stats[:service_fee]} />
+          <.price value={
+            @order_stats[:gross_revenue] - @order_stats[:service_fee] - @order_stats[:gateway_fee]
+          } />
         </span>
       </div>
     </div>
@@ -254,7 +256,7 @@
                   <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap dark:text-white">
                     <.price value={order.total} />
                     <p class="text-xs text-gray-400 font-normal">
-                      JetForm fee <.price value={order.service_fee} />
+                      Fee <.price value={App.Orders.total_fee(order)} />
                     </p>
                   </td>
                   <td class="p-4 text-sm font-normal text-primary-500 whitespace-nowrap dark:text-gray-400">

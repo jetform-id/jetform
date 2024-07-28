@@ -2,9 +2,9 @@ defmodule App.Plans.Commission5 do
   @behaviour App.Plans.Plan
 
   @id "plan-comm-5"
-  @name "JetForm 5"
-  @description "JetForm fee = 5% (komisi) + 0.7% (QRIS) per transaksi"
-  @commission_percent 5 + 0.7
+  @name "Starter"
+  @description "Fee per transaksi = komisi 5% + fee payment gateway"
+  @commission_percent 5
 
   def id(), do: @id
   def name(), do: @name
