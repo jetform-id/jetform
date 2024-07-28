@@ -16,6 +16,7 @@ kill_signal = 'SIGTERM'
   PHX_HOST = 'demo.jetform.me'
   PORT = '8080'
   MIDTRANS_MODE = "sandbox"
+  IPAYMU_MODE = "sandbox"
   WAFFLE_AWS_S3_BUCKET = "jetform-demo-static"
   WAFFLE_ASSET_HOST = "https://is3.cloudhost.id/jetform-demo-static"
   AWS_S3_HOST = "is3.cloudhost.id"

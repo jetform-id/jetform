@@ -16,9 +16,11 @@ config :app,
   access_validity_days: 7,
   withdrawal_fee: 5_000,
   default_plan: App.Plans.Commission5,
-  payment_provider: App.PaymentGateway.Ipaymu
+  payment_provider: App.PaymentGateway.Midtrans
 
-config :app, :midtrans, enabled_payments: ["other_qris"]
+config :app, :midtrans,
+  enabled_payments: ["permata_va", "bca_va", "bni_va", "bri_va", "cimb_va", "other_qris"]
+
 config :app, :ipaymu, payment_method: "auto"
 
 config :app,

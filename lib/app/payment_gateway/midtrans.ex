@@ -61,15 +61,18 @@ defmodule App.PaymentGateway.Midtrans do
     |> Tesla.get("/v2/#{id}/status")
     |> case do
       {:ok, %{body: %{"transaction_id" => _} = body}} ->
+        payment_type = Map.get(body, "payment_type")
+        {gross_amount, _} = Map.get(body, "gross_amount") |> Integer.parse()
+
         result = %GetTransactionResult{
           payload: Jason.encode!(body),
-          type: Map.get(body, "payment_type"),
+          type: payment_type,
           trx_id: Map.get(body, "transaction_id"),
           trx_status: Map.get(body, "transaction_status"),
           fraud_status: Map.get(body, "fraud_status"),
           status_code: Map.get(body, "status_code"),
-          gross_amount: Map.get(body, "gross_amount"),
-          fee: 0
+          gross_amount: gross_amount,
+          fee: calculate_fee(gross_amount, payment_type)
         }
 
         {:ok, result}
@@ -122,6 +125,21 @@ defmodule App.PaymentGateway.Midtrans do
       "enabled_payments" => config_value(:enabled_payments),
       "custom_field1" => order.product.user_id
     }
+  end
+
+  @doc """
+  Currently we only accept QRIS and bank transfer payment types.
+  Calculations are based on: https://midtrans.com/pricing
+
+  - qris: 0.7% of the transaction amount
+  - bank_transfer: IDR 4,000
+  """
+  def calculate_fee(amount, payment_type) do
+    case payment_type do
+      "qris" -> trunc(amount * 0.007)
+      "bank_transfer" -> 4_000
+      _ -> 0
+    end
   end
 
   @doc """
