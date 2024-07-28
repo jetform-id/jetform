@@ -391,11 +391,11 @@ defmodule App.Orders do
     |> Ecto.Multi.insert(:new_payment, Payment.create_changeset(%Payment{}, %{"order" => order}))
     |> Ecto.Multi.run(:redirect_url, fn _repo,
                                         %{
-                                          expiry_in_minutes: _expiry,
+                                          expiry_in_minutes: expiry,
                                           new_payment: payment
                                         } ->
-      # since we'll only enable QRIS, we'll ignore `expiry_in_minutes` and use the default value (30 minutes)
-      payload = payment_provider().create_transaction_payload(order, payment)
+      payload =
+        payment_provider().create_transaction_payload(order, payment, expiry_in_minutes: expiry)
 
       case payment_provider().create_transaction(payload) do
         {:ok, %CreateTransactionResult{} = result} ->
