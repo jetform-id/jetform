@@ -69,8 +69,13 @@ defmodule AppWeb.Router do
   scope "/api", AppWeb do
     pipe_through :api
 
-    get "/payment/redirect", PaymentController, :midtrans_redirect
-    post "/payment/notification", PaymentController, :midtrans_notification
+    # midtrans
+    get "/payment/midtrans/redirect", PaymentController, :midtrans_redirect
+    post "/payment/midtrans/notification", PaymentController, :midtrans_notification
+
+    # ipaymu
+    get "/payment/ipaymu/:payment_id/redirect", PaymentController, :ipaymu_redirect
+    post "/payment/ipaymu/:payment_id/notification", PaymentController, :ipaymu_notification
 
     scope "/v1" do
       pipe_through :protected_api

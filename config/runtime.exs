@@ -34,6 +34,11 @@ config :app, :midtrans,
   merchant_id: System.get_env("MIDTRANS_MERCHANT_ID"),
   mode: System.get_env("MIDTRANS_MODE", "sandbox")
 
+config :app, :ipaymu,
+  va: System.get_env("IPAYMU_VA"),
+  api_key: System.get_env("IPAYMU_API_KEY"),
+  mode: System.get_env("IPAYMU_MODE", "sandbox")
+
 config :app, :captcha,
   provider: System.get_env("CAPTCHA_PROVIDER", "cloudflare"),
   site_key: System.get_env("CAPTCHA_SITE_KEY"),

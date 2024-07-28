@@ -177,8 +177,9 @@ defmodule App.Credits do
     %Credit{}
     |> Credit.create_changeset(%{
       "order" => order,
-      "user_amount" => order.total - order.service_fee,
+      "user_amount" => App.Orders.net_amount(order),
       "system_amount" => order.service_fee,
+      "gateway_amount" => order.gateway_fee,
       "withdrawable_at" => Credit.withdrawable_at(order.paid_at)
     })
   end

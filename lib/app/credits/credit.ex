@@ -2,7 +2,7 @@ defmodule App.Credits.Credit do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @required_fields ~w(user_amount system_amount withdrawable_at)a
+  @required_fields ~w(user_amount system_amount gateway_amount withdrawable_at)a
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -12,6 +12,7 @@ defmodule App.Credits.Credit do
     # we put them in the same record so we can easily calculate the amount for both user and system.
     field :user_amount, :integer
     field :system_amount, :integer
+    field :gateway_amount, :integer
     field :withdrawable_at, :utc_datetime
 
     belongs_to :user, App.Users.User
