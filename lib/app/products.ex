@@ -31,22 +31,16 @@ defmodule App.Products do
     |> Repo.get!(id)
   end
 
-  def get_product_by_slug(slug) do
-    Repo.get_by(Product, slug: slug)
-  end
-
   def get_product_by_slug!(slug) do
     Repo.get_by!(Product, slug: slug)
   end
 
-  def get_live_product_by_slug(slug) do
-    from(p in Product, where: p.slug == ^slug, where: p.is_live == true)
-    |> Repo.one()
+  def get_product_by_user_and_slug!(user, slug) do
+    Repo.get_by!(Product, user_id: user.id, slug: slug)
   end
 
-  def get_live_product_by_slug!(slug) do
-    from(p in Product, where: p.slug == ^slug, where: p.is_live == true)
-    |> Repo.one!()
+  def get_live_product_by_user_and_slug!(user, slug) do
+    Repo.get_by!(Product, user_id: user.id, slug: slug, is_live: true)
   end
 
   def change_product(product, attrs) do

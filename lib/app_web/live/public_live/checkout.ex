@@ -1,21 +1,43 @@
 defmodule AppWeb.PublicLive.Checkout do
   use AppWeb, :live_view
 
+  alias App.Users
   alias App.Products
 
   @impl true
-  def mount(%{"slug" => slug}, _session, socket) do
+  def mount(_params, _session, socket) do
+    {:ok, socket}
+  end
+
+  @impl true
+  def handle_params(%{"slug" => slug, "username" => username}, _uri, socket) do
+    seller = Users.get_by_username!(username)
+
     case socket.assigns.current_user do
       nil ->
-        return_product(socket, Products.get_live_product_by_slug!(slug))
+        # non logged in user: only live products are accessible
+        return_product(socket, Products.get_live_product_by_user_and_slug!(seller, slug))
 
       user ->
-        product = Products.get_product_by_slug!(slug)
+        # logged in user: product is accessible if it's live or user is the owner
+        product = Products.get_product_by_user_and_slug!(seller, slug)
 
         if product.is_live || product.user_id == user.id,
           do: return_product(socket, product),
           else: raise(Ecto.NoResultsError, queryable: Products.Product)
     end
+  end
+
+  @doc """
+  If legacy product path is accessed, redirect to new path.
+  """
+  @impl true
+  def handle_params(%{"slug" => slug} = params, _uri, socket) do
+    params = Map.drop(params, ["slug"])
+
+    product = Products.get_product_by_slug!(slug) |> App.Repo.preload(:user)
+    user = product.user
+    {:noreply, redirect(socket, to: ~p"/#{user.username}/#{slug}?#{params}")}
   end
 
   @impl true
@@ -57,6 +79,6 @@ defmodule AppWeb.PublicLive.Checkout do
       |> assign(:page_info, AppWeb.PageInfo.new(product))
       |> assign(:product, App.Repo.preload(product, :variants))
 
-    {:ok, socket}
+    {:noreply, socket}
   end
 end

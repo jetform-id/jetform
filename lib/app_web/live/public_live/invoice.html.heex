@@ -22,7 +22,9 @@
             <div :if={@brand_info.email}><%= @brand_info.email %></div>
             <div :if={@brand_info.phone}><%= @brand_info.phone %></div>
             <div :if={@brand_info.website}>
-              <a href={@brand_info.website} target="_blank" class="text-primary-600"><%= @brand_info.website %></a>
+              <a href={@brand_info.website} target="_blank" class="text-primary-600">
+                <%= @brand_info.website %>
+              </a>
             </div>
           </address>
         </div>

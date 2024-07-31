@@ -88,8 +88,8 @@ defmodule App.Products.Product do
     |> validate_length(:slug, min: 3, max: 150)
     |> validate_format(:slug, ~r/^[a-zA-Z0-9_\-]+$/)
     |> validate_reserved_words(:slug)
-    |> unsafe_validate_unique(:slug, App.Repo)
-    |> unique_constraint(:slug)
+    |> unsafe_validate_unique([:user_id, :slug], App.Repo)
+    |> unique_constraint([:user_id, :slug])
   end
 
   defp validate_user(changeset, attrs) do

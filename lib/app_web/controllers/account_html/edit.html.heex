@@ -62,7 +62,7 @@
                 </div>
               </:help>
             </.input>
-            <%!-- <.input
+            <.input
               field={f[:username]}
               type="text"
               label="Username"
@@ -71,10 +71,14 @@
             >
               <:help>
                 <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                  Your shop URL: <%= @base_url %>/<span id="shop-username" class="font-semibold"><%= Map.get(@user_changeset.changes, :username, @user_changeset.data.username) %></span>
+                  URL anda: <%= @base_url %>/<span
+                    id="shop-username"
+                    data-domain="jetform.me"
+                    class="font-semibold"
+                  ><%= Map.get(@user_changeset.changes, :username, @user_changeset.data.username) %></span>
                 </div>
               </:help>
-            </.input> --%>
+            </.input>
             <.input
               field={f[:timezone]}
               type="select"

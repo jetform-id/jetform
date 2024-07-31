@@ -10,9 +10,7 @@ defmodule App.ContentsFixtures do
   def content_fixture(attrs \\ %{}) do
     {:ok, content} =
       attrs
-      |> Enum.into(%{
-
-      })
+      |> Enum.into(%{})
       |> App.Contents.create_content()
 
     content

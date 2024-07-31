@@ -7,22 +7,22 @@ defmodule App.Users do
   defdelegate tz_select_options(), to: User
   defdelegate tz_label(tz), to: User
 
-  def brand_logo_url(user, version, opts \\ []) do
-    App.Users.BrandLogo.url({user.brand_logo, user}, version, opts)
+  # ------------------ USERS ------------------
+
+  def get_by_username!(username) do
+    Repo.get_by!(User, username: username)
   end
 
-  def brand_info_complete?(user) do
-    not is_nil(user.brand_name) and not is_nil(user.brand_email || user.brand_phone)
-  end
+  def get_by_api_key(key) do
+    key_hash = APIKey.hash(key)
 
-  def get_brand_info(user) do
-    %{
-      name: user.brand_name,
-      email: user.brand_email,
-      phone: user.brand_phone,
-      website: user.brand_website,
-      logo: if(user.brand_logo, do: brand_logo_url(user, :thumb), else: nil)
-    }
+    from(u in User,
+      join: a in APIKey,
+      on: u.id == a.user_id,
+      where: a.key == ^key_hash,
+      select: u
+    )
+    |> Repo.one()
   end
 
   def list_users!(user, query) do
@@ -42,6 +42,26 @@ defmodule App.Users do
     |> User.role_changeset(%{role: role})
     |> Repo.update()
   end
+
+  def brand_logo_url(user, version, opts \\ []) do
+    App.Users.BrandLogo.url({user.brand_logo, user}, version, opts)
+  end
+
+  def brand_info_complete?(user) do
+    not is_nil(user.brand_name) and not is_nil(user.brand_email || user.brand_phone)
+  end
+
+  def get_brand_info(user) do
+    %{
+      name: user.brand_name,
+      email: user.brand_email,
+      phone: user.brand_phone,
+      website: user.brand_website,
+      logo: if(user.brand_logo, do: brand_logo_url(user, :thumb), else: nil)
+    }
+  end
+
+  # ------------------ BANK ACCOUNT ------------------
 
   def enabled_banks_select_options() do
     Enum.map(BankList.enabled(), fn {code, name} = _bank ->
@@ -83,6 +103,7 @@ defmodule App.Users do
     |> Repo.update()
   end
 
+  # ------------------ API KEYS ------------------
   def list_api_keys(user) do
     from(a in APIKey, where: a.user_id == ^user.id)
     |> Repo.all()
@@ -112,17 +133,5 @@ defmodule App.Users do
   def change_api_key(api_key, attrs \\ %{}) do
     api_key
     |> APIKey.changeset(attrs)
-  end
-
-  def get_by_api_key(key) do
-    key_hash = APIKey.hash(key)
-
-    from(u in User,
-      join: a in APIKey,
-      on: u.id == a.user_id,
-      where: a.key == ^key_hash,
-      select: u
-    )
-    |> Repo.one()
   end
 end

@@ -28,9 +28,11 @@ defmodule AppWeb.AccountController do
         user = conn.assigns.current_user |> App.Repo.preload(:bank_account)
 
         render(conn, :edit,
-          plan: Plans.get(user.plan),
+          page_title: "Edit Akun",
+          user: user,
           user_changeset: changeset,
-          bank_acc_changeset: bank_acc_changeset(user.bank_account)
+          bank_acc_changeset: bank_acc_changeset(user.bank_account),
+          plan: Plans.get(user.plan)
         )
     end
   end

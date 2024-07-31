@@ -8,7 +8,19 @@ defmodule App.OrdersTest do
 
     import App.OrdersFixtures
 
-    @invalid_attrs %{total: nil, user_name: nil, user_email: nil, user_phone: nil, product_id: nil, product_name: nil, product_variant_id: nil, product_variant_name: nil, discount_name: nil, discount_value: nil, sub_total: nil}
+    @invalid_attrs %{
+      total: nil,
+      user_name: nil,
+      user_email: nil,
+      user_phone: nil,
+      product_id: nil,
+      product_name: nil,
+      product_variant_id: nil,
+      product_variant_name: nil,
+      discount_name: nil,
+      discount_value: nil,
+      sub_total: nil
+    }
 
     test "list_orders/0 returns all orders" do
       order = order_fixture()
@@ -21,7 +33,19 @@ defmodule App.OrdersTest do
     end
 
     test "create_order/1 with valid data creates a order" do
-      valid_attrs = %{total: 42, user_name: "some user_name", user_email: "some user_email", user_phone: "some user_phone", product_id: "some product_id", product_name: "some product_name", product_variant_id: "some product_variant_id", product_variant_name: "some product_variant_name", discount_name: "some discount_name", discount_value: 42, sub_total: 42}
+      valid_attrs = %{
+        total: 42,
+        user_name: "some user_name",
+        user_email: "some user_email",
+        user_phone: "some user_phone",
+        product_id: "some product_id",
+        product_name: "some product_name",
+        product_variant_id: "some product_variant_id",
+        product_variant_name: "some product_variant_name",
+        discount_name: "some discount_name",
+        discount_value: 42,
+        sub_total: 42
+      }
 
       assert {:ok, %Order{} = order} = Orders.create_order(valid_attrs)
       assert order.total == 42
@@ -43,7 +67,20 @@ defmodule App.OrdersTest do
 
     test "update_order/2 with valid data updates the order" do
       order = order_fixture()
-      update_attrs = %{total: 43, user_name: "some updated user_name", user_email: "some updated user_email", user_phone: "some updated user_phone", product_id: "some updated product_id", product_name: "some updated product_name", product_variant_id: "some updated product_variant_id", product_variant_name: "some updated product_variant_name", discount_name: "some updated discount_name", discount_value: 43, sub_total: 43}
+
+      update_attrs = %{
+        total: 43,
+        user_name: "some updated user_name",
+        user_email: "some updated user_email",
+        user_phone: "some updated user_phone",
+        product_id: "some updated product_id",
+        product_name: "some updated product_name",
+        product_variant_id: "some updated product_variant_id",
+        product_variant_name: "some updated product_variant_name",
+        discount_name: "some updated discount_name",
+        discount_value: 43,
+        sub_total: 43
+      }
 
       assert {:ok, %Order{} = order} = Orders.update_order(order, update_attrs)
       assert order.total == 43

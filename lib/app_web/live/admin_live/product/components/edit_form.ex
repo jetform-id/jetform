@@ -9,6 +9,7 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
   """
   attr :on_change, :string, default: "validate"
   attr :on_submit, :string, default: "save"
+  attr :current_user, :map, required: true
   attr :product, :map, required: true
   attr :changeset, :map, required: true
   attr :uploads, :map, required: true
@@ -34,10 +35,13 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
             <:help>
               <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 <.link
-                  href={Utils.base_url() <> "/p/" <> Map.get(@changeset.changes, :slug, @changeset.data.slug)}
+                  href={Utils.base_url() <> "/" <> @current_user.username <> "/" <> Map.get(@changeset.changes, :slug, @changeset.data.slug)}
                   target="_blank"
                 >
-                  <%= Utils.base_url() %>/p/<span id="shop-username" class="font-bold"><%= Map.get(@changeset.changes, :slug, @changeset.data.slug) %></span>
+                  <%= Utils.base_url() %>/<%= @current_user.username %>/<span
+                    id="shop-username"
+                    class="font-bold"
+                  ><%= Map.get(@changeset.changes, :slug, @changeset.data.slug) %></span>
                   <.icon
                     name="hero-arrow-top-right-on-square"
                     class="w-4 h-4 inline-block text-primary-500"

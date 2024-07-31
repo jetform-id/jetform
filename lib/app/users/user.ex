@@ -13,7 +13,7 @@ defmodule App.Users.User do
     filterable: [:email_confirmed_at], sortable: [:email_confirmed_at]
   }
 
-  # alias App.Utils.ReservedWords
+  alias App.Utils.ReservedWords
 
   @default_tz "Asia/Jakarta"
   @tz_labels [
@@ -29,7 +29,7 @@ defmodule App.Users.User do
   schema "users" do
     pow_user_fields()
 
-    # field :username, :string
+    field :username, :string
     field :role, Ecto.Enum, values: @roles, default: :user
     field :timezone, :string, default: @default_tz
     field :plan, :string
@@ -78,15 +78,17 @@ defmodule App.Users.User do
     user_or_changeset
     |> pow_changeset(attrs)
     |> pow_extension_changeset(attrs)
-    |> cast(attrs, [:timezone, :plan, :plan_valid_until])
+    |> cast(attrs, [:username, :timezone, :plan, :plan_valid_until])
+    |> validate_username()
   end
 
   def changeset(user_or_changeset, %{"action" => "update"} = attrs) do
-    # on update: we only allow user to update their email, password, and timezone.
+    # on update: we only allow user to update their username, email, password, and branding info.
     user_or_changeset
     |> pow_changeset(attrs)
     |> pow_extension_changeset(attrs)
-    |> cast(attrs, [:timezone, :brand_name, :brand_email, :brand_phone, :brand_website])
+    |> cast(attrs, [:username, :timezone, :brand_name, :brand_email, :brand_phone, :brand_website])
+    |> validate_username()
     |> cast_attachments(attrs, [:brand_logo], allow_paths: true)
   end
 
@@ -103,23 +105,23 @@ defmodule App.Users.User do
     |> validate_inclusion(:role, @roles)
   end
 
-  # defp validate_username(changeset) do
-  #   changeset
-  #   |> validate_required([:username])
-  #   |> validate_length(:username, min: 4, max: 20)
-  #   |> validate_format(:username, ~r/^[a-zA-Z0-9_]+$/)
-  #   |> validate_reserved_words(:username)
-  #   |> unsafe_validate_unique(:username, App.Repo)
-  #   |> unique_constraint(:username)
-  # end
+  defp validate_username(changeset) do
+    changeset
+    |> validate_required([:username])
+    |> validate_length(:username, min: 4, max: 20)
+    |> validate_format(:username, ~r/^[a-zA-Z0-9_]+$/)
+    |> validate_reserved_words(:username)
+    |> unsafe_validate_unique(:username, App.Repo)
+    |> unique_constraint(:username)
+  end
 
-  # defp validate_reserved_words(changeset, field) do
-  #   validate_change(changeset, field, fn _, value ->
-  #     if ReservedWords.is_reserved?(value) do
-  #       [{field, "is reserved"}]
-  #     else
-  #       []
-  #     end
-  #   end)
-  # end
+  defp validate_reserved_words(changeset, field) do
+    validate_change(changeset, field, fn _, value ->
+      if ReservedWords.is_reserved?(value) do
+        [{field, "has already been taken"}]
+      else
+        []
+      end
+    end)
+  end
 end

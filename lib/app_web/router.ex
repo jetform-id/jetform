@@ -90,22 +90,6 @@ defmodule AppWeb.Router do
     end
   end
 
-  scope "/", AppWeb do
-    pipe_through [:browser]
-
-    # public pages
-    get "/access/:id", AccessController, :index
-
-    # public live-pages
-    live_session :public,
-      on_mount: {AppWeb.LiveAuth, :default},
-      layout: {AppWeb.Layouts, :checkout} do
-      live "/p/:slug", PublicLive.Checkout
-      live "/invoice/:id", PublicLive.Invoice
-      live "/invoice/:id/thanks", PublicLive.Thanks
-    end
-  end
-
   # overriden pow routes
   scope "/", Pow.Phoenix, as: "pow" do
     pipe_through [:browser, :auth_area]
@@ -166,5 +150,25 @@ defmodule AppWeb.Router do
       live_dashboard "/dashboard", metrics: AppWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
+  end
+
+  scope "/", AppWeb do
+    pipe_through [:browser]
+
+    # public pages
+    get "/access/:id", AccessController, :index
+
+    # public live-pages
+    live_session :public,
+      on_mount: {AppWeb.LiveAuth, :default},
+      layout: {AppWeb.Layouts, :checkout} do
+      live "/invoice/:id", PublicLive.Invoice
+      live "/invoice/:id/thanks", PublicLive.Thanks
+      live "/p/:slug", PublicLive.Checkout
+      live "/:username/:slug", PublicLive.Checkout
+    end
+
+    # user's storefront
+    get "/:username", StorefrontController, :index
   end
 end

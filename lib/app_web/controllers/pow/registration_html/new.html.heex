@@ -45,7 +45,7 @@
         label={Phoenix.Naming.humanize(Pow.Ecto.Schema.user_id_field(@changeset))}
         required
       />
-      <%!-- <.input
+      <.input
         field={f[:username]}
         type="text"
         label="Username"
@@ -54,11 +54,10 @@
       >
         <:help>
           <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-            Your shop URL: <%= @base_url %>/<span id="shop-username" class="font-bold"><%= Map.get(@changeset.changes, :username, "username") %></span>
+            URL anda: <%= @base_url %>/<span id="shop-username" class="font-bold"><%= Map.get(@changeset.changes, :username, "username") %></span>
           </div>
         </:help>
-      </.input> --%>
-
+      </.input>
       <.input field={f[:password]} type="password" label="Password" required />
       <.input field={f[:password_confirmation]} type="password" label="Confirm password" required />
     </div>
