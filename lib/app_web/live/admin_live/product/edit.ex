@@ -5,7 +5,7 @@ defmodule AppWeb.AdminLive.Product.Edit do
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
-    product = Products.get_product!(id)
+    product = Products.get_product!(id) |> App.Repo.preload(:user)
 
     socket =
       socket

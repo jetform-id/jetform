@@ -109,9 +109,9 @@
                   </.link>
                 </div>
                 <div class="text-sm font-normal text-gray-400 dark:text-gray-400">
-                  <%= @base_url %>/<%= @current_user.username %>/<%= product.slug %>
+                  <%= @base_url %>/<%= product.user.username %>/<%= product.slug %>
                   <.link
-                    href={@base_url <> "/"<>  @current_user.username <>"/" <> product.slug}
+                    href={@base_url <> "/"<>  product.user.username <>"/" <> product.slug}
                     target="_blank"
                   >
                     <.icon

@@ -1,6 +1,7 @@
 defmodule App.Products do
   import Ecto.Query
   alias App.Repo
+  alias App.Users.User
   alias App.Products.{Product, Variant}
 
   # --------------- PRODUCT ---------------
@@ -10,7 +11,7 @@ defmodule App.Products do
   defdelegate has_details?(product), to: Product
 
   def list_products_by_user!(user, query) do
-    Product
+    from(p in Product, join: u in assoc(p, :user), preload: [user: u])
     |> list_products_by_user_scope(user)
     |> Flop.validate_and_run!(query)
   end

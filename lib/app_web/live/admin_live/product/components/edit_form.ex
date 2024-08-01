@@ -26,19 +26,19 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
       phx-update="replace"
     >
       <div>
-        <%!-- <.error :if={@changeset.action && not @changeset.valid?}>
-              Oops, something went wrong! Please check the errors below.
-            </.error> --%>
         <div class="p-4 md:p-8 bg-white dark:bg-gray-800 space-y-6">
+          <.error :if={@changeset.action && not @changeset.valid?}>
+            Oops, something went wrong! Please check the errors below.
+          </.error>
           <.input field={f[:name]} type="text" label="Nama produk" required />
           <.input field={f[:slug]} type="text" label="URL" required>
             <:help>
               <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 <.link
-                  href={Utils.base_url() <> "/" <> @current_user.username <> "/" <> Map.get(@changeset.changes, :slug, @changeset.data.slug)}
+                  href={Utils.base_url() <> "/" <> @product.user.username <> "/" <> Map.get(@changeset.changes, :slug, @changeset.data.slug)}
                   target="_blank"
                 >
-                  <%= Utils.base_url() %>/<%= @current_user.username %>/<span
+                  <%= Utils.base_url() %>/<%= @product.user.username %>/<span
                     id="shop-username"
                     class="font-bold"
                   ><%= Map.get(@changeset.changes, :slug, @changeset.data.slug) %></span>
