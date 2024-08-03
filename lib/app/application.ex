@@ -14,6 +14,7 @@ defmodule App.Application do
       {Phoenix.PubSub, name: App.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: App.Finch},
+      {Finch, name: App.FinchWithProxy, pools: finch_pool_options()},
       {Oban, Application.fetch_env!(:app, Oban)},
       {Redix,
        {Application.get_env(:app, :redis_url),
@@ -37,5 +38,22 @@ defmodule App.Application do
   def config_change(changed, _new, removed) do
     AppWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  defp finch_pool_options do
+    %{host: host, port: port, userinfo: userinfo} =
+      Application.get_env(:app, :proxy_url) |> URI.parse()
+
+    opts =
+      if is_nil(userinfo),
+        do: [proxy: {:http, host, port, []}],
+        else: [
+          proxy: {:http, host, port, []},
+          proxy_headers: [
+            {"Proxy-Authorization", "Basic #{Base.encode64(userinfo)}"}
+          ]
+        ]
+
+    %{default: [conn_opts: opts]}
   end
 end

@@ -57,7 +57,9 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsSalesChart do
   end
 
   defp cached_pageviews_buckets(product) do
-    url = "/p/#{product.slug}"
+    product = App.Repo.preload(product, :user)
+
+    url = "/#{product.user.username}/#{product.slug}"
     cache_key = "products:#{product.id}:pageviews:#{url}"
 
     # always pull pageviews from the last 30 days so we can cache it and avoid calling the API too often.

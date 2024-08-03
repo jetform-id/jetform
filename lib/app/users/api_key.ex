@@ -37,7 +37,7 @@ defmodule App.Users.APIKey do
   defp hash_key(changeset) do
     key = get_change(changeset, :key)
     prefix = String.slice(key, 0..2)
-    rest = String.slice(key, 3..-1) |> String.replace(~r/./, "*")
+    rest = String.slice(key, 3..-1//1) |> String.replace(~r/./, "*")
 
     changeset
     |> put_change(:key, hash(key))

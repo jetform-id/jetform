@@ -3,7 +3,7 @@ defmodule App.PaymentGateway.Midtrans do
 
   alias App.Repo
   alias App.Orders.{Order, Payment}
-  alias App.PaymentGateway.{CreateTransactionResult, GetTransactionResult}
+  alias App.PaymentGateway.{ProviderInfo, CreateTransactionResult, GetTransactionResult}
 
   @app_sandbox_base_url "https://app.sandbox.midtrans.com"
   @app_production_base_url "https://app.midtrans.com"
@@ -12,7 +12,10 @@ defmodule App.PaymentGateway.Midtrans do
   @api_production_base_url "https://api.midtrans.com"
 
   @impl true
-  def name(), do: "midtrans"
+  def id(), do: "midtrans"
+
+  @impl true
+  def info(), do: ProviderInfo.new("Midtrans", "https://midtrans.com")
 
   @impl true
   def config_value(key) when is_atom(key) do
@@ -61,16 +64,30 @@ defmodule App.PaymentGateway.Midtrans do
     |> Tesla.get("/v2/#{id}/status")
     |> case do
       {:ok, %{body: %{"transaction_id" => _} = body}} ->
-        payment_type = Map.get(body, "payment_type")
-        {gross_amount, _} = Map.get(body, "gross_amount") |> Integer.parse()
+        payment_type = body["payment_type"]
+        {gross_amount, _} = body["gross_amount"] |> Integer.parse()
+
+        transaction_status = body["transaction_status"]
+        status_code = body["status_code"]
+        fraud_status = body["fraud_status"]
+
+        # paid: if all conditions are met (status, fraud_status, and status_code)
+        trx_status =
+          with true <- transaction_status in ["settlement", "capture"],
+               "200" <- status_code,
+               true <- fraud_status in ["accept", nil] do
+            "paid"
+          else
+            _ -> transaction_status
+          end
 
         result = %GetTransactionResult{
           payload: Jason.encode!(body),
           type: payment_type,
-          trx_id: Map.get(body, "transaction_id"),
-          trx_status: Map.get(body, "transaction_status"),
-          fraud_status: Map.get(body, "fraud_status"),
-          status_code: Map.get(body, "status_code"),
+          trx_id: body["transaction_id"],
+          trx_status: trx_status,
+          fraud_status: fraud_status,
+          status_code: status_code,
           gross_amount: gross_amount,
           fee: calculate_fee(gross_amount, payment_type)
         }

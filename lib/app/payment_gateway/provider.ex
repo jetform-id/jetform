@@ -15,10 +15,8 @@ end
 defmodule App.PaymentGateway.GetTransactionResult do
   @enforce_keys [
     :payload,
-    :type,
     :trx_id,
-    :trx_status,
-    :status_code
+    :trx_status
   ]
 
   @type t :: %__MODULE__{
@@ -42,14 +40,30 @@ defmodule App.PaymentGateway.GetTransactionResult do
   ]
 end
 
+defmodule App.PaymentGateway.ProviderInfo do
+  @enforce_keys [:name, :website]
+
+  @type t :: %__MODULE__{
+          name: String.t(),
+          website: String.t()
+        }
+  defstruct [:name, :website]
+
+  def new(name, website) do
+    %__MODULE__{name: name, website: website}
+  end
+end
+
 defmodule App.PaymentGateway.Provider do
-  alias App.PaymentGateway.GetTransactionResult
+  @callback id() :: String.t()
+  @callback info() :: App.PaymentGateway.ProviderInfo.t()
+
   @callback config_value(key :: atom()) :: any()
-  @callback name() :: String.t()
   @callback create_transaction(payload :: map()) ::
               {:ok, App.PaymentGateway.CreateTransactionResult.t()} | {:error, any()}
   @callback cancel_transaction(id :: String.t()) :: {:ok, any()} | {:error, any()}
-  @callback get_transaction(id :: String.t()) :: {:ok, GetTransactionResult.t()} | {:error, any()}
+  @callback get_transaction(id :: String.t()) ::
+              {:ok, App.PaymentGateway.GetTransactionResult.t()} | {:error, any()}
   @callback create_transaction_payload(
               order :: map(),
               payment :: map(),

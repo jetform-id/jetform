@@ -359,13 +359,6 @@ defmodule App.Orders do
   end
 
   @doc """
-  Get active payment provider.
-  """
-  def payment_provider() do
-    Application.get_env(:app, :payment_provider)
-  end
-
-  @doc """
   Create a payment for an order and generate payment URL.
     0. cancel all pending payments for this order before creating new one
     1. calculate the expiry time in minutes
@@ -395,14 +388,16 @@ defmodule App.Orders do
                                           new_payment: payment
                                         } ->
       payload =
-        payment_provider().create_transaction_payload(order, payment, expiry_in_minutes: expiry)
+        App.payment_provider().create_transaction_payload(order, payment,
+          expiry_in_minutes: expiry
+        )
 
-      case payment_provider().create_transaction(payload) do
+      case App.payment_provider().create_transaction(payload) do
         {:ok, %CreateTransactionResult{} = result} ->
           {:ok, result.redirect_url}
 
         {:error, err} ->
-          Logger.error("#{payment_provider()}.create_transaction/1 error: #{inspect(err)}")
+          Logger.error("#{App.payment_provider()}.create_transaction/1 error: #{inspect(err)}")
           {:error, :payment_gateway_error}
       end
     end)
@@ -419,36 +414,18 @@ defmodule App.Orders do
     end
   end
 
-  # custom guards
-  defguard is_paid(transaction_status)
-           when transaction_status in ["capture", "settlement", "paid"]
+  defguard is_paid(transaction_status) when transaction_status == "paid"
 
-  defguard is_ok(status_code) when status_code in ["200", "1"]
-  defguard is_safe(fraud_status) when fraud_status in [nil, "accept"]
-
-  def update_payment(
-        %Payment{
-          trx_status: old_status,
-          status_code: status_code,
-          fraud_status: fraud_status
-        } = payment,
-        _trx
-      )
-      when is_paid(old_status) and is_ok(status_code) and is_safe(fraud_status) do
+  def update_payment(%Payment{trx_status: old_status} = payment, _trx) when is_paid(old_status) do
     # alread paid, do nothing
     {:ok, payment}
   end
 
   def update_payment(
         %{trx_status: old_status} = payment,
-        %{
-          trx_status: new_status,
-          status_code: status_code,
-          fraud_status: fraud_status
-        } = trx
+        %{trx_status: new_status} = trx
       )
-      when not is_paid(old_status) and is_paid(new_status) and is_ok(status_code) and
-             is_safe(fraud_status) do
+      when not is_paid(old_status) and is_paid(new_status) do
     payment = Repo.preload(payment, :order)
     # payment successfull:
     # - update payment status
@@ -509,7 +486,7 @@ defmodule App.Orders do
   end
 
   def refresh_payment(%Payment{} = payment) do
-    with {:ok, trx} <- payment_provider().get_transaction(payment.id),
+    with {:ok, trx} <- App.payment_provider().get_transaction(payment.id),
          {:ok, payment} <- update_payment(payment, Map.from_struct(trx)) do
       {:ok, payment}
     else
@@ -521,7 +498,7 @@ defmodule App.Orders do
     Ecto.Multi.new()
     |> Ecto.Multi.update(:payment, change_payment(payment, %{"trx_status" => "cancel"}))
     |> Ecto.Multi.run(:cancel, fn _repo, %{payment: payment} ->
-      payment_provider().cancel_transaction(payment.id)
+      App.payment_provider().cancel_transaction(payment.id)
     end)
     |> Repo.transaction()
   end

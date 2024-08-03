@@ -184,18 +184,16 @@
         >
           PEMBAYARAN <span aria-hidden="true">→</span>
         </button>
-        <%!-- <h4 class="text-lg font-semibold text-slate-800">Thank you!</h4>
-        <p class="text-slate-500">
-          If you have any questions concerning this invoice, use the following contact information:
+        <p class="text-center text-xs text-slate-400 mt-1">
+          Secure payment by
+          <.link
+            navigate={App.payment_provider().info().website}
+            class="text-primary-500"
+            target="_blank"
+          >
+            <%= App.payment_provider().info().name %>
+          </.link>
         </p>
-        <div class="mt-2">
-          <p class="block text-sm font-medium text-slate-800">
-            example@site.com
-          </p>
-          <p class="block text-sm font-medium text-slate-800">
-            +1 (062) 109-9222
-          </p>
-        </div> --%>
       </div>
     </div>
     <!-- End Card -->

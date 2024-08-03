@@ -3,13 +3,16 @@ defmodule App.PaymentGateway.Ipaymu do
 
   alias App.Repo
   alias App.Orders.{Order, Payment}
-  alias App.PaymentGateway.{CreateTransactionResult, GetTransactionResult}
+  alias App.PaymentGateway.{ProviderInfo, CreateTransactionResult, GetTransactionResult}
 
   @sandbox_base_url "https://sandbox.ipaymu.com"
   @production_base_url "https://my.ipaymu.com"
 
   @impl true
-  def name(), do: "ipaymu"
+  def id(), do: "ipaymu"
+
+  @impl true
+  def info(), do: ProviderInfo.new("iPaymu", "https://ipaymu.com")
 
   @impl true
   def config_value(key) when is_atom(key) do
@@ -75,20 +78,27 @@ defmodule App.PaymentGateway.Ipaymu do
        }} ->
         trx_status =
           case status do
+            -2 -> "expire"
             0 -> "pending"
             1 -> "paid"
-            -2 -> "expired"
+            2 -> "cancel"
+            3 -> "refund"
+            4 -> "error"
+            5 -> "failure"
+            # 6 -> paid but unsettled
+            6 -> "paid"
+            7 -> "escrow"
             _ -> "unknown"
           end
 
         result = %GetTransactionResult{
           payload: Jason.encode!(data),
-          type: Map.get(data, "TypeDesc"),
-          trx_id: Map.get(data, "TransactionId") |> to_string(),
+          type: data["TypeDesc"],
+          trx_id: data["TransactionId"] |> to_string(),
           trx_status: trx_status,
           status_code: to_string(status),
-          gross_amount: Map.get(data, "Amount"),
-          fee: Map.get(data, "Fee")
+          gross_amount: data["Amount"],
+          fee: data["Fee"]
         }
 
         {:ok, result}
@@ -117,6 +127,9 @@ defmodule App.PaymentGateway.Ipaymu do
 
       {_, %Tesla.Env{status: status, body: body}} ->
         {:error, %{"status" => status, "body" => body}}
+
+      error ->
+        error
     end
   end
 
@@ -190,7 +203,13 @@ defmodule App.PaymentGateway.Ipaymu do
       {Tesla.Middleware.Headers, headers}
     ]
 
-    Tesla.client(middlewares)
+    adapter =
+      case config_value(:use_proxy) do
+        true -> {Tesla.Adapter.Finch, name: App.FinchWithProxy, receive_timeout: 30_000}
+        false -> {Tesla.Adapter.Finch, name: App.Finch, receive_timeout: 30_000}
+      end
+
+    Tesla.client(middlewares, adapter)
   end
 end
 

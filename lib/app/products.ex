@@ -1,7 +1,6 @@
 defmodule App.Products do
   import Ecto.Query
   alias App.Repo
-  alias App.Users.User
   alias App.Products.{Product, Variant}
 
   # --------------- PRODUCT ---------------

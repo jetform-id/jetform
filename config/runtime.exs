@@ -26,7 +26,8 @@ config :app,
   admin_email: System.get_env("ADMIN_EMAIL", "admin@jetform.local"),
   marketing_site: System.get_env("MARKETING_SITE", "http://localhost:4321"),
   redis_url: System.get_env("REDIS_URL", "redis://redis:6379/1"),
-  redis_socket_opts: if(System.get_env("REDIS_IPV6") in ~w(true 1), do: [:inet6], else: [])
+  redis_socket_opts: if(System.get_env("REDIS_IPV6") in ~w(true 1), do: [:inet6], else: []),
+  proxy_url: System.get_env("PROXY_URL", "http://localhost:8080")
 
 config :app, :midtrans,
   server_key: System.get_env("MIDTRANS_SERVER_KEY"),
@@ -37,7 +38,8 @@ config :app, :midtrans,
 config :app, :ipaymu,
   va: System.get_env("IPAYMU_VA"),
   api_key: System.get_env("IPAYMU_API_KEY"),
-  mode: System.get_env("IPAYMU_MODE", "sandbox")
+  mode: System.get_env("IPAYMU_MODE", "sandbox"),
+  use_proxy: if(System.get_env("IPAYMU_USE_PROXY") in ~w(true 1), do: true, else: false)
 
 config :app, :captcha,
   provider: System.get_env("CAPTCHA_PROVIDER", "cloudflare"),
