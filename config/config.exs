@@ -18,7 +18,8 @@ config :app,
   minimum_price: 10_000,
   withdrawal_fee: 5_000,
   default_plan: App.Plans.Commission5,
-  payment_provider: App.PaymentGateway.Ipaymu
+  payment_provider: App.PaymentGateway.Ipaymu,
+  enable_subdomain: true
 
 config :app, :midtrans,
   payment_channels: ["permata_va", "bca_va", "bni_va", "bri_va", "cimb_va", "other_qris"]
@@ -31,7 +32,7 @@ config :app,
 
 # Configures the endpoint
 config :app, AppWeb.Endpoint,
-  url: [host: "localhost"],
+  url: [host: "jetform.local"],
   adapter: Phoenix.Endpoint.Cowboy2Adapter,
   render_errors: [
     formats: [html: AppWeb.ErrorHTML, json: AppWeb.ErrorJSON],
