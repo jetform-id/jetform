@@ -16,7 +16,7 @@ defmodule AppWeb.Subdomain.PageController do
     }
 
     {products, _meta} = Products.list_products_by_user!(tenant, query)
-    render(conn, :index, tenant: tenant, products: products)
+    render(conn, :index, tenant: tenant, products: products, body_class: "bg-white")
   end
 
   def show(conn, %{"slug" => slug}) do
