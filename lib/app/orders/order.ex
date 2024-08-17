@@ -71,6 +71,7 @@ defmodule App.Orders.Order do
     |> validate_product(attrs)
     # need to be after validate_product
     |> validate_product_variant(attrs)
+    |> validate_custom_price(attrs)
     |> put_status()
   end
 
@@ -113,6 +114,37 @@ defmodule App.Orders.Order do
         |> put_change(:sub_total, variant.price)
         |> put_change(:total, variant.price)
         |> put_change(:service_fee, user_plan.commission(variant.price))
+    end
+  end
+
+  defp validate_custom_price(changeset, attrs) do
+    case Map.get(attrs, "custom_price") do
+      nil ->
+        changeset
+
+      custom_price ->
+        user_plan = fetch_change!(changeset, :plan)
+        total = fetch_change!(changeset, :total)
+
+        {price, error} =
+          case Integer.parse(custom_price) do
+            {price, _} -> {price, nil}
+            err -> {nil, err}
+          end
+
+        cond do
+          error != nil ->
+            add_error(changeset, :custom_price, "tidak valid")
+
+          price < total ->
+            add_error(changeset, :custom_price, "kurang dari Rp. #{total}")
+
+          true ->
+            changeset
+            |> put_change(:sub_total, price)
+            |> put_change(:total, price)
+            |> put_change(:service_fee, user_plan.commission(price))
+        end
     end
   end
 

@@ -136,7 +136,7 @@ defmodule AppWeb.AdminLive.Product.Edit do
     product =
       socket.assigns.product
       |> App.Repo.reload!()
-      |> App.Repo.preload(:variants)
+      |> App.Repo.preload([:user, :variants])
 
     {:noreply, assign(socket, :product, product)}
   end

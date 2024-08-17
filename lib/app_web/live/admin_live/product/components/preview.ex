@@ -94,28 +94,25 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
                   <p class="text-lg font-semibold text-gray-900">8.00</p>
                 </div>
               </div> --%>
+
+          <%!-- fixed price and variant price total --%>
           <div
-            :if={(!@has_variants && @total_price > 0) || (@has_variants && @selected_variant)}
-            class="mt-6 flex items-center justify-between"
+            :if={!@has_variants && @product.price_type == :fixed}
+            class="mt-6 pt-4 flex items-center justify-between border-t"
           >
-            <p class="text-lg font-medium text-gray-900">Total</p>
-            <p class="text-2xl font-semibold text-gray-900">
+            <p class="text-lg font-medium text-gray-900">Harga</p>
+            <p class="text-lg font-semibold text-gray-900">
               <span class="text-xs font-normal text-gray-400"></span>
               <.price value={@total_price} />
             </p>
           </div>
 
-          <.buy_button
-            :if={@step == :cart}
-            product={@product}
-            error={@error}
-            on_click={JS.push("buy", target: @myself)}
-          />
-
           <.checkout_form
-            :if={@step == :checkout}
             is_free={@total_price == 0}
+            product={@product}
             changeset={@checkout_changeset}
+            total_price={@total_price}
+            has_variants={@has_variants}
             submit_event={if @preview, do: "fake_order", else: "create_order"}
             submit_target={@myself}
             enable_captcha={@enable_captcha}
@@ -143,40 +140,13 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
     """
   end
 
-  attr :error, :string, default: nil
-  attr :product, :map, required: true
-  attr :on_click, JS, default: %JS{}
-
-  def buy_button(assigns) do
-    ~H"""
-    <div class="mt-6 text-center">
-      <div
-        :if={@error}
-        class="p-4 mb-4 text-sm font-medium text-red-800 rounded-md bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-dashed border-red-800"
-        role="alert"
-      >
-        <.icon name="hero-exclamation-triangle" /> <%= @error %>
-      </div>
-
-      <button
-        phx-click={@on_click}
-        type="button"
-        class="group inline-flex w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-700"
-      >
-        <%= if Products.cta_custom?(@product.cta) do %>
-          <%= @product.cta_text %>
-        <% else %>
-          <%= Products.cta_text(@product.cta) %>
-        <% end %>
-      </button>
-    </div>
-    """
-  end
-
   attr :is_free, :boolean, default: false
+  attr :product, :map, required: true
   attr :changeset, :map, required: true
+  attr :total_price, :integer, required: true
   attr :submit_event, :string, required: true
   attr :submit_target, :any, required: true
+  attr :has_variants, :boolean, default: false
   attr :enable_captcha, :boolean, default: true
   attr :error, :string, default: nil
 
@@ -197,6 +167,19 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         phx-submit={@submit_event}
         phx-target={@submit_target}
       >
+        <div
+          :if={!@has_variants && @product.price_type == :flexible}
+          class="my-6 pb-6 flex items-center justify-between border-b"
+        >
+          <div class="text-lg font-medium text-gray-900">
+            Bayar sesuai keinginan
+            <div class="text-xs text-gray-400">Minimal <.price value={@product.price} /></div>
+          </div>
+          <div class="flex items-center text-2xl font-semibold text-gray-900">
+            <span class="text-base font-normal text-gray-400 mr-1">Rp.</span>
+            <.input field={f[:custom_price]} type="number" required />
+          </div>
+        </div>
         <div class="space-y-6">
           <.input field={f[:customer_name]} type="text" label="Nama *" required />
           <div class="md:flex gap-4">
@@ -215,7 +198,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
             />
           </div>
 
-          <div :if={@enable_captcha} id="cf-turnstile" phx-hook="RenderCaptcha" phx-update="ignore" />
+          <div :if={@enable_captcha} id="cf-turnstile" phx-hook="RenderCaptcha" />
 
           <%!-- <label class="flex items-center">
             <.input field={f[:confirm]} type="checkbox" required />
@@ -238,11 +221,11 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
             type="submit"
             class="mt-6 w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-700"
           >
-            <%= if @is_free do
-              "Kirim Akses via Email"
-            else
-              "Buat Order"
-            end %>
+            <%= if Products.cta_custom?(@product.cta) do %>
+              <%= @product.cta_text %>
+            <% else %>
+              <%= Products.cta_text(@product.cta) %>
+            <% end %>
           </button>
         </:actions>
       </.simple_form>
@@ -263,30 +246,33 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
       case Map.get(assigns, :changeset) do
         nil ->
           product = assigns.product
+          variants = App.Products.list_variants_by_product(product)
 
           socket
           |> assign(assigns)
-          |> assign(:enable_captcha, true)
           |> assign(:product, product)
           |> assign(:preview, false)
+          |> assign(:enable_captcha, true)
           |> assign(:has_variants, Products.has_variants?(product))
-          |> assign(:product_variants, App.Products.list_variants_by_product(product))
+          |> assign(:product_variants, variants)
           |> assign(:total_price, product.price)
+          |> maybe_select_default_variant(variants)
 
         changeset ->
           product = Ecto.Changeset.apply_changes(changeset)
+          variants = App.Products.list_variants_by_product(product)
 
           socket
+          |> assign(:product, product)
           |> assign(:preview, true)
           |> assign(:enable_captcha, false)
-          |> assign(:product, product)
           |> assign(:has_variants, Products.has_variants?(product))
-          |> assign(:product_variants, App.Products.list_variants_by_product(product))
+          |> assign(:product_variants, variants)
           |> assign(:total_price, product.price)
+          |> maybe_select_default_variant(variants)
       end
-      |> assign(:selected_variant, nil)
       |> assign(:error, nil)
-      |> assign(:step, :cart)
+      |> assign(:checkout_changeset, Orders.change_order(%Orders.Order{}))
 
     {:ok, socket}
   end
@@ -294,30 +280,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
   @impl true
   def handle_event("select_variant", %{"id" => id}, socket) do
     variant = Enum.find(socket.assigns.product_variants, fn v -> v.id == id end)
-
-    socket =
-      socket
-      |> assign(:selected_variant, variant)
-      |> assign(:total_price, variant.price)
-      |> assign(:error, nil)
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("buy", _params, socket) do
-    with true <- socket.assigns.has_variants,
-         nil <- socket.assigns.selected_variant do
-      {:noreply, assign(socket, :error, "Silahkan pilih varian produk terlebih dahulu.")}
-    else
-      _ ->
-        socket =
-          socket
-          |> assign(:step, :checkout)
-          |> assign(:checkout_changeset, Orders.change_order(%Orders.Order{}))
-
-        {:noreply, socket}
-    end
+    {:noreply, select_variant(socket, variant)}
   end
 
   @impl true
@@ -366,7 +329,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
     order_params =
       order_params
       |> Map.put("product", socket.assigns.product)
-      |> Map.put("product_variant", socket.assigns.selected_variant)
+      |> Map.put("product_variant", socket.assigns[:selected_variant])
       |> Map.put("invoice_number", Orders.generate_invoice_number())
       |> Map.put(
         "valid_until",
@@ -380,6 +343,23 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
 
       {:error, changeset} ->
         {:noreply, assign(socket, :checkout_changeset, changeset)}
+    end
+  end
+
+  defp select_variant(socket, variant) do
+    socket
+    |> assign(:selected_variant, variant)
+    |> assign(:total_price, variant.price)
+    |> assign(:error, nil)
+  end
+
+  defp maybe_select_default_variant(socket, variants) do
+    cond do
+      Enum.empty?(variants) ->
+        socket
+
+      true ->
+        select_variant(socket, Enum.at(variants, 0))
     end
   end
 end

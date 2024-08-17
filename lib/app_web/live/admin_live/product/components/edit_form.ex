@@ -50,13 +50,21 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
               </div>
             </:help>
           </.input>
-          <.input field={f[:price]} type="number" label="Harga" required>
-            <:help>
-              <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                Masukkan 0 untuk membuat produk ini gratis.
-              </div>
-            </:help>
-          </.input>
+
+          <.input
+            field={f[:price_type]}
+            options={App.Products.price_type_options()}
+            type="select"
+            label="Harga"
+            required
+          />
+          <.input
+            :if={show_price_input?(@changeset)}
+            field={f[:price]}
+            type="number"
+            placeholder="Minimum Rp. 10,000"
+            required
+          />
           <div
             :if={@has_variants}
             class="p-4 mb-4 text-sm text-yellow-800 rounded-md bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
@@ -75,13 +83,13 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
             required
           />
           <.input
-            :if={Map.get(@changeset.changes, :cta, @changeset.data.cta) != :custom}
+            :if={show_cta_text_input?(@changeset) == false}
             field={f[:cta_text]}
             type="text"
             rest_class="hidden"
           />
           <.input
-            :if={Map.get(@changeset.changes, :cta, @changeset.data.cta) == :custom}
+            :if={show_cta_text_input?(@changeset)}
             field={f[:cta_text]}
             type="text"
             placeholder="Custom CTA..."
@@ -259,5 +267,13 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
       </.button>
     </div>
     """
+  end
+
+  defp show_price_input?(changeset) do
+    Map.get(changeset.changes, :price_type, changeset.data.price_type) != :free
+  end
+
+  defp show_cta_text_input?(changeset) do
+    Map.get(changeset.changes, :cta, changeset.data.cta) == :custom
   end
 end

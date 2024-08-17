@@ -252,9 +252,13 @@ defmodule App.Orders do
       {:ok, %{order_with_contents: order}} ->
         {:ok, order}
 
-      {:error, op, value, changeset} ->
-        Logger.error("create_order/1 error: op=#{inspect(op)}, value=#{inspect(value)}")
+      {:error, op, %Ecto.Changeset{} = changeset, _changes_so_far} ->
+        Logger.error("create_order/1 error: op=#{inspect(op)}, changeset=#{inspect(changeset)}")
         {:error, changeset}
+
+      err ->
+        Logger.error("create_order/1 error=#{inspect(err)}")
+        err
     end
   end
 

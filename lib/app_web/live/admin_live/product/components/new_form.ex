@@ -19,13 +19,20 @@ defmodule AppWeb.AdminLive.Product.Components.NewForm do
         <div class="mt-8 space-y-6">
           <.input field={f[:name]} type="text" label="Nama Produk" required />
           <.input field={f[:slug]} type="hidden" required />
-          <.input field={f[:price]} type="number" label="Harga" required>
-            <:help>
-              <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                Masukkan 0 untuk membuat produk ini gratis.
-              </div>
-            </:help>
-          </.input>
+          <.input
+            field={f[:price_type]}
+            options={App.Products.price_type_options()}
+            type="select"
+            label="Harga"
+            required
+          />
+          <.input
+            :if={show_price_input?(@changeset)}
+            field={f[:price]}
+            type="number"
+            placeholder="Minimum Rp. 10,000"
+            required
+          />
         </div>
 
         <:actions>
@@ -45,7 +52,17 @@ defmodule AppWeb.AdminLive.Product.Components.NewForm do
 
   @impl true
   def handle_event("create", %{"product" => product_params}, socket) do
-    params = Map.put(product_params, "user", socket.assigns.current_user)
+    # if price_type is free, set price to 0
+    params =
+      case product_params["price_type"] do
+        "free" ->
+          product_params
+          |> Map.put("price", 0)
+          |> Map.put("user", socket.assigns.current_user)
+
+        _ ->
+          Map.put(product_params, "user", socket.assigns.current_user)
+      end
 
     socket =
       case Products.create_product(params) do
@@ -69,5 +86,9 @@ defmodule AppWeb.AdminLive.Product.Components.NewForm do
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, :changeset, changeset)}
+  end
+
+  defp show_price_input?(changeset) do
+    Map.get(changeset.changes, :price_type, changeset.data.price_type) != :free
   end
 end

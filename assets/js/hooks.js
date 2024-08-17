@@ -13,10 +13,16 @@ let Hooks = {}
 
 
 Hooks.RenderCaptcha = {
-    mounted() {
+    render() {
         turnstile.render('#cf-turnstile', {
             sitekey: document.querySelector("meta[name='captcha-sitekey']").getAttribute("content")
         });
+    },
+    mounted() {
+        this.render()
+    },
+    updated() {
+        this.render()
     }
 }
 

@@ -4,6 +4,7 @@ defmodule App.Products do
   alias App.Products.{Product, Variant}
 
   # --------------- PRODUCT ---------------
+  defdelegate price_type_options, to: Product, as: :price_type_options
   defdelegate cta_options, to: Product
   defdelegate cta_text(cta), to: Product
   defdelegate cta_custom?(cta), to: Product

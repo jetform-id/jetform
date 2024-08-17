@@ -15,8 +15,8 @@ dependencies:
     specifier: ^2.2.0
     version: 2.3.0
   trix:
-    specifier: ^2.0.8
-    version: 2.0.10
+    specifier: ^2.1.4
+    version: 2.1.5
 
 packages:
 
@@ -132,6 +132,6 @@ packages:
     resolution: {integrity: sha512-NB6Dk1A9xgQPMoGqC5CVXn123gWyte215ONT5Pp5a0yt4nlEoO1ZWeCwpncaekPHXO60i47ihFnZPiRPjRMq4Q==}
     dev: false
 
-  /trix@2.0.10:
-    resolution: {integrity: sha512-a24w8rNVL+g9nDDdiDZwQVQ9AEWiXAmk9r0ZbwimczJi/xlaM+m0d6upAi0vysDNu0HsiYDFS1/VrR7HbX0Aig==}
+  /trix@2.1.5:
+    resolution: {integrity: sha512-5pC4olCp7BwxTC8Joy1Kv33kDvSOApi9Tqf6c8wygqCgeCx9xPP5cxkZEhvKpMV+kjd9gszingd5fZo834+ktw==}
     dev: false

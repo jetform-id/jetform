@@ -10,32 +10,38 @@ defmodule App.Products.Product do
     filterable: [:is_live, :is_public], sortable: [:inserted_at]
   }
 
-  @required_fields ~w(name slug price cta)a
+  @required_fields ~w(name slug price price_type cta)a
   @optional_fields ~w(is_live is_public description cta_text details)a
-  @cta_enums ~w(buy buy_now get_now free_download i_want_it custom)a
-  @ctas [
+
+  @price_type_options [
+    {"Harga tetap (ditentukan oleh penjual)", :fixed},
+    {"Harga fleksibel (pembeli menentukan berapa yang ingin mereka bayar)", :flexible},
+    {"Tanpa harga (produk gratis)", :free}
+  ]
+  @price_types @price_type_options |> Enum.map(&elem(&1, 1))
+
+  @cta_options [
     {"Beli", :buy},
     {"Beli Sekarang", :buy_now},
+    {"Pesan Sekarang", :order_now},
     {"Dapatkan Sekarang", :get_now},
-    {"Download Gratis", :free_download},
+    {"Download Sekarang", :free_download},
     {"Saya Mau", :i_want_it},
     {"Custom...", :custom}
   ]
+  @cta_enums @cta_options |> Enum.map(&elem(&1, 1))
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "products" do
     field :name, :string
     field :slug, :string
-    field :price, :integer, default: 0
+    field :price, :integer
+    field :price_type, Ecto.Enum, values: @price_types
     field :description, :string
     field :is_live, :boolean, default: false
     field :is_public, :boolean, default: false
-
-    field :cta, Ecto.Enum,
-      values: @cta_enums,
-      default: :buy
-
+    field :cta, Ecto.Enum, values: @cta_enums, default: :buy
     field :cta_text, :string
     field :details, :map, default: %{"items" => []}
     field :cover, App.Products.ProductCover.Type
@@ -48,12 +54,11 @@ defmodule App.Products.Product do
     timestamps(type: :utc_datetime)
   end
 
-  def cta_options() do
-    @ctas
-  end
+  def price_type_options(), do: @price_type_options
+  def cta_options(), do: @cta_options
 
   def cta_text(cta) do
-    @ctas
+    @cta_options
     |> Enum.reduce(%{}, fn {value, text}, acc -> Map.put(acc, text, value) end)
     |> Map.fetch!(cta)
   end
@@ -73,7 +78,7 @@ defmodule App.Products.Product do
     |> validate_length(:name, max: 50, message: "maksimum %{count} karakter")
     |> cast_attachments(attrs, [:cover], allow_paths: true)
     |> validate_required(@required_fields)
-    |> validate_number(:price, greater_than_or_equal_to: 0)
+    |> validate_price()
     |> validate_slug()
   end
 
@@ -81,6 +86,23 @@ defmodule App.Products.Product do
     product
     |> changeset(attrs)
     |> validate_user(attrs)
+  end
+
+  defp validate_price(changeset) do
+    min_price = Application.get_env(:app, :min_price, 10_000)
+    price = changeset.changes[:price]
+    price_type = changeset.changes[:price_type]
+
+    cond do
+      price_type == :free ->
+        put_change(changeset, :price, 0)
+
+      price < min_price ->
+        add_error(changeset, :price, "Harga harus lebih besar dari Rp. #{min_price}")
+
+      true ->
+        changeset
+    end
   end
 
   defp validate_slug(changeset) do

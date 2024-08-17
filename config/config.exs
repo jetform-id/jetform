@@ -14,6 +14,7 @@ config :app,
   default_tz_label: "WIB",
   order_validity_hours: 2,
   access_validity_days: 7,
+  minimum_price: 10_000,
   withdrawal_fee: 5_000,
   default_plan: App.Plans.Commission5,
   payment_provider: App.PaymentGateway.Ipaymu
