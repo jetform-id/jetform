@@ -137,7 +137,7 @@ defmodule App.Orders.Order do
             add_error(changeset, :custom_price, "tidak valid")
 
           price < total ->
-            add_error(changeset, :custom_price, "kurang dari Rp. #{total}")
+            add_error(changeset, :custom_price, "Minimal Rp. #{total}")
 
           true ->
             changeset

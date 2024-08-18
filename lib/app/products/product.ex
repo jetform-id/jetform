@@ -98,7 +98,7 @@ defmodule App.Products.Product do
         put_change(changeset, :price, 0)
 
       price < min_price ->
-        add_error(changeset, :price, "Harga harus lebih besar dari Rp. #{min_price}")
+        add_error(changeset, :price, "Minimal Rp. #{min_price}")
 
       true ->
         changeset

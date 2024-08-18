@@ -55,7 +55,7 @@ defmodule AppWeb.AdminLive.Product.Edit do
           |> assign(:product, product)
           |> assign(:changeset, Products.change_product(product, %{}))
           |> put_flash(:info, "Produk berhasil disimpan.")
-          |> redirect(to: ~p"/products")
+          |> redirect(to: ~p"/products/#{product.id}/stats")
 
         {:error, changeset} ->
           socket

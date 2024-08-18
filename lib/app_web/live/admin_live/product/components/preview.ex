@@ -12,10 +12,37 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
     ~H"""
     <%!-- preview --%>
     <div class="p-1 md:p-6">
-      <div class="mx-auto max-w-xl rounded-md bg-white shadow-md">
+      <.product_detail product={@product} />
+      <.checkout_form
+        product={@product}
+        changeset={@checkout_changeset}
+        total_price={@total_price}
+        product_variants={@product_variants}
+        has_variants={@has_variants}
+        selected_variant={@selected_variant}
+        submit_event={if @preview, do: "fake_order", else: "create_order"}
+        submit_target={@myself}
+        enable_captcha={@enable_captcha}
+        error={@error}
+      />
+
+      <p class="text-center p-3 text-sm text-gray-400">
+        <.link href={AppWeb.Utils.marketing_site()} target="_blank">
+          Powered by JetForm
+        </.link>
+      </p>
+    </div>
+    <%!-- end preview --%>
+    """
+  end
+
+  attr :product, :map, required: true
+  def product_detail(assigns) do
+    ~H"""
+      <div class="mx-auto max-w-xl rounded-md bg-white shadow-md mb-6">
         <img src={Products.cover_url(@product, :standard)} class="rounded-t-md" />
         <hr />
-        <div class="p-6">
+        <div class="p-6 pb-10">
           <h2 class="text-2xl font-semibold" id="preview" phx-update="replace">
             <%= @product.name %>
           </h2>
@@ -46,196 +73,153 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
               </tbody>
             </table>
           </div>
-
-          <div :if={@has_variants} class="mt-10 grid gap-2">
-            <div :for={variant <- @product_variants} class="relative">
-              <input
-                class="peer hidden"
-                id={"radio_" <> variant.id}
-                type="radio"
-                name="radio"
-                phx-click={JS.push("select_variant", value: %{"id" => variant.id}, target: @myself)}
-                checked={@selected_variant && variant.id == @selected_variant.id}
-              />
-              <span class="peer-checked:border-primary-700 absolute right-4 top-7 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white">
-              </span>
-              <label
-                class="peer-checked:border-2 peer-checked:border-primary-700 peer-checked:bg-primary-50 flex cursor-pointer select-none rounded-md border border-gray-300 p-4"
-                for={"radio_" <> variant.id}
-              >
-                <div class="w-full">
-                  <div class="font-semibold flex pr-12">
-                    <span class="flex-1"><%= variant.name %></span>
-                    <.price value={variant.price} />
-                  </div>
-                  <p class="text-slate-600 text-sm mt-1 pr-10">
-                    <%= variant.description %>
-                  </p>
-                  <%!-- <div :if={variant.quantity} class="pt-2">
-                        <span class="bg-yellow-100 text-yellow-800 text-xs font-medium inline-flex items-center px-2 py-0.5 rounded dark:bg-gray-700 dark:text-yellow-400 border border-yellow-400">
-                          <.icon name="hero-clock w-3 h-3 me-1" /> Sisa <%= variant.quantity %>
-                        </span>
-                      </div> --%>
-                </div>
-              </label>
-            </div>
-          </div>
-
-          <%!-- <div class="mt-6 border-t border-b py-2">
-                <div class="flex items-center justify-between">
-                  <p class="text-sm text-gray-400">Subtotal</p>
-                  <p class="text-lg font-semibold text-gray-900">
-                    <span class="text-xs font-normal text-gray-400"></span>
-                    <.price value={Products.final_price(@product)} />
-                  </p>
-                </div>
-                <div class="flex items-center justify-between">
-                  <p class="text-sm text-gray-400">Fedex Delivery Enterprise</p>
-                  <p class="text-lg font-semibold text-gray-900">8.00</p>
-                </div>
-              </div> --%>
-
-          <%!-- fixed price and variant price total --%>
-          <div
-            :if={!@has_variants && @product.price_type == :fixed}
-            class="mt-6 pt-4 flex items-center justify-between border-t"
-          >
-            <p class="text-lg font-medium text-gray-900">Harga</p>
-            <p class="text-lg font-semibold text-gray-900">
-              <span class="text-xs font-normal text-gray-400"></span>
-              <.price value={@total_price} />
-            </p>
-          </div>
-
-          <.checkout_form
-            is_free={@total_price == 0}
-            product={@product}
-            changeset={@checkout_changeset}
-            total_price={@total_price}
-            has_variants={@has_variants}
-            submit_event={if @preview, do: "fake_order", else: "create_order"}
-            submit_target={@myself}
-            enable_captcha={@enable_captcha}
-            error={@error}
-          />
-          <%!-- <div class="text-center pt-4 mt-6">
-            <p class="text-sm text-slate-400 items-center">
-              Produk ini disediakan oleh
-              <span class="font-semibold text-primary-500">UpKoding</span>
-              <.icon
-                name="hero-arrow-top-right-on-square"
-                class="w-4 h-4 inline-block text-primary-500"
-              />
-            </p>
-          </div> --%>
         </div>
       </div>
-      <p class="text-center p-3 text-sm text-gray-400">
-        <.link href={AppWeb.Utils.marketing_site()} target="_blank">
-          Powered by JetForm
-        </.link>
-      </p>
-    </div>
-    <%!-- end preview --%>
     """
   end
 
-  attr :is_free, :boolean, default: false
   attr :product, :map, required: true
   attr :changeset, :map, required: true
   attr :total_price, :integer, required: true
   attr :submit_event, :string, required: true
   attr :submit_target, :any, required: true
+  attr :product_variants, :list, default: []
   attr :has_variants, :boolean, default: false
+  attr :selected_variant, :map, default: nil
   attr :enable_captcha, :boolean, default: true
   attr :error, :string, default: nil
 
   def checkout_form(assigns) do
     ~H"""
-    <div class="mt-6 space-y-4">
-      <hr class="my-4" />
-      <%!-- <div>
-        <p class="font-normal flex items-center">
-          <.icon name="hero-identification me-1" />Data Pembeli
-        </p>
-      </div> --%>
-      <.simple_form
-        :let={f}
-        for={@changeset}
-        as={:order}
-        phx-update="replace"
-        phx-submit={@submit_event}
-        phx-target={@submit_target}
+    <div class="mx-auto max-w-xl rounded-md bg-slate-50 shadow-md overflow-hidden">
+      <div :if={@has_variants} class="grid gap-3 p-6 bg-white">
+        <div :for={variant <- @product_variants} class="relative bg-primary-50 shadow-md">
+          <input
+            class="peer hidden"
+            id={"radio_" <> variant.id}
+            type="radio"
+            name="radio"
+            phx-click={JS.push("select_variant", value: %{"id" => variant.id}, target: @submit_target)}
+            checked={@selected_variant && variant.id == @selected_variant.id}
+          />
+          <span class="peer-checked:border-primary-700 absolute right-4 top-7 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white">
+          </span>
+          <label
+            class="peer-checked:border-2 peer-checked:border-primary-700 peer-checked:bg-primary-50 flex cursor-pointer select-none rounded-md border border-gray-300 p-4"
+            for={"radio_" <> variant.id}
+          >
+            <div class="w-full">
+              <div class="font-semibold flex pr-12">
+                <span class="flex-1 text-primary-600 font-bold"><%= variant.name %></span>
+                <.price value={variant.price} />
+              </div>
+              <p class="text-slate-600 text-sm mt-1 pr-10">
+                <%= variant.description %>
+              </p>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <%!-- fixed price and variant price total --%>
+      <div
+        :if={!@has_variants && @product.price_type == :fixed}
+        class="p-6 flex items-center justify-between bg-white"
       >
-        <div
-          :if={!@has_variants && @product.price_type == :flexible}
-          class="my-6 pb-6 flex items-center justify-between border-b"
-        >
-          <div class="text-lg font-medium text-gray-900">
-            Bayar sesuai keinginan
-            <div class="text-xs text-gray-400">Minimal <.price value={@product.price} /></div>
-          </div>
-          <div class="flex items-center text-2xl font-semibold text-gray-900">
-            <span class="text-base font-normal text-gray-400 mr-1">Rp.</span>
-            <.input field={f[:custom_price]} type="number" required />
-          </div>
-        </div>
-        <div class="space-y-6">
-          <.input field={f[:customer_name]} type="text" label="Nama *" required />
-          <div class="md:flex gap-4">
-            <.input
-              field={f[:customer_email]}
-              type="email"
-              label="Alamat email *"
-              required
-              wrapper_class="flex-1"
-            />
-            <.input
-              field={f[:customer_phone]}
-              type="text"
-              label="No. HP / WhatsApp"
-              wrapper_class="flex-1 mt-4 md:mt-0"
-            />
-          </div>
-
-          <div :if={@enable_captcha} id="cf-turnstile" phx-hook="RenderCaptcha" />
-
-          <%!-- <label class="flex items-center">
-            <.input field={f[:confirm]} type="checkbox" required />
-            <span class="text-sm text-slate-500 ml-2">
-              Saya menyatakan data di atas sudah benar.
-            </span>
-          </label> --%>
-
-          <div
-            :if={@error}
-            class="p-4 mb-4 text-sm font-medium text-red-800 rounded-md bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-dashed border-red-800"
-            role="alert"
-          >
-            <.icon name="hero-exclamation-triangle" /> <%= @error %>
-          </div>
-        </div>
-
-        <:actions>
-          <button
-            type="submit"
-            class="mt-6 w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-700"
-          >
-            <%= if Products.cta_custom?(@product.cta) do %>
-              <%= @product.cta_text %>
-            <% else %>
-              <%= Products.cta_text(@product.cta) %>
-            <% end %>
-          </button>
-        </:actions>
-      </.simple_form>
-
-      <div class="border border-yellow-300 bg-yellow-100 rounded p-2 text-center">
-        <p class="pl-6 mt-1 text-xs text-yellow-600">
-          <.icon name="hero-exclamation-triangle" />
-          Harap pastikan data di atas sudah benar. Kami tidak bertanggung jawab atas akibat dari kesalahan data yang dimasukkan.
+        <p class="text-2xl font-medium text-slate-900">Total</p>
+        <p class="text-2xl font-bold text-slate-600">
+          <.price value={@total_price} />
         </p>
       </div>
+
+      <hr/>
+      <%!--  FORM --%>
+      <div class="space-y-4">
+        <.simple_form
+          :let={f}
+          for={@changeset}
+          as={:order}
+          phx-update="replace"
+          phx-submit={@submit_event}
+          phx-target={@submit_target}
+        >
+          <div
+            :if={!@has_variants && @product.price_type == :flexible}
+            class="mb-2 p-6 md:flex items-center justify-between bg-white border-b"
+          >
+            <div class="text-lg font-medium text-gray-900">
+              Bayar suka-suka
+              <div class="text-xs text-gray-400">Minimal <.price value={@product.price} /></div>
+            </div>
+            <div class="flex items-center text-2xl font-semibold text-gray-900">
+              <.input field={f[:custom_price]} type="number" wrapper_class="w-full" placeholder={"Min. #{@product.price}"} required />
+            </div>
+          </div>
+
+          <div class="space-y-6 pt-4 px-6">
+            <.input field={f[:customer_name]} type="text" label="Nama *" required />
+            <div class="md:flex gap-4">
+              <.input
+                field={f[:customer_email]}
+                type="email"
+                label="Alamat email *"
+                required
+                wrapper_class="flex-1"
+              />
+              <.input
+                field={f[:customer_phone]}
+                type="text"
+                label="No. HP / WhatsApp"
+                wrapper_class="flex-1 mt-4 md:mt-0"
+              />
+            </div>
+
+            <div :if={@enable_captcha} id="cf-turnstile" phx-hook="RenderCaptcha" />
+
+            <%!-- <label class="flex items-center">
+              <.input field={f[:confirm]} type="checkbox" required />
+              <span class="text-sm text-slate-500 ml-2">
+                Saya menyatakan data di atas sudah benar.
+              </span>
+            </label> --%>
+
+            <div
+              :if={@error}
+              class="p-4 mb-4 text-sm font-medium text-red-800 rounded-md bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-dashed border-red-800"
+              role="alert"
+            >
+              <.icon name="hero-exclamation-triangle" /> <%= @error %>
+            </div>
+          </div>
+
+          <:actions>
+          <div class="px-6 pb-8">
+            <button
+              type="submit"
+              class="mt-6 w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-700"
+            >
+              <%= if Products.cta_custom?(@product.cta) do %>
+                <%= @product.cta_text %>
+              <% else %>
+                <%= Products.cta_text(@product.cta) %>
+              <% end %>
+            </button>
+          </div>
+          </:actions>
+        </.simple_form>
+      </div>
+      <%!-- END FORM --%>
+
+      <%!-- <div class="text-center pt-4 mt-6">
+        <p class="text-sm text-slate-400 items-center">
+          Produk ini disediakan oleh
+          <span class="font-semibold text-primary-500">UpKoding</span>
+          <.icon
+            name="hero-arrow-top-right-on-square"
+            class="w-4 h-4 inline-block text-primary-500"
+          />
+        </p>
+      </div> --%>
     </div>
     """
   end
@@ -246,27 +230,27 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
       case Map.get(assigns, :changeset) do
         nil ->
           product = assigns.product
-          variants = App.Products.list_variants_by_product(product)
+          variants = App.Products.list_variants_by_product(product, true)
 
           socket
           |> assign(assigns)
           |> assign(:product, product)
           |> assign(:preview, false)
           |> assign(:enable_captcha, true)
-          |> assign(:has_variants, Products.has_variants?(product))
+          |> assign(:has_variants, Products.has_variants?(product, true))
           |> assign(:product_variants, variants)
           |> assign(:total_price, product.price)
           |> maybe_select_default_variant(variants)
 
         changeset ->
           product = Ecto.Changeset.apply_changes(changeset)
-          variants = App.Products.list_variants_by_product(product)
+          variants = App.Products.list_variants_by_product(product, true)
 
           socket
           |> assign(:product, product)
           |> assign(:preview, true)
           |> assign(:enable_captcha, false)
-          |> assign(:has_variants, Products.has_variants?(product))
+          |> assign(:has_variants, Products.has_variants?(product, true))
           |> assign(:product_variants, variants)
           |> assign(:total_price, product.price)
           |> maybe_select_default_variant(variants)
@@ -356,7 +340,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
   defp maybe_select_default_variant(socket, variants) do
     cond do
       Enum.empty?(variants) ->
-        socket
+        assign(socket, :selected_variant, nil)
 
       true ->
         select_variant(socket, Enum.at(variants, 0))

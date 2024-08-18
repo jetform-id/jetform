@@ -124,35 +124,38 @@ defmodule App.Products do
 
   # --------------- VARIANT ---------------
 
-  def variants_count(product) do
+  def variants_count(product,  active_only \\ false) do
     from(
       v in Variant,
       where: v.product_id == ^product.id,
       select: count(v.id)
     )
+    |> then(fn q -> if active_only, do: where(q, [v], v.is_active == true), else: q end)
     |> Repo.one()
   end
 
-  def has_variants?(product) do
-    variants_count(product) > 0
+  def has_variants?(product, active_only \\ false) do
+    variants_count(product, active_only) > 0
   end
 
-  def list_variants_by_product(product) do
+  def list_variants_by_product(product, active_only \\ false) do
     from(
       v in Variant,
       where: v.product_id == ^product.id,
       order_by: [asc: v.price]
     )
+    |> then(fn q -> if active_only, do: where(q, [v], v.is_active == true), else: q end)
     |> Repo.all()
   end
 
-  def list_variants_price_by_product(product) do
+  def list_variants_price_by_product(product,  active_only \\ false) do
     from(
       v in Variant,
       where: v.product_id == ^product.id,
       order_by: [asc: v.price],
       select: v.price
     )
+    |> then(fn q -> if active_only, do: where(q, [v], v.is_active == true), else: q end)
     |> Repo.all()
   end
 

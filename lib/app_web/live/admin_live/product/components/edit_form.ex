@@ -15,7 +15,7 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
   attr :uploads, :map, required: true
 
   def render(assigns) do
-    assigns = assigns |> assign(:has_variants, Products.has_variants?(assigns.product))
+    assigns = assigns |> assign(:has_variants, Products.has_variants?(assigns.product, true))
 
     ~H"""
     <.simple_form
@@ -52,6 +52,7 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
           </.input>
 
           <.input
+            :if={!@has_variants}
             field={f[:price_type]}
             options={App.Products.price_type_options()}
             type="select"
@@ -59,22 +60,12 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
             required
           />
           <.input
-            :if={show_price_input?(@changeset)}
+            :if={!@has_variants and show_price_input?(@changeset)}
             field={f[:price]}
             type="number"
             placeholder="Minimum Rp. 10,000"
             required
           />
-          <div
-            :if={@has_variants}
-            class="p-4 mb-4 text-sm text-yellow-800 rounded-md bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400 border border-yellow-600"
-            role="alert"
-          >
-            <span class="font-medium">
-              <.icon name="hero-hand-raised" /> Perhatian!
-            </span>
-            Harga di atas tidak berlaku karena anda memiliki varian produk. Harga yang berlaku adalah harga masing-masing varian produk.
-          </div>
           <.input
             field={f[:cta]}
             type="select"

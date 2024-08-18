@@ -1,9 +1,9 @@
 <div class="px-4 pt-6">
   <div class="pb-4 md:flex md:justify-between">
     <div>
-      <.link navigate={~p"/products"} class="text-primary-500 font-semibold">
+      <%!-- <.link navigate={~p"/products"} class="text-primary-500 font-semibold">
         <span aria-hidden="true">←</span> Semua produk
-      </.link>
+      </.link> --%>
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
         <%= Map.get(@changeset.changes, :name, @changeset.data.name) %>
       </h2>
