@@ -11,7 +11,11 @@ defmodule App.Products do
   defdelegate has_details?(product), to: Product
 
   def list_products_by_user!(user, query) do
-    from(p in Product, join: u in assoc(p, :user), left_join: i in assoc(p, :images), preload: [user: u, images: i])
+    from(p in Product,
+      join: u in assoc(p, :user),
+      left_join: i in assoc(p, :images),
+      preload: [user: u, images: i]
+    )
     |> list_products_by_user_scope(user)
     |> Flop.validate_and_run!(query)
   end
@@ -66,6 +70,7 @@ defmodule App.Products do
 
   def cover_url(product, version, opts \\ []) do
     product = Repo.preload(product, :images)
+
     case Enum.fetch(product.images, 0) do
       {:ok, image} -> ImageUploader.url({image.attachment, image}, version, opts)
       _ -> ImageUploader.default_url(version, product)
@@ -247,7 +252,13 @@ defmodule App.Products do
   end
 
   def delete_image(image) do
-    Repo.delete(image)
+    Ecto.Multi.new()
+    |> Ecto.Multi.delete(:delete_record, image)
+    |> Ecto.Multi.run(:delete_file, fn _repo, _changes ->
+      ImageUploader.delete({image.attachment, image})
+      {:ok, image}
+    end)
+    |> Repo.transaction(timeout: Application.fetch_env!(:app, :db_transaction_timeout))
   end
 
   def image_url(image, version, opts \\ []) do

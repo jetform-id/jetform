@@ -96,7 +96,6 @@ config :waffle,
   storage_dir: "uploads",
   version_timeout: 60_000
 
-
 config :flop,
   repo: App.Repo
 
