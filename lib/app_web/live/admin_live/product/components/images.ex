@@ -131,7 +131,7 @@ defmodule AppWeb.AdminLive.Product.Components.Images do
     {:ok, socket}
   end
 
-  @implr true
+  @impl true
   def update(%{action: {:upload, entry}}, socket) do
     {path, size} = handle_upload(entry, socket)
 
@@ -177,8 +177,6 @@ defmodule AppWeb.AdminLive.Product.Components.Images do
         entry.progress < 100 -> entry.progress
         true -> Enum.random(60..90)
       end
-
-    entry.progress
 
     if entry.done? do
       # handle upload later, now we update the UI first
