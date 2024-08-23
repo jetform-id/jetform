@@ -55,7 +55,7 @@ defmodule AppWeb.PublicLive.Checkout do
   # handle messages from Preview component
 
   @impl true
-  def handle_info({AppWeb.AdminLive.Product.Components.Preview, order}, socket) do
+  def handle_info({:new_order, order}, socket) do
     socket =
       case order.status in [:free, :paid] do
         true ->

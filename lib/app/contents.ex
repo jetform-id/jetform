@@ -75,7 +75,7 @@ defmodule App.Contents do
     |> Ecto.Multi.update(:content_with_attachment, fn %{content: content} ->
       Content.attachment_changeset(content, attrs)
     end)
-    |> Repo.transaction()
+    |> Repo.transaction(timeout: Application.fetch_env!(:app, :db_transaction_timeout))
     |> case do
       {:ok, %{content_with_attachment: content}} ->
         {:ok, content}

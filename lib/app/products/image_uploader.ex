@@ -1,4 +1,4 @@
-defmodule App.Products.ProductCover do
+defmodule App.Products.ImageUploader do
   use Waffle.Definition
 
   # Include ecto support (requires package waffle_ecto installed):
@@ -44,8 +44,12 @@ defmodule App.Products.ProductCover do
   # end
 
   # Override the storage directory:
-  def storage_dir(version, {_file, _scope}) do
+  def storage_dir(version, {_file, %App.Products.Product{}}) do
     "uploads/products/cover/#{version}"
+  end
+
+  def storage_dir(version, {_file, %App.Products.Image{} = scope}) do
+    "uploads/products/images/#{scope.id}/#{version}"
   end
 
   # Provide a default URL if there hasn't been a file uploaded

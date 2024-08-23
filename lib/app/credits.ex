@@ -228,7 +228,7 @@ defmodule App.Credits do
     |> Ecto.Multi.run(:notify, fn _repo, %{withdrawal: withdrawal} ->
       Workers.Withdrawal.notify(withdrawal)
     end)
-    |> Repo.transaction()
+    |> Repo.transaction(timeout: Application.fetch_env!(:app, :db_transaction_timeout))
     |> case do
       {:ok, %{withdrawal: withdrawal}} ->
         {:ok, withdrawal}
@@ -254,7 +254,7 @@ defmodule App.Credits do
         {:ok, :no_notify}
       end
     end)
-    |> Repo.transaction()
+    |> Repo.transaction(timeout: Application.fetch_env!(:app, :db_transaction_timeout))
     |> case do
       {:ok, %{withdrawal: withdrawal}} ->
         {:ok, withdrawal}

@@ -10,13 +10,12 @@ defmodule App.Products.Product do
     filterable: [:is_live, :is_public], sortable: [:inserted_at]
   }
 
-  @required_fields ~w(name slug price price_type cta)a
-  @optional_fields ~w(is_live is_public description cta_text details)a
+  @types ~w(downloadable)a
 
   @price_type_options [
-    {"Harga tetap (ditentukan oleh penjual)", :fixed},
-    {"Harga fleksibel (pembeli menentukan berapa yang ingin mereka bayar)", :flexible},
-    {"Tanpa harga (produk gratis)", :free}
+    {"Harga tetap", :fixed},
+    {"Harga ditentukan pembeli", :flexible},
+    {"Gratis", :free}
   ]
   @price_types @price_type_options |> Enum.map(&elem(&1, 1))
 
@@ -31,11 +30,15 @@ defmodule App.Products.Product do
   ]
   @cta_enums @cta_options |> Enum.map(&elem(&1, 1))
 
+  @required_fields ~w(name slug price price_type cta)a
+  @optional_fields ~w(is_live is_public description cta_text details)a
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "products" do
     field :name, :string
     field :slug, :string
+    field :type, Ecto.Enum, values: @types, default: :downloadable
     field :price, :integer
     field :price_type, Ecto.Enum, values: @price_types
     field :description, :string
@@ -44,9 +47,10 @@ defmodule App.Products.Product do
     field :cta, Ecto.Enum, values: @cta_enums, default: :buy
     field :cta_text, :string
     field :details, :map, default: %{"items" => []}
-    field :cover, App.Products.ProductCover.Type
+    field :cover, App.Products.ImageUploader.Type
 
     belongs_to :user, App.Users.User
+    has_many :images, App.Products.Image
     has_many :variants, App.Products.Variant
     has_many :orders, App.Orders.Order
     has_many :contents, App.Contents.Content
@@ -90,15 +94,15 @@ defmodule App.Products.Product do
 
   defp validate_price(changeset) do
     min_price = Application.get_env(:app, :min_price, 10_000)
-    price = changeset.changes[:price]
-    price_type = changeset.changes[:price_type]
+    price = get_field(changeset, :price)
+    price_type = get_field(changeset, :price_type)
 
     cond do
       price_type == :free ->
-        put_change(changeset, :price, 0)
+        changeset
 
       price < min_price ->
-        add_error(changeset, :price, "Minimal Rp. #{min_price}")
+        add_error(changeset, :price, "Minimum Rp. #{min_price}")
 
       true ->
         changeset

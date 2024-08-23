@@ -12,7 +12,6 @@ defmodule AppWeb.AdminLive.Product.Edit do
       |> assign(:page_title, "Edit: #{product.name}")
       |> assign(:product, product)
       |> assign(:changeset, Products.change_product(product, %{}))
-      |> allow_upload(:cover, accept: ~w(.jpg .jpeg .png), max_file_size: 1_000_000)
 
     {:ok, socket}
   end
@@ -44,9 +43,6 @@ defmodule AppWeb.AdminLive.Product.Edit do
         nil -> product_params
         details -> Map.put(product_params, "details", details)
       end
-
-    # get uploaded cover image
-    product_params = maybe_put_file_params(socket, product_params, :cover)
 
     socket =
       case Products.update_product(socket.assigns.product, product_params) do
@@ -106,65 +102,35 @@ defmodule AppWeb.AdminLive.Product.Edit do
   end
 
   @impl true
-  def handle_params(%{"tab" => "variants"}, _uri, socket) do
-    socket =
-      socket |> assign(:tab, "variants")
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_params(%{"tab" => "content"}, _uri, socket) do
-    socket =
-      socket |> assign(:tab, "content")
-
-    {:noreply, socket}
+  def handle_params(%{"tab" => tab}, _uri, socket) do
+    {:noreply, assign(socket, :tab, tab)}
   end
 
   @impl true
   def handle_params(_params, _uri, socket) do
-    socket =
-      socket |> assign(:tab, "info")
-
-    {:noreply, socket}
+    {:noreply, assign(socket, :tab, "details")}
   end
 
-  # handle messages from Variants component
+  # handle messages from child components
 
   @impl true
-  def handle_info({AppWeb.AdminLive.Product.Components.Variants, :variants_updated}, socket) do
-    product =
-      socket.assigns.product
-      |> App.Repo.reload!()
-      |> App.Repo.preload([:user, :variants])
-
-    {:noreply, assign(socket, :product, product)}
+  def handle_info(:images_updated, socket) do
+    {:noreply, update_preview(socket)}
   end
 
-  # handle messages from Preview component
+  @impl true
+  def handle_info(:variants_updated, socket) do
+    {:noreply, update_preview(socket)}
+  end
 
   @impl true
-  def handle_info({AppWeb.AdminLive.Product.Components.Preview, _order}, socket) do
+  def handle_info({:new_order, _order}, socket) do
     {:noreply, put_flash(socket, :info, "Anda dalam mode preview.")}
   end
 
-  defp maybe_put_file_params(socket, params, field) when is_atom(field) do
-    case uploaded_entries(socket, field) do
-      {[_ | _], []} ->
-        [file_path] = uploaded_image_paths(socket, field)
-        Map.put(params, Atom.to_string(field), file_path)
-
-      _ ->
-        params
-    end
-  end
-
-  defp uploaded_image_paths(socket, field) when is_atom(field) do
-    consume_uploaded_entries(socket, field, fn %{path: path}, entry ->
-      extension = String.replace(entry.client_type, "image/", ".")
-      updated_path = Path.join(Path.dirname(path), "#{entry.uuid}#{extension}")
-      File.cp!(path, updated_path)
-      {:ok, updated_path}
-    end)
+  defp update_preview(socket) do
+    product = socket.assigns.product
+    send_update(Preview, id: product.id, product: product)
+    socket
   end
 end

@@ -18,13 +18,24 @@
       >
         <li>
           <.link
-            patch="?tab=info"
+            patch="?tab=details"
             class={[
               "inline-block p-4 px-6 rounded-ss-lg hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-500",
-              @tab == "info" && "text-primary-500 bg-gray-100"
+              @tab == "details" && "text-primary-500 bg-gray-100"
             ]}
           >
-            <.icon name="hero-exclamation-circle" /> Info
+            Detail
+          </.link>
+        </li>
+        <li>
+          <.link
+            patch="?tab=images"
+            class={[
+              "inline-block p-4 px-6 hover:text-primary-500 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300",
+              @tab == "images" && "text-primary-500 bg-gray-100"
+            ]}
+          >
+            Gambar
           </.link>
         </li>
         <li>
@@ -35,7 +46,7 @@
               @tab == "variants" && "text-primary-500 bg-gray-100"
             ]}
           >
-            <.icon name="hero-square-3-stack-3d" /> Varian
+            Varian
           </.link>
         </li>
         <li>
@@ -46,20 +57,25 @@
               @tab == "content" && "text-primary-500 bg-gray-100"
             ]}
           >
-            <.icon name="hero-paper-clip" /> Konten
+            Konten
           </.link>
         </li>
       </ul>
       <div id="defaultTabContent">
         <div role="tabpanel" aria-labelledby="info-tab">
           <EditForm.render
-            :if={@tab == "info"}
+            :if={@tab == "details"}
             on_change="validate"
             on_submit="save"
             current_user={@current_user}
             product={@product}
             changeset={@changeset}
-            uploads={@uploads}
+          />
+          <.live_component
+            :if={@tab == "images"}
+            module={AppWeb.AdminLive.Product.Components.Images}
+            id={@product.id}
+            product={@product}
           />
           <.live_component
             :if={@tab == "variants"}

@@ -12,7 +12,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
     ~H"""
     <%!-- preview --%>
     <div class="p-1 md:p-6">
-      <.product_detail product={@product} />
+      <.product_detail product={@product} images={@images} />
       <.checkout_form
         product={@product}
         changeset={@checkout_changeset}
@@ -37,44 +37,72 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
   end
 
   attr :product, :map, required: true
+  attr :images, :list, required: true
+
   def product_detail(assigns) do
     ~H"""
-      <div class="mx-auto max-w-xl rounded-md bg-white shadow-md mb-6">
-        <img src={Products.cover_url(@product, :standard)} class="rounded-t-md" />
-        <hr />
-        <div class="p-6 pb-10">
-          <h2 class="text-2xl font-semibold" id="preview" phx-update="replace">
-            <%= @product.name %>
-          </h2>
-          <div class="mt-4 trix-content preview text-gray-600">
-            <%= raw(@product.description) %>
+    <div class="mx-auto max-w-xl rounded-md bg-white shadow-md mb-6 overflow-hidden">
+      <%= if Enum.empty?(@images) do %>
+        <img src="https://via.placeholder.com/1280x720" />
+      <% else %>
+        <div id={"glide-" <> @product.id} class="glide" phx-hook="InitGlide">
+          <div class="glide__track" data-glide-el="track">
+            <ul class="glide__slides">
+              <li :for={image <- @images} class="glide__slide">
+                <img src={Products.image_url(image, :standard)} />
+              </li>
+            </ul>
           </div>
-
-          <div :if={Products.has_details?(@product)} class="relative overflow-x-auto rounded-md mt-6">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-700 dark:text-gray-700">
-              <tbody>
-                <tr
-                  :for={{item, index} <- Enum.with_index(@product.details["items"])}
-                  class={if Integer.is_even(index), do: "bg-primary-100", else: "bg-primary-50"}
-                >
-                  <td
-                    scope="row"
-                    class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
-                  >
-                    <%= item["key"] %>
-                  </td>
-                  <td
-                    scope="row"
-                    class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
-                  >
-                    <.icon name="hero-chevron-right me-2 w-3 h-3" /> <%= item["value"] %>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div :if={length(@images) > 1} class="glide__arrows" data-glide-el="controls">
+            <button
+              class="transition-colors bg-white hover:bg-gray-50 px-1 rounded h-8 w-8 text-black absolute top-0 bottom-0 -left-1 mt-auto mb-auto shadow-md focus:outline-none"
+              data-glide-dir="<"
+            >
+              <.icon name="hero-chevron-left" class="h-6 w-6 text-slate-500" />
+            </button>
+            <button
+              class="transition-colors bg-white hover:bg-gray-50 px-1 rounded h-8 w-8 text-black absolute top-0 bottom-0 -right-1 mt-auto mb-auto shadow-md focus:outline-none"
+              data-glide-dir=">"
+            >
+              <.icon name="hero-chevron-right" class="h-6 w-6 text-slate-500" />
+            </button>
           </div>
         </div>
+      <% end %>
+      <hr />
+      <div class="p-6 pb-10">
+        <h2 class="text-2xl font-semibold" id="preview" phx-update="replace">
+          <%= @product.name %>
+        </h2>
+        <div class="mt-4 trix-content preview text-gray-600">
+          <%= raw(@product.description) %>
+        </div>
+
+        <div :if={Products.has_details?(@product)} class="relative overflow-x-auto rounded-md mt-6">
+          <table class="w-full text-sm text-left rtl:text-right text-gray-700 dark:text-gray-700">
+            <tbody>
+              <tr
+                :for={{item, index} <- Enum.with_index(@product.details["items"])}
+                class={if Integer.is_even(index), do: "bg-primary-100", else: "bg-primary-50"}
+              >
+                <td
+                  scope="row"
+                  class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
+                >
+                  <%= item["key"] %>
+                </td>
+                <td
+                  scope="row"
+                  class="p-2 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700"
+                >
+                  <.icon name="hero-chevron-right me-2 w-3 h-3" /> <%= item["value"] %>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
+    </div>
     """
   end
 
@@ -99,7 +127,9 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
             id={"radio_" <> variant.id}
             type="radio"
             name="radio"
-            phx-click={JS.push("select_variant", value: %{"id" => variant.id}, target: @submit_target)}
+            phx-click={
+              JS.push("select_variant", value: %{"id" => variant.id}, target: @submit_target)
+            }
             checked={@selected_variant && variant.id == @selected_variant.id}
           />
           <span class="peer-checked:border-primary-700 absolute right-4 top-7 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white">
@@ -132,7 +162,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         </p>
       </div>
 
-      <hr/>
+      <hr />
       <%!--  FORM --%>
       <div class="space-y-4">
         <.simple_form
@@ -152,7 +182,13 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
               <div class="text-xs text-gray-400">Minimal <.price value={@product.price} /></div>
             </div>
             <div class="flex items-center text-2xl font-semibold text-gray-900">
-              <.input field={f[:custom_price]} type="number" wrapper_class="w-full" placeholder={"Min. #{@product.price}"} required />
+              <.input
+                field={f[:custom_price]}
+                type="number"
+                wrapper_class="w-full"
+                placeholder={"Min. #{@product.price}"}
+                required
+              />
             </div>
           </div>
 
@@ -193,18 +229,18 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           </div>
 
           <:actions>
-          <div class="px-6 pb-8">
-            <button
-              type="submit"
-              class="mt-6 w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-700"
-            >
-              <%= if Products.cta_custom?(@product.cta) do %>
-                <%= @product.cta_text %>
-              <% else %>
-                <%= Products.cta_text(@product.cta) %>
-              <% end %>
-            </button>
-          </div>
+            <div class="px-6 pb-8">
+              <button
+                type="submit"
+                class="mt-6 w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-700"
+              >
+                <%= if Products.cta_custom?(@product.cta) do %>
+                  <%= @product.cta_text %>
+                <% else %>
+                  <%= Products.cta_text(@product.cta) %>
+                <% end %>
+              </button>
+            </div>
           </:actions>
         </.simple_form>
       </div>
@@ -231,20 +267,23 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         nil ->
           product = assigns.product
           variants = App.Products.list_variants_by_product(product, true)
+          images = App.Products.list_images(product)
 
           socket
           |> assign(assigns)
           |> assign(:product, product)
           |> assign(:preview, false)
-          |> assign(:enable_captcha, true)
+          |> assign(:enable_captcha, false)
           |> assign(:has_variants, Products.has_variants?(product, true))
           |> assign(:product_variants, variants)
+          |> assign(:images, images)
           |> assign(:total_price, product.price)
           |> maybe_select_default_variant(variants)
 
         changeset ->
           product = Ecto.Changeset.apply_changes(changeset)
           variants = App.Products.list_variants_by_product(product, true)
+          images = App.Products.list_images(product)
 
           socket
           |> assign(:product, product)
@@ -252,6 +291,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           |> assign(:enable_captcha, false)
           |> assign(:has_variants, Products.has_variants?(product, true))
           |> assign(:product_variants, variants)
+          |> assign(:images, images)
           |> assign(:total_price, product.price)
           |> maybe_select_default_variant(variants)
       end
@@ -284,7 +324,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
 
     case Ecto.Changeset.apply_action(changeset, :insert) do
       {:ok, order} ->
-        send(self(), {__MODULE__, order})
+        send(self(), {:new_order, order})
         {:noreply, assign(socket, :checkout_changeset, changeset)}
 
       {:error, changeset} ->
@@ -309,7 +349,19 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
       ) do
     # verify captcha token
     :ok = Captcha.verify_token(captcha_token)
+    create_order(socket, order_params)
+  end
 
+  @impl true
+  def handle_event(
+        "create_order",
+        %{"order" => order_params},
+        socket
+      ) do
+    create_order(socket, order_params)
+  end
+
+  defp create_order(socket, order_params) do
     order_params =
       order_params
       |> Map.put("product", socket.assigns.product)
@@ -322,7 +374,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
 
     case Orders.create_order(order_params) do
       {:ok, order} ->
-        send(self(), {__MODULE__, order})
+        send(self(), {:new_order, order})
         {:noreply, assign(socket, :checkout_changeset, Orders.change_order(order, %{}))}
 
       {:error, changeset} ->

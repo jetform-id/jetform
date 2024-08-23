@@ -247,7 +247,7 @@ defmodule App.Orders do
         err -> err
       end
     end)
-    |> Repo.transaction()
+    |> Repo.transaction(timeout: Application.fetch_env!(:app, :db_transaction_timeout))
     |> case do
       {:ok, %{order_with_contents: order}} ->
         {:ok, order}
@@ -408,7 +408,7 @@ defmodule App.Orders do
     |> Ecto.Multi.update(:updated_payment, fn %{new_payment: payment, redirect_url: redirect_url} ->
       Payment.changeset(payment, %{"redirect_url" => redirect_url})
     end)
-    |> Repo.transaction()
+    |> Repo.transaction(timeout: Application.fetch_env!(:app, :db_transaction_timeout))
     |> case do
       {:ok, %{updated_payment: payment}} ->
         {:ok, payment}
@@ -467,7 +467,7 @@ defmodule App.Orders do
         err -> err
       end
     end)
-    |> Repo.transaction()
+    |> Repo.transaction(timeout: Application.fetch_env!(:app, :db_transaction_timeout))
     |> case do
       {:ok, %{payment: payment, order: order}} ->
         # notify all subscribers (e.g. invoice page) that this order has been updated.
@@ -504,6 +504,6 @@ defmodule App.Orders do
     |> Ecto.Multi.run(:cancel, fn _repo, %{payment: payment} ->
       App.payment_provider().cancel_transaction(payment.id)
     end)
-    |> Repo.transaction()
+    |> Repo.transaction(timeout: Application.fetch_env!(:app, :db_transaction_timeout))
   end
 end

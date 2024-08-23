@@ -141,6 +141,6 @@ defmodule AppWeb.AdminLive.Product.Components.Variants do
   end
 
   defp notify_parent() do
-    send(self(), {__MODULE__, :variants_updated})
+    send(self(), :variants_updated)
   end
 end

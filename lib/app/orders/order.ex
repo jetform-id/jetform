@@ -34,6 +34,7 @@ defmodule App.Orders.Order do
     field :gateway_fee, :integer
 
     field :plan, :map, virtual: true
+    field :price_type, :string, virtual: true
 
     belongs_to :user, App.Users.User
     belongs_to :product, App.Products.Product
@@ -97,6 +98,7 @@ defmodule App.Orders.Order do
         |> put_change(:total, product.price)
         |> put_change(:service_fee, user_plan.commission(product.price))
         |> put_change(:plan, user_plan)
+        |> put_change(:price_type, product.price_type)
     end
   end
 
@@ -108,12 +110,20 @@ defmodule App.Orders.Order do
       variant ->
         user_plan = fetch_change!(changeset, :plan)
 
+        # variant product price_type isn't implemented yet (still based on price)
+        price_type =
+          case variant.price do
+            0 -> :free
+            _ -> :fixed
+          end
+
         changeset
         |> put_assoc(:product_variant, variant)
         |> put_change(:product_variant_name, variant.name)
         |> put_change(:sub_total, variant.price)
         |> put_change(:total, variant.price)
         |> put_change(:service_fee, user_plan.commission(variant.price))
+        |> put_change(:price_type, price_type)
     end
   end
 
@@ -137,7 +147,7 @@ defmodule App.Orders.Order do
             add_error(changeset, :custom_price, "tidak valid")
 
           price < total ->
-            add_error(changeset, :custom_price, "Minimal Rp. #{total}")
+            add_error(changeset, :custom_price, "Minimum Rp. #{total}")
 
           true ->
             changeset
@@ -149,11 +159,20 @@ defmodule App.Orders.Order do
   end
 
   defp put_status(changeset) do
-    # if price is 0, then set status to :free
-    case fetch_change(changeset, :total) do
-      {:ok, 0} ->
-        params = %{"status" => "free", "paid_at" => Timex.now()}
-        cast(changeset, params, [:status, :paid_at])
+    # if price_type is :free
+    # - set status to :free and paid_at to now
+    # - overrides subtotal, total, service_fee to 0
+    case fetch_change(changeset, :price_type) do
+      {:ok, :free} ->
+        params = %{
+          "status" => "free",
+          "sub_total" => 0,
+          "total" => 0,
+          "service_fee" => 0,
+          "paid_at" => Timex.now()
+        }
+
+        cast(changeset, params, [:status, :sub_total, :total, :service_fee, :paid_at])
 
       _ ->
         changeset

@@ -23,16 +23,27 @@ defmodule AppWeb.AdminLive.Product.Components.NewForm do
             field={f[:price_type]}
             options={App.Products.price_type_options()}
             type="select"
-            label="Harga"
+            label="Tipe harga"
             required
           />
           <.input
             :if={show_price_input?(@changeset)}
             field={f[:price]}
             type="number"
-            placeholder="Minimum Rp. 10,000"
+            label={
+              if Ecto.Changeset.get_field(@changeset, :price_type) == :flexible,
+                do: "Harga minimum",
+                else: "Harga"
+            }
             required
-          />
+          >
+            <:help>
+              <div class="pt-3 text-xs text-yellow-500 leading-tight">
+                <.icon name="hero-exclamation-circle w-4 h-4" /> <span class="font-bold">Beberapa bank menetapkan nilai minimal transaksi</span>, dan nilai tersebut biasanya
+                <.price value={Application.get_env(:app, :minimum_price)} />. Oleh karena itu, harga harus lebih besar atau sama dengan nilai tersebut.
+              </div>
+            </:help>
+          </.input>
         </div>
 
         <:actions>

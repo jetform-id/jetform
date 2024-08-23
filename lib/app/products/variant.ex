@@ -38,11 +38,11 @@ defmodule App.Products.Variant do
 
   defp validate_price(changeset) do
     min_price = Application.get_env(:app, :minimum_price)
-    price = Map.get(changeset.changes, :price, changeset.data.price)
+    price = get_field(changeset, :price)
 
     cond do
       price == 0 -> changeset
-      price < min_price -> add_error(changeset, :price, "minimal Rp. #{min_price}")
+      price < min_price -> add_error(changeset, :price, "Minimum Rp. #{min_price}")
       true -> changeset
     end
   end

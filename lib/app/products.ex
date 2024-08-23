@@ -1,7 +1,7 @@
 defmodule App.Products do
   import Ecto.Query
   alias App.Repo
-  alias App.Products.{Product, Variant}
+  alias App.Products.{Product, Variant, Image, ImageUploader}
 
   # --------------- PRODUCT ---------------
   defdelegate price_type_options, to: Product, as: :price_type_options
@@ -65,7 +65,29 @@ defmodule App.Products do
   end
 
   def cover_url(product, version, opts \\ []) do
-    App.Products.ProductCover.url({product.cover, product}, version, opts)
+    ImageUploader.url({product.cover, product}, version, opts)
+  end
+
+  def price_display(product) do
+    with true <- has_variants?(product, true),
+         [_ | _] = prices <- list_variants_price_by_product(product, true) do
+      if Enum.count(prices) == 1 do
+        App.Utils.Commons.format_price(Enum.at(prices, 0))
+      else
+        min_price = Enum.min(prices) |> App.Utils.Commons.format_price()
+        max_price = Enum.max(prices) |> App.Utils.Commons.delimited_number()
+        min_price <> " - " <> max_price
+      end
+    else
+      _ ->
+        formatted_price = App.Utils.Commons.format_price(product.price)
+
+        case product.price_type do
+          :free -> "Gratis"
+          :fixed -> formatted_price
+          :flexible -> "Mulai " <> formatted_price
+        end
+    end
   end
 
   def add_detail(product, %{changes: changes}) do
@@ -124,7 +146,7 @@ defmodule App.Products do
 
   # --------------- VARIANT ---------------
 
-  def variants_count(product,  active_only \\ false) do
+  def variants_count(product, active_only \\ false) do
     from(
       v in Variant,
       where: v.product_id == ^product.id,
@@ -148,7 +170,7 @@ defmodule App.Products do
     |> Repo.all()
   end
 
-  def list_variants_price_by_product(product,  active_only \\ false) do
+  def list_variants_price_by_product(product, active_only \\ false) do
     from(
       v in Variant,
       where: v.product_id == ^product.id,
@@ -183,14 +205,53 @@ defmodule App.Products do
     Repo.delete(variant)
   end
 
-  def price_display(product) do
-    with true <- has_variants?(product),
-         [_ | _] = prices <- list_variants_price_by_product(product) do
-      min_price = Enum.min(prices) |> App.Utils.Commons.format_price()
-      max_price = Enum.max(prices) |> App.Utils.Commons.delimited_number()
-      min_price <> " - " <> max_price
-    else
-      _ -> App.Utils.Commons.format_price(product.price)
+  # --------------- IMAGE ---------------
+
+  def list_images(product) do
+    from(i in Image, where: i.product_id == ^product.id)
+    |> Repo.all()
+  end
+
+  def get_image!(id) do
+    Repo.get!(Image, id)
+  end
+
+  def change_image(image, attrs \\ %{}) do
+    Image.changeset(image, attrs)
+  end
+
+  def create_image(attrs) do
+    Ecto.Multi.new()
+    |> Ecto.Multi.insert(:image, change_image(%Image{}, attrs))
+    |> Ecto.Multi.update(:image_with_attachment, fn %{image: image} ->
+      Image.attachment_changeset(image, attrs)
+    end)
+    |> Repo.transaction(timeout: Application.fetch_env!(:app, :db_transaction_timeout))
+    |> case do
+      {:ok, %{image_with_attachment: image}} ->
+        {:ok, image}
+
+      {:error, _op, changeset} ->
+        {:error, changeset}
     end
+  end
+
+  def update_image(image, attrs) do
+    image
+    |> change_image(attrs)
+    |> Repo.update()
+  end
+
+  def delete_image(image) do
+    Repo.delete(image)
+  end
+
+  def image_url(image, version, opts \\ []) do
+    ImageUploader.url({image.attachment, image}, version, opts)
+  end
+
+  def image_size_kb(image) do
+    size = image.attachment_size_byte || 0
+    "#{Float.round(size / 1000, 2)} KB"
   end
 end

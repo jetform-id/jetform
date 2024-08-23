@@ -3,6 +3,7 @@
     "clipboard": "^2.0.11",
     "flowbite": "^2.2.0",
     "trix": "^2.1.4",
-    "apexcharts": "^3.29.0"
+    "apexcharts": "^3.29.0",
+    "@glidejs/glide": "^3.6.2"
   }
 }

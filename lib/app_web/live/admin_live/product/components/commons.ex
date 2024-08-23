@@ -98,7 +98,7 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
         <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
         <div class="flex">
           <div class="flex items-center h-5">
-          <.input field={f[:is_active]} type="checkbox"/>
+            <.input field={f[:is_active]} type="checkbox" />
           </div>
           <div class="ms-2 text-sm">
             <label for="helper-checkbox" class="font-medium text-gray-900 dark:text-gray-300">
@@ -182,7 +182,12 @@ defmodule AppWeb.AdminLive.Product.Components.Commons do
       <div class="flex mb-4 items-center">
         <span class="flex-1 font-semibold">
           <%= @variant.name %>
-          <span :if={!@variant.is_active} class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-700 dark:text-red-300">inactive</span>
+          <span
+            :if={!@variant.is_active}
+            class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-700 dark:text-red-300"
+          >
+            inactive
+          </span>
         </span>
         <span class="flex-none items-center">
           <span class="font-semibold me-4"><.price value={@variant.price} /></span>

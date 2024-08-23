@@ -2,7 +2,6 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
   use AppWeb, :html
   alias App.Products
   alias AppWeb.Utils
-  alias AppWeb.AdminLive.Product.Components.Commons
 
   @doc """
   Renders basic product editor form
@@ -12,7 +11,6 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
   attr :current_user, :map, required: true
   attr :product, :map, required: true
   attr :changeset, :map, required: true
-  attr :uploads, :map, required: true
 
   def render(assigns) do
     assigns = assigns |> assign(:has_variants, Products.has_variants?(assigns.product, true))
@@ -56,16 +54,27 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
             field={f[:price_type]}
             options={App.Products.price_type_options()}
             type="select"
-            label="Harga"
+            label="Tipe harga"
             required
           />
           <.input
             :if={!@has_variants and show_price_input?(@changeset)}
             field={f[:price]}
             type="number"
-            placeholder="Minimum Rp. 10,000"
+            label={
+              if Ecto.Changeset.get_field(@changeset, :price_type) == :flexible,
+                do: "Harga minimum",
+                else: "Harga"
+            }
             required
-          />
+          >
+            <:help>
+              <div class="pt-3 text-xs text-yellow-500 leading-tight">
+                <.icon name="hero-exclamation-circle w-4 h-4" /> <span class="font-bold">Beberapa bank menetapkan nilai minimal transaksi</span>, dan nilai tersebut biasanya
+                <.price value={Application.get_env(:app, :minimum_price)} />. Oleh karena itu, harga harus lebih besar atau sama dengan nilai tersebut.
+              </div>
+            </:help>
+          </.input>
           <.input
             field={f[:cta]}
             type="select"
@@ -105,22 +114,6 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
           </div>
 
           <.details_input details={f[:details]} label="Detail" />
-        </div>
-
-        <hr />
-        <div class="p-4 md:p-8 dark:bg-gray-800 space-y-6">
-          <div>
-            <p class="font-normal flex items-center">
-              <.icon name="hero-photo me-1" />Gambar produk
-            </p>
-            <p class="pl-6 mt-1 text-xs text-gray-500">
-              Untuk penampilan terbaik silahkan upload file gambar dengan rasio 16:9 dan maksimum ukuran file 1 MB (Megabyte).
-            </p>
-          </div>
-
-          <img src={Products.cover_url(@product, :standard)} class="h-auto max-w-sm" />
-          <Commons.live_file_error upload={@uploads.cover} />
-          <.live_file_input upload={@uploads.cover} />
         </div>
 
         <hr />

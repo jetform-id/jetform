@@ -1,3 +1,4 @@
+import Glide from '@glidejs/glide'
 import ApexCharts from 'apexcharts'
 
 let Hooks = {}
@@ -11,6 +12,24 @@ let Hooks = {}
 //     }
 // }
 
+Hooks.InitGlide = {
+    init() {
+        const config = {
+            gap: 0,
+            hoverpause: true
+        }
+        if (this.el.dataset.autostart == "true") {
+            config.autoplay = 5000
+        }
+        new Glide('.glide', config).mount();
+    },
+    mounted() {
+        this.init()
+    },
+    updated() {
+        this.init()
+    }
+}
 
 Hooks.RenderCaptcha = {
     render() {
