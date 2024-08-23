@@ -12,7 +12,7 @@ config :app,
   app_tagline: "JetForm",
   default_tz: "Asia/Jakarta",
   default_tz_label: "WIB",
-  db_transaction_timeout: 30_000,
+  db_transaction_timeout: 60_000,
   order_validity_hours: 2,
   access_validity_days: 7,
   minimum_price: 10_000,
@@ -93,7 +93,9 @@ config :app, :pow,
 config :waffle,
   storage: Waffle.Storage.Local,
   storage_dir_prefix: "priv/static",
-  storage_dir: "uploads"
+  storage_dir: "uploads",
+  version_timeout: 60_000
+
 
 config :flop,
   repo: App.Repo

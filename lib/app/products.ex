@@ -11,7 +11,7 @@ defmodule App.Products do
   defdelegate has_details?(product), to: Product
 
   def list_products_by_user!(user, query) do
-    from(p in Product, join: u in assoc(p, :user), preload: [user: u])
+    from(p in Product, join: u in assoc(p, :user), left_join: i in assoc(p, :images), preload: [user: u, images: i])
     |> list_products_by_user_scope(user)
     |> Flop.validate_and_run!(query)
   end
@@ -65,7 +65,11 @@ defmodule App.Products do
   end
 
   def cover_url(product, version, opts \\ []) do
-    ImageUploader.url({product.cover, product}, version, opts)
+    product = Repo.preload(product, :images)
+    case Enum.fetch(product.images, 0) do
+      {:ok, image} -> ImageUploader.url({image.attachment, image}, version, opts)
+      _ -> ImageUploader.default_url(version, product)
+    end
   end
 
   def price_display(product) do

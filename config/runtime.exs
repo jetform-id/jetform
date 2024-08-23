@@ -54,6 +54,7 @@ config :app, :umami,
 if System.get_env("WAFFLE_AWS_S3_BUCKET") do
   config :waffle,
     storage: Waffle.Storage.S3,
+    version_timeout: 60_000,
     bucket: System.get_env("WAFFLE_AWS_S3_BUCKET"),
     asset_host: System.get_env("WAFFLE_ASSET_HOST")
 end
