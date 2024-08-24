@@ -47,24 +47,27 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsMetricsChart do
       </ul>
 
       <div class="relative overflow-x-auto">
-        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-          <tbody>
-            <tr
-              :for={metric <- @metrics}
-              class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-            >
-              <th
-                scope="row"
-                class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+        <.async_result :let={metrics} assign={@metrics}>
+          <:loading><.spinner class="w-6 h-6 ml-6 mt-2" /></:loading>
+          <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <tbody>
+              <tr
+                :for={metric <- metrics}
+                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
               >
-                <%= if metric["x"], do: metric["x"], else: "(None)" %>
-              </th>
-              <td class="px-6 py-2">
-                <%= metric["y"] %>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                <th
+                  scope="row"
+                  class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  <%= if metric["x"], do: metric["x"], else: "(None)" %>
+                </th>
+                <td class="px-6 py-2">
+                  <%= metric["y"] %>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </.async_result>
       </div>
     </div>
     """
@@ -73,23 +76,33 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsMetricsChart do
   @impl true
   def update(%{product: product, start_time: start_time} = assigns, socket) do
     time_range = time_range(product, start_time)
-    metrics = fetch_metrics(product, time_range, @default_metric)
 
     socket =
       socket
       |> assign(assigns)
       |> assign(:tab, @default_metric)
       |> assign(:time_range, time_range)
-      |> assign(:metrics, metrics)
+      |> assign_async(:metrics, fn ->
+        {:ok,
+         %{
+           metrics: fetch_metrics(product, time_range, @default_metric)
+         }}
+      end)
 
     {:ok, socket}
   end
 
   @impl true
   def handle_event("change_tab", %{"tab" => tab}, socket) do
-    metrics = fetch_metrics(socket.assigns.product, socket.assigns.time_range, tab)
+    product = socket.assigns.product
+    time_range = socket.assigns.time_range
 
-    {:noreply, assign(socket, tab: tab, metrics: metrics)}
+    {:noreply,
+     socket
+     |> assign(tab: tab)
+     |> assign_async(:metrics, fn ->
+       {:ok, %{metrics: fetch_metrics(product, time_range, tab)}}
+     end)}
   end
 
   defp fetch_metrics(product, {start_time, end_time}, type) do

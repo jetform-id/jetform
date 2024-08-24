@@ -34,7 +34,10 @@
           Jumlah terjual
         </h3>
         <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">
-          <.delimited_number value={@order_stats[:paid_count]} />
+          <.async_result :let={stat} assign={@order_stats}>
+            <:loading><.spinner /></:loading>
+            <.delimited_number :if={stat} value={stat[:paid_count]} />
+          </.async_result>
         </span>
       </div>
     </div>
@@ -44,9 +47,13 @@
           Keuntungan Bersih
         </h3>
         <span class="text-2xl text-green-500 font-bold leading-none sm:text-3xl dark:text-white">
-          <.price value={
-            @order_stats[:gross_revenue] - @order_stats[:service_fee] - @order_stats[:gateway_fee]
-          } />
+          <.async_result :let={stat} assign={@order_stats}>
+            <:loading><.spinner /></:loading>
+            <.price
+              :if={stat}
+              value={stat[:gross_revenue] - stat[:service_fee] - stat[:gateway_fee]}
+            />
+          </.async_result>
         </span>
       </div>
     </div>
@@ -78,17 +85,22 @@
           <div data-popper-arrow></div>
         </div>
         <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">
-          <.delimited_number value={@order_stats[:free_count]} />
+          <.async_result :let={stat} assign={@order_stats}>
+            <:loading><.spinner /></:loading>
+            <.delimited_number :if={stat} value={stat[:free_count]} />
+          </.async_result>
         </span>
       </div>
-      <div
-        id="DownloadsChart"
-        phx-hook="DownloadsChart"
-        class="hidden md:block absolute z-0 w-full bottom-0"
-        data-height="60"
-        data-buckets={@free_download_buckets}
-      >
-      </div>
+      <.async_result :let={buckets} assign={@free_download_buckets}>
+        <div
+          :if={buckets}
+          id="DownloadsChart"
+          phx-hook="DownloadsChart"
+          class="hidden md:block absolute z-0 w-full bottom-0"
+          data-height="60"
+          data-buckets={buckets}
+        />
+      </.async_result>
     </div>
   </div>
 
@@ -223,7 +235,7 @@
                   </th>
                 </tr>
               </thead>
-              <tbody class="bg-white dark:bg-gray-800" id="order-list" phx-update="replace">
+              <tbody class="bg-white dark:bg-gray-800" id="order-list" phx-update="stream">
                 <tr
                   :for={{dom_id, order} <- @streams.orders}
                   id={dom_id}

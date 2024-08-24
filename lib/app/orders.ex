@@ -337,6 +337,10 @@ defmodule App.Orders do
 
   # ------------- PAYMENTS -------------
 
+  def list_payment_channels(only \\ ["qris", "va"]) do
+    App.payment_provider().list_payment_channels(only)
+  end
+
   def get_payment(id), do: Repo.get(Payment, id)
   def get_payment!(id), do: Repo.get!(Payment, id)
 

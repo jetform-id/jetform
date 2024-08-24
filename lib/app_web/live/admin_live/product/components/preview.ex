@@ -20,6 +20,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         product_variants={@product_variants}
         has_variants={@has_variants}
         selected_variant={@selected_variant}
+        payment_channels={@payment_channels}
         submit_event={if @preview, do: "fake_order", else: "create_order"}
         submit_target={@myself}
         enable_captcha={@enable_captcha}
@@ -41,7 +42,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
 
   def product_detail(assigns) do
     ~H"""
-    <div class="mx-auto max-w-xl rounded-md bg-white shadow-md mb-6 overflow-hidden">
+    <div class="mx-auto max-w-lg rounded-t-md bg-white shadow-md overflow-hidden">
       <%= if Enum.empty?(@images) do %>
         <img src="https://via.placeholder.com/1280x720" />
       <% else %>
@@ -78,7 +79,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           <%= raw(@product.description) %>
         </div>
 
-        <div :if={Products.has_details?(@product)} class="relative overflow-x-auto rounded-md mt-6">
+        <div :if={Products.has_details?(@product)} class="relative overflow-x-auto rounded-md mt-4">
           <table class="w-full text-sm text-left rtl:text-right text-gray-700 dark:text-gray-700">
             <tbody>
               <tr
@@ -114,12 +115,13 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
   attr :product_variants, :list, default: []
   attr :has_variants, :boolean, default: false
   attr :selected_variant, :map, default: nil
+  attr :payment_channels, :map, required: true
   attr :enable_captcha, :boolean, default: true
   attr :error, :string, default: nil
 
   def checkout_form(assigns) do
     ~H"""
-    <div class="mx-auto max-w-xl rounded-md bg-slate-50 shadow-md overflow-hidden">
+    <div class="mx-auto max-w-lg rounded-b-md bg-slate-50 shadow-md overflow-hidden">
       <div :if={@has_variants} class="grid gap-3 p-6 bg-white">
         <div :for={variant <- @product_variants} class="relative bg-primary-50 shadow-md">
           <input
@@ -151,18 +153,6 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         </div>
       </div>
 
-      <%!-- fixed price and variant price total --%>
-      <div
-        :if={!@has_variants && @product.price_type == :fixed}
-        class="p-6 flex items-center justify-between bg-white"
-      >
-        <p class="text-2xl font-medium text-slate-900">Total</p>
-        <p class="text-2xl font-bold text-slate-600">
-          <.price value={@total_price} />
-        </p>
-      </div>
-
-      <hr />
       <%!--  FORM --%>
       <div class="space-y-4">
         <.simple_form
@@ -173,9 +163,17 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           phx-submit={@submit_event}
           phx-target={@submit_target}
         >
+          <%!-- fixed price and variant price total --%>
+          <div
+            :if={!@has_variants && @product.price_type == :fixed}
+            class="p-4 px-6 bg-white border-t"
+          >
+            <p class="text-xl font-semibold text-slate-900"><span class="line-through font-normal text-sm text-slate-400 block">Rp. 150,000</span><.price value={@total_price} /></p>
+          </div>
+
           <div
             :if={!@has_variants && @product.price_type == :flexible}
-            class="mb-2 p-6 md:flex items-center justify-between bg-white border-b"
+            class="p-6 md:flex items-center justify-between bg-white border-t"
           >
             <div class="text-lg font-medium text-gray-900">
               Bayar suka-suka
@@ -192,7 +190,33 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
             </div>
           </div>
 
-          <div class="space-y-6 pt-4 px-6">
+          <%!-- payment channels --%>
+          <.async_result :if={@product.price_type != :free and @total_price > 0} :let={channels} assign={@payment_channels}>
+            <:loading>
+              <div class="flex justify-center text-sm text-slate-500 p-4 border-t">
+                <.spinner class="w-4 h-4 mr-2" />
+                <span>Memuat metode pembayaran...</span>
+              </div>
+            </:loading>
+
+            <div :if={channels} class="pt-3 px-6 border-t">
+              <%!-- <h3 class="text-lg font-semibold text-gray-900">Metode Pembayaran</h3> --%>
+              <div :for={category <- channels} class="pb-6">
+                <p class="text-sm font-semibold mb-2"><%= category.name %></p>
+                <div class="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                  <div
+                    :for={channel <- category.channels}
+                    class="flex items-center justify-center bg-white shadow-md rounded-md p-2 cursor-pointer border border-2 border-white hover:border hover:border-2 hover:border-primary-500"
+                  >
+                    <img src={channel.logo_url} alt={channel.name} title={channel.name}/>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </.async_result>
+
+          <hr />
+          <div class="space-y-6 pt-4 px-6 bg-white">
             <.input field={f[:customer_name]} type="text" label="Nama *" required />
             <div class="md:flex gap-4">
               <.input
@@ -297,6 +321,9 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
       end
       |> assign(:error, nil)
       |> assign(:checkout_changeset, Orders.change_order(%Orders.Order{}))
+      |> assign_async(:payment_channels, fn ->
+        {:ok, %{payment_channels: Orders.list_payment_channels()}}
+      end)
 
     {:ok, socket}
   end

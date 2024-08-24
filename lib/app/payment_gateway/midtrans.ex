@@ -30,6 +30,9 @@ defmodule App.PaymentGateway.Midtrans do
   end
 
   @impl true
+  def list_payment_channels(), do: {:ok, []}
+
+  @impl true
   def create_transaction(%{} = payload) do
     get_app_base_url()
     |> get_http_client()

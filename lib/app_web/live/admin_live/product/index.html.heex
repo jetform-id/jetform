@@ -126,7 +126,7 @@
               </td>
               <td class="p-4 space-x-4">
                 <.link
-                  phx-click={JS.push("delete", value: %{id: product.id})}
+                  phx-click={JS.push("delete", value: %{id: product.id}, page_loading: true)}
                   data-confirm="Produk yang sudah dihapus tidak bisa dikembalikan. Anda yakin ingin melanjutkan?"
                   class="inline-flex items-center text-sm text-center text-red-600 rounded-sm focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
                 >

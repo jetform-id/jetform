@@ -86,9 +86,6 @@ defmodule AppWeb.AdminLive.Product.Stats do
 
     time_filter = Map.get(params, "time", @default_time_filter)
     {start_time, end_time} = time_range(user, product, time_filter)
-
-    order_stats = Orders.stats_by_product_and_time(product, start_time)
-    free_download_buckets = free_download_buckets(product, start_time, end_time)
     {orders, pagination} = fetch_orders(user, product, start_time, params)
 
     orders_with_index =
@@ -104,11 +101,17 @@ defmodule AppWeb.AdminLive.Product.Stats do
         :time_filter_form,
         to_form(%{"time" => Map.get(params, "time", @default_time_filter)})
       )
+      |> assign(:start_time, start_time)
       |> assign(:pagination, pagination)
       |> stream(:orders, orders_with_index, reset: true)
-      |> assign(:order_stats, order_stats)
-      |> assign(:free_download_buckets, Jason.encode!(free_download_buckets))
-      |> assign(:start_time, start_time)
+      |> assign_async([:order_stats, :free_download_buckets], fn ->
+        {:ok,
+         %{
+           order_stats: Orders.stats_by_product_and_time(product, start_time),
+           free_download_buckets:
+             free_download_buckets(product, start_time, end_time) |> Jason.encode!()
+         }}
+      end)
 
     {:noreply, socket}
   end

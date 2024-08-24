@@ -3,7 +3,14 @@ defmodule App.PaymentGateway.Ipaymu do
 
   alias App.Repo
   alias App.Orders.{Order, Payment}
-  alias App.PaymentGateway.{ProviderInfo, CreateTransactionResult, GetTransactionResult}
+
+  alias App.PaymentGateway.{
+    ProviderInfo,
+    CreateTransactionResult,
+    GetTransactionResult,
+    PaymentChannel,
+    PaymentChannelCategory
+  }
 
   @sandbox_base_url "https://sandbox.ipaymu.com"
   @production_base_url "https://my.ipaymu.com"
@@ -24,6 +31,28 @@ defmodule App.PaymentGateway.Ipaymu do
 
   def config_value(key) when is_binary(key) do
     config_value(String.to_atom(key))
+  end
+
+  @impl true
+  def list_payment_channels(only \\ []) do
+    signature = compute_signature("GET")
+
+    get_http_client(signature)
+    |> Tesla.get("/api/v2/payment-channels")
+    |> case do
+      {:ok,
+       %Tesla.Env{
+         status: 200,
+         body: %{"Success" => true, "Data" => data}
+       }} ->
+        filter_categories(data, only)
+
+      {_, %Tesla.Env{status: status, body: body}} ->
+        {:error, %{"status" => status, "body" => body}}
+
+      error ->
+        error
+    end
   end
 
   @doc """
@@ -164,7 +193,7 @@ defmodule App.PaymentGateway.Ipaymu do
   Based on:
   https://storage.googleapis.com/ipaymu-docs/ipaymu-api/iPaymu-signature-documentation-v2.pdf
   """
-  def compute_signature(method, %{} = payload) do
+  def compute_signature(method, %{} = payload \\ %{}) do
     va = config_value(:va)
     api_key = config_value(:api_key)
 
@@ -181,6 +210,80 @@ defmodule App.PaymentGateway.Ipaymu do
     :crypto.mac(:hmac, :sha256, api_key, string_to_sign)
     |> Base.encode16()
     |> String.downcase()
+  end
+
+  defp filter_categories([_ | _] = channels, [_ | _] = only) do
+    # - skip channels without channels list
+    # - pick only active and online payment AND in the `only` list if provided
+    # - only can be a mix of category and category-channel: ["cc", "qris", "va:bri", "va:bni"]
+
+    {cat_filters, chan_filters} =
+      Enum.reduce(only, {[], %{}}, fn x, {category, channel} ->
+        case String.split(x, ":") do
+          [cat, cha] ->
+            {[cat | category], Map.put(channel, cat, Map.get(channel, cat, []) ++ [cha])}
+
+          [cat] ->
+            {[cat | category], channel}
+        end
+      end)
+
+    filter_cat? = not Enum.empty?(cat_filters)
+
+    channels
+    |> Enum.filter(&Map.has_key?(&1, "Channels"))
+    |> Enum.filter(fn c -> filter_cat? && Enum.member?(cat_filters, c["Code"]) end)
+    |> Enum.map(&filter_channels(&1, chan_filters))
+  end
+
+  defp filter_channels(
+         %{"Code" => code, "Name" => name, "Channels" => channels},
+         %{} = only
+       ) do
+    # %{
+    #   "Channels" => [
+    #     %{
+    #       "Code" => "cc",
+    #       "Description" => "Credit Card",
+    #       "FeatureStatus" => "active",
+    #       "HealthStatus" => "online",
+    #       "Logo" => "https://storage.googleapis.com/ipaymu-docs/assets/logo_cc.png",
+    #       "Name" => "Credit Card",
+    #       "PaymentInstructionsDoc" => "",
+    #       "TransactionFee" => %{
+    #         "ActualFee" => 2.8,
+    #         "ActualFeeType" => "PERCENT",
+    #         "AdditionalFee" => 5000
+    #       }
+    #     }
+    #   ],
+    #   "Code" => "cc",
+    #   "Description" => "Credit Card",
+    #   "Name" => "Credit Card"
+    # }
+    filter_chan? = Map.has_key?(only, code)
+
+    channels =
+      channels
+      |> Enum.filter(fn %{"Code" => c} ->
+        if filter_chan?, do: Enum.member?(only[code], c), else: true
+      end)
+      |> Enum.filter(&(Map.fetch!(&1, "FeatureStatus") == "active"))
+      |> Enum.filter(&(Map.fetch!(&1, "HealthStatus") == "online"))
+      |> Enum.map(fn %{"TransactionFee" => fee} = channel ->
+        %PaymentChannel{
+          code: channel["Code"],
+          name: channel["Name"],
+          description: channel["Description"],
+          logo_url: channel["Logo"],
+          doc_url: channel["PaymentInstructionsDoc"],
+          trx_fee: fee["ActualFee"],
+          trx_fee_type: fee["ActualFeeType"],
+          additional_fee: fee["AdditionalFee"]
+        }
+      end)
+
+    %PaymentChannelCategory{code: code, name: name, channels: channels}
   end
 
   defp get_http_client(signature) do
