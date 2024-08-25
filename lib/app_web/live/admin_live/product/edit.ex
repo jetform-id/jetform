@@ -112,6 +112,15 @@ defmodule AppWeb.AdminLive.Product.Edit do
   end
 
   # handle messages from child components
+  @impl true
+  def handle_info({:flash, :clear}, socket) do
+    {:noreply, clear_flash(socket)}
+  end
+
+  @impl true
+  def handle_info({:flash, type, message}, socket) do
+    {:noreply, put_flash(socket, type, message)}
+  end
 
   @impl true
   def handle_info(:images_updated, socket) do

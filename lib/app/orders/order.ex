@@ -9,8 +9,8 @@ defmodule App.Orders.Order do
   }
 
   @mail_regex ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/
-  @required_fields ~w(invoice_number valid_until customer_name customer_email)a
-  @optional_fields ~w(customer_phone status payment_type gateway_fee paid_at)a
+  @required_fields ~w(invoice_number valid_until customer_name customer_email sub_total total)a
+  @optional_fields ~w(customer_phone status discount_name discount_value service_fee payment_type gateway_fee paid_at)a
   @statuses ~w(pending paid expired cancelled free)a
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -32,9 +32,6 @@ defmodule App.Orders.Order do
     field :paid_at, :utc_datetime
     field :service_fee, :integer
     field :gateway_fee, :integer
-
-    field :plan, :map, virtual: true
-    field :price_type, :string, virtual: true
 
     belongs_to :user, App.Users.User
     belongs_to :product, App.Products.Product
@@ -69,10 +66,9 @@ defmodule App.Orders.Order do
     order
     |> changeset(attrs)
     |> validate_format(:customer_email, @mail_regex)
-    |> validate_product(attrs)
-    # need to be after validate_product
-    |> validate_product_variant(attrs)
-    |> validate_custom_price(attrs)
+    |> put_user(attrs)
+    |> put_product(attrs)
+    |> put_product_variant(attrs)
     |> put_status()
   end
 
@@ -80,99 +76,44 @@ defmodule App.Orders.Order do
     put_assoc(changeset, :contents, contents)
   end
 
-  defp validate_product(changeset, attrs) do
+  defp put_user(changeset, attrs) do
+    case Map.get(attrs, "user") do
+      nil ->
+        add_error(changeset, :user, "can't be blank")
+
+      user ->
+        put_assoc(changeset, :user, user)
+    end
+  end
+
+  defp put_product(changeset, attrs) do
     case Map.get(attrs, "product") do
       nil ->
         add_error(changeset, :product, "can't be blank")
 
       product ->
-        product = product |> App.Repo.preload(:user)
-        user = product.user
-        user_plan = App.Plans.get(user.plan)
-
         changeset
-        |> put_assoc(:user, user)
         |> put_assoc(:product, product)
         |> put_change(:product_name, product.name)
-        |> put_change(:sub_total, product.price)
-        |> put_change(:total, product.price)
-        |> put_change(:service_fee, user_plan.commission(product.price))
-        |> put_change(:plan, user_plan)
-        |> put_change(:price_type, product.price_type)
     end
   end
 
-  defp validate_product_variant(changeset, attrs) do
+  defp put_product_variant(changeset, attrs) do
     case Map.get(attrs, "product_variant") do
       nil ->
         changeset
 
       variant ->
-        user_plan = fetch_change!(changeset, :plan)
-
-        # variant product price_type isn't implemented yet (still based on price)
-        price_type =
-          case variant.price do
-            0 -> :free
-            _ -> :fixed
-          end
-
         changeset
         |> put_assoc(:product_variant, variant)
         |> put_change(:product_variant_name, variant.name)
-        |> put_change(:sub_total, variant.price)
-        |> put_change(:total, variant.price)
-        |> put_change(:service_fee, user_plan.commission(variant.price))
-        |> put_change(:price_type, price_type)
-    end
-  end
-
-  defp validate_custom_price(changeset, attrs) do
-    case Map.get(attrs, "custom_price") do
-      nil ->
-        changeset
-
-      custom_price ->
-        user_plan = fetch_change!(changeset, :plan)
-        total = fetch_change!(changeset, :total)
-
-        {price, error} =
-          case Integer.parse(custom_price) do
-            {price, _} -> {price, nil}
-            err -> {nil, err}
-          end
-
-        cond do
-          error != nil ->
-            add_error(changeset, :custom_price, "tidak valid")
-
-          price < total ->
-            add_error(changeset, :custom_price, "Minimum Rp. #{total}")
-
-          true ->
-            changeset
-            |> put_change(:sub_total, price)
-            |> put_change(:total, price)
-            |> put_change(:service_fee, user_plan.commission(price))
-        end
     end
   end
 
   defp put_status(changeset) do
-    # if price_type is :free
-    # - set status to :free and paid_at to now
-    # - overrides subtotal, total, service_fee to 0
-    case fetch_change(changeset, :price_type) do
-      {:ok, :free} ->
-        params = %{
-          "status" => "free",
-          "sub_total" => 0,
-          "total" => 0,
-          "service_fee" => 0,
-          "paid_at" => Timex.now()
-        }
-
-        cast(changeset, params, [:status, :sub_total, :total, :service_fee, :paid_at])
+    case fetch_field!(changeset, :total) do
+      0 ->
+        put_change(changeset, :status, :free)
 
       _ ->
         changeset

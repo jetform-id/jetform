@@ -84,13 +84,13 @@
             product={@product}
           />
           <.live_component
-            :if={@tab == "content" && !App.Products.has_variants?(@product)}
+            :if={@tab == "content" && !App.Products.has_variants?(@product, true)}
             module={AppWeb.AdminLive.Product.Components.ProductContent}
             id={@product.id}
             product={@product}
           />
           <.live_component
-            :if={@tab == "content" && App.Products.has_variants?(@product)}
+            :if={@tab == "content" && App.Products.has_variants?(@product, true)}
             module={AppWeb.AdminLive.Product.Components.VariantContent}
             id={@product.id}
             product={@product}

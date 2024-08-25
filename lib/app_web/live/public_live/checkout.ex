@@ -55,6 +55,16 @@ defmodule AppWeb.PublicLive.Checkout do
   # handle messages from Preview component
 
   @impl true
+  def handle_info({:flash, :clear}, socket) do
+    {:noreply, clear_flash(socket)}
+  end
+
+  @impl true
+  def handle_info({:flash, type, message}, socket) do
+    {:noreply, put_flash(socket, type, message)}
+  end
+
+  @impl true
   def handle_info({:new_order, order}, socket) do
     socket =
       case order.status in [:free, :paid] do
