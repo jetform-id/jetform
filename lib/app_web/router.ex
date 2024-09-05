@@ -162,8 +162,9 @@ defmodule AppWeb.Router do
     live_session :public,
       on_mount: {AppWeb.LiveAuth, :default},
       layout: {AppWeb.Layouts, :checkout} do
-      live "/invoice/:id", PublicLive.Invoice
-      live "/invoice/:id/thanks", PublicLive.Thanks
+      live "/invoices/:id", PublicLive.Invoices
+      live "/invoices/:id/thanks", PublicLive.Thanks
+      live "/payments/:id", PublicLive.Payments
       live "/p/:slug", PublicLive.Checkout
       live "/:username/:slug", PublicLive.Checkout
     end

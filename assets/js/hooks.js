@@ -1,3 +1,4 @@
+import ClipboardJS from "clipboard/dist/clipboard"
 import Glide from '@glidejs/glide'
 import ApexCharts from 'apexcharts'
 
@@ -11,6 +12,21 @@ let Hooks = {}
 //         }
 //     }
 // }
+
+Hooks.InitClipboard = {
+    init() {
+        const clipboard = new ClipboardJS('.clipboard')
+        clipboard.on('success', function(e) {
+            alert("Data disalin ke clipboard");
+        });
+    },
+    mounted() {
+        this.init()
+    },
+    updated() {
+        this.init()
+    }
+}
 
 Hooks.InitGlide = {
     init() {

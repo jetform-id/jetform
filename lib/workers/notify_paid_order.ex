@@ -46,7 +46,7 @@ defmodule Workers.NotifyPaidOrder do
     Apabila dalam 1 jam anda belum menerima email tersebut, silahkan hubungi kami dengan membalas email ini.
 
     Detail pembelian bisa anda lihat di halaman berikut:
-    #{base_url}/invoice/#{order.id}
+    #{base_url}/invoices/#{order.id}
 
     #{Utils.email_signature(user)}
     """
@@ -61,7 +61,7 @@ defmodule Workers.NotifyPaidOrder do
     Status: #{order.status} (LUNAS)
 
     Detail pembelian bisa anda lihat di halaman berikut:
-    #{base_url}/invoice/#{order.id}
+    #{base_url}/invoices/#{order.id}
     """
 
     # Mailgun doesn't support `deliver_many` so we have to send them one by one

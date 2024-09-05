@@ -211,14 +211,17 @@ defmodule App.Credits do
       where: w.status == :success,
       order_by: [desc: w.inserted_at]
     )
+    |> limit(1)
     |> Repo.one()
   end
 
   def get_unprocessed_withdrawal_by_user(user) do
     from(w in Withdrawal,
       where: w.user_id == ^user.id,
-      where: w.status == :pending or w.status == :submitted
+      where: w.status == :pending or w.status == :submitted,
+      order_by: [desc: w.inserted_at]
     )
+    |> limit(1)
     |> Repo.one()
   end
 

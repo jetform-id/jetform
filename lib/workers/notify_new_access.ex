@@ -44,7 +44,7 @@ defmodule Workers.NotifyNewAccess do
         :paid ->
           """
           Dan berikut adalah detail order anda:
-          #{base_url}/invoice/#{order.id}
+          #{base_url}/invoices/#{order.id}
           """
 
         _ ->

@@ -1,0 +1,3 @@
+#!/bin/bash -eu
+
+ngrok http 4000

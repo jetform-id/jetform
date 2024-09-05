@@ -1,11 +1,17 @@
-<div class="p-6">
-  <div class="mx-auto max-w-xl rounded-md bg-white shadow-md">
-    <div class="py-6">
-      <div class="px-6 pb-6 border-b">
-        <h2 class="text-2xl font-semibold" id="preview" phx-update="replace">
+<div class="p-6" id={"access-" <> @access.id} phx-hook="InitClipboard">
+  <div class="mx-auto max-w-xl rounded-md bg-white shadow-md overflow-hidden">
+    <div class="pb-6">
+      <div class="px-6 p-6 border-b bg-primary-600">
+        <h2 class="text-2xl text-white font-semibold" id="preview" phx-update="replace">
           <%= App.Orders.product_fullname(@order) %>
         </h2>
-        <p class="text-gray-400 font-semibold">INVOICE #<%= @order.invoice_number %></p>
+        <.link
+          :if={@order.status != :free}
+          navigate={~p"/invoices/#{@order.id}"}
+          class="text-primary-300 font-semibold cursor-pointer"
+        >
+          INVOICE #<%= @order.invoice_number %>
+        </.link>
       </div>
 
       <%!-- contents --%>
@@ -18,8 +24,6 @@
               <button
                 class="clipboard flex-none text-sm font-normal text-white bg-primary-600 px-2 py-1 rounded-md hover:bg-primary-700 border border-primary-600"
                 data-clipboard-text={content.text}
-                data-tooltip-target="tooltip-copied"
-                data-tooltip-trigger="click"
               >
                 <.icon name="hero-clipboard-document" /> Copy
               </button>
@@ -36,16 +40,6 @@
             <% end %>
           </span>
         </div>
-
-        <div
-          id="tooltip-copied"
-          role="tooltip"
-          class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-md shadow-sm opacity-0 tooltip dark:bg-gray-700"
-        >
-          Copied!
-          <div class="tooltip-arrow" data-popper-arrow></div>
-        </div>
-
         <p class="text-gray-500 mt-1 pr-4">
           <%= if content.type == :text do %>
             <pre class="text-gray-500 text-sm whitespace-pre-line bg-white p-4 rounded border shadow"><%= content.text %></pre>

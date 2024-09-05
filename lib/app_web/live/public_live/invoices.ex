@@ -1,4 +1,4 @@
-defmodule AppWeb.PublicLive.Invoice do
+defmodule AppWeb.PublicLive.Invoices do
   use AppWeb, :live_view
   alias App.Orders
   alias AppWeb.AdminLive.Product.Components.Commons
@@ -52,7 +52,7 @@ defmodule AppWeb.PublicLive.Invoice do
   def handle_event("create_payment", _params, socket) do
     # check if there's already an empty payment for this order
     # if there is, redirect to its `redirect_url`, otherwise create a new one
-    case Orders.get_empty_payment(socket.assigns.order) do
+    case Orders.get_pending_payment(socket.assigns.order) do
       nil ->
         case Orders.create_payment(socket.assigns.order) do
           {:ok, payment} ->
@@ -85,10 +85,10 @@ defmodule AppWeb.PublicLive.Invoice do
 
     case order.status do
       :free ->
-        {:noreply, redirect(socket, to: ~p"/invoice/#{order.id}/thanks")}
+        {:noreply, redirect(socket, to: ~p"/invoices/#{order.id}/thanks")}
 
       :paid ->
-        {:noreply, redirect(socket, to: ~p"/invoice/#{order.id}/thanks")}
+        {:noreply, redirect(socket, to: ~p"/invoices/#{order.id}/thanks")}
 
       :expired ->
         {:noreply, put_flash(socket, :error, "Order telah kadaluarsa!")}

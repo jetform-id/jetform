@@ -3,7 +3,10 @@ defmodule App.Orders.Payment do
   import Ecto.Changeset
 
   @fields [
-    :payload,
+    :provider,
+    :create_transaction_response,
+    :get_transaction_response,
+    :notification_payload,
     :type,
     :trx_id,
     :trx_status,
@@ -11,13 +14,17 @@ defmodule App.Orders.Payment do
     :status_code,
     :gross_amount,
     :redirect_url,
-    :fee
+    :fee,
+    :cancellation_reason
   ]
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "order_payments" do
-    field :payload, :string
+    field :provider, :string
+    field :create_transaction_response, :map
+    field :get_transaction_response, :map
+    field :notification_payload, :map
     field :type, :string
     field :trx_id, :string
     field :trx_status, :string
@@ -27,8 +34,10 @@ defmodule App.Orders.Payment do
     field :redirect_url, :string
     # payment gateway fee
     field :fee, :integer
+    field :cancellation_reason, :string
 
     belongs_to :order, App.Orders.Order
+    has_many :notifications, App.Orders.PaymentNotification
 
     timestamps(type: :utc_datetime)
   end

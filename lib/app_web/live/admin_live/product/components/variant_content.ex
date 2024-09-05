@@ -28,7 +28,7 @@ defmodule AppWeb.AdminLive.Product.Components.VariantContent do
     socket =
       socket
       |> assign(assigns)
-      |> stream(:variants, Products.list_variants_by_product(assigns.product))
+      |> stream(:variants, Products.list_variants_by_product(assigns.product, true))
 
     {:ok, socket}
   end

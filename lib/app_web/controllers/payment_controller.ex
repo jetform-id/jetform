@@ -10,9 +10,9 @@ defmodule AppWeb.PaymentController do
     order = payment.order
 
     if order.status == :paid do
-      redirect(conn, to: ~p"/invoice/#{order.id}/thanks")
+      redirect(conn, to: ~p"/invoices/#{order.id}/thanks")
     else
-      redirect(conn, to: ~p"/invoice/#{order.id}?#{params}")
+      redirect(conn, to: ~p"/invoices/#{order.id}?#{params}")
     end
   end
 
@@ -24,11 +24,16 @@ defmodule AppWeb.PaymentController do
   - get transaction status from Ipaymu
   - pass to downstream handler
   """
-  def ipaymu_notification(conn, %{"payment_id" => payment_id, "trx_id" => trx_id}) do
+  def ipaymu_notification(conn, %{"payment_id" => payment_id, "trx_id" => trx_id} = payload) do
     payment = Orders.get_payment!(payment_id)
 
-    with {:ok, trx} <- Ipaymu.get_transaction(trx_id),
-         {:ok, _payment} <- Orders.update_payment(payment, Map.from_struct(trx)) do
+    # payment notification logger
+    payment_notification = Orders.change_payment_notification(conn, payment)
+
+    with {:ok, _} <- Orders.create_payment_notification(payment_notification),
+         {:ok, result} <- Ipaymu.get_transaction(trx_id),
+         attrs <- Orders.to_payment_attrs(result) |> Map.put("notification_payload", payload),
+         {:ok, _payment} <- Orders.update_payment(payment, attrs) do
       send_resp(conn, 200, "ok")
     else
       {:error, err} ->
@@ -42,14 +47,14 @@ defmodule AppWeb.PaymentController do
     order = payment.order
 
     if order.status == :paid do
-      redirect(conn, to: ~p"/invoice/#{order.id}/thanks")
+      redirect(conn, to: ~p"/invoices/#{order.id}/thanks")
     else
       params =
         params
         |> Map.drop(["order_id"])
         |> Map.put("payment_id", payment_id)
 
-      redirect(conn, to: ~p"/invoice/#{order.id}?#{params}")
+      redirect(conn, to: ~p"/invoices/#{order.id}?#{params}")
     end
   end
 

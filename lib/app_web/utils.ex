@@ -13,9 +13,9 @@ defmodule AppWeb.Utils do
   def admin_menus do
     [
       %{
-        title: "Penjualan",
+        title: "Dashboard",
         path: ~p"/",
-        icon: "hero-receipt-percent"
+        icon: "hero-home"
       },
       # %{title: "Dashboard", path: ~p"/", icon: "hero-chart-pie"},
       %{

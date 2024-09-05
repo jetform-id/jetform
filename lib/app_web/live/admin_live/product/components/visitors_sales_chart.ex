@@ -8,7 +8,17 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsSalesChart do
   @impl true
   def render(assigns) do
     ~H"""
-    <div id="VisitorsSalesChart" phx-hook="VisitorsSalesChart" data-buckets={@buckets}></div>
+    <div>
+      <.async_result :let={buckets} assign={@buckets}>
+        <:loading><.spinner /></:loading>
+        <div
+          :if={buckets}
+          id="VisitorsSalesChart"
+          phx-hook="VisitorsSalesChart"
+          data-buckets={buckets}
+        />
+      </.async_result>
+    </div>
     """
   end
 
@@ -23,29 +33,35 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsSalesChart do
 
     end_time = Timex.now()
 
+    socket =
+      socket
+      |> assign(assigns)
+      |> assign_async(:buckets, fn ->
+        {:ok,
+         %{
+           buckets: buckets(product, start_time, end_time) |> Jason.encode!()
+         }}
+      end)
+
+    {:ok, socket}
+  end
+
+  defp buckets(product, start_time, end_time) do
     # get the data from the database, format and convert it to a map
     sales = sales_buckets(product, start_time)
     pageviews = cached_pageviews_buckets(product)
 
     # create the buckets and fill it with the data
-    buckets =
-      Timex.Interval.new(
-        from: start_time,
-        until: end_time,
-        steps: [days: 1]
-      )
-      |> Enum.to_list()
-      |> Enum.map(fn date ->
-        date_str = Timex.format!(date, "%Y-%m-%d", :strftime)
-        %{x: date, y1: Map.get(pageviews, date_str, 0), y2: Map.get(sales, date_str, 0)}
-      end)
-
-    socket =
-      socket
-      |> assign(assigns)
-      |> assign(:buckets, Jason.encode!(buckets))
-
-    {:ok, socket}
+    Timex.Interval.new(
+      from: start_time,
+      until: end_time,
+      steps: [days: 1]
+    )
+    |> Enum.to_list()
+    |> Enum.map(fn date ->
+      date_str = Timex.format!(date, "%Y-%m-%d", :strftime)
+      %{x: date, y1: Map.get(pageviews, date_str, 0), y2: Map.get(sales, date_str, 0)}
+    end)
   end
 
   defp sales_buckets(product, start_time) do

@@ -30,72 +30,19 @@ defmodule App.PaymentGateway.Midtrans do
   end
 
   @impl true
-  def create_transaction(%{} = payload) do
+  def list_channels(), do: {:ok, []}
+
+  @impl true
+  def create_redirect_transaction(%{} = payload) do
     get_app_base_url()
     |> get_http_client()
     |> Tesla.post("/snap/v1/transactions", payload)
     |> case do
-      {:ok, %{body: %{"token" => token, "redirect_url" => redirect_url}}} ->
-        {:ok, CreateTransactionResult.new(token, redirect_url)}
+      {:ok, %{body: %{"token" => token, "redirect_url" => redirect_url} = data}} ->
+        {:ok, CreateTransactionResult.new(token, redirect_url, data)}
 
       {:ok, %{body: %{"error_messages" => errors}}} ->
         {:error, errors}
-
-      error ->
-        error
-    end
-  end
-
-  @impl true
-  def cancel_transaction(id) do
-    get_api_base_url()
-    |> get_http_client()
-    |> Tesla.post("/v2/#{id}/cancel", %{})
-    |> case do
-      {:ok, body} -> {:ok, body}
-      error -> error
-    end
-  end
-
-  @impl true
-  def get_transaction(id) do
-    get_api_base_url()
-    |> get_http_client()
-    |> Tesla.get("/v2/#{id}/status")
-    |> case do
-      {:ok, %{body: %{"transaction_id" => _} = body}} ->
-        payment_type = body["payment_type"]
-        {gross_amount, _} = body["gross_amount"] |> Integer.parse()
-
-        transaction_status = body["transaction_status"]
-        status_code = body["status_code"]
-        fraud_status = body["fraud_status"]
-
-        # paid: if all conditions are met (status, fraud_status, and status_code)
-        trx_status =
-          with true <- transaction_status in ["settlement", "capture"],
-               "200" <- status_code,
-               true <- fraud_status in ["accept", nil] do
-            "paid"
-          else
-            _ -> transaction_status
-          end
-
-        result = %GetTransactionResult{
-          payload: Jason.encode!(body),
-          type: payment_type,
-          trx_id: body["transaction_id"],
-          trx_status: trx_status,
-          fraud_status: fraud_status,
-          status_code: status_code,
-          gross_amount: gross_amount,
-          fee: calculate_fee(gross_amount, payment_type)
-        }
-
-        {:ok, result}
-
-      {:ok, %{body: %{"status_message" => status_message}}} ->
-        {:error, status_message}
 
       error ->
         error
@@ -109,7 +56,7 @@ defmodule App.PaymentGateway.Midtrans do
   well as the transaction expiry time to the value of `expiry_in_minutes`.
   """
   @impl true
-  def create_transaction_payload(%Order{} = order, %Payment{} = payment, options \\ []) do
+  def create_redirect_transaction_payload(%Order{} = order, %Payment{} = payment, options \\ []) do
     order = Repo.preload(order, :product)
     expiry_in_minutes = Keyword.get(options, :expiry_in_minutes, 30)
 
@@ -139,9 +86,72 @@ defmodule App.PaymentGateway.Midtrans do
         "duration" => expiry_in_minutes,
         "unit" => "minutes"
       },
-      "enabled_payments" => config_value(:enabled_payments),
+      "enabled_payments" => config_value(:payment_channels),
       "custom_field1" => order.product.user_id
     }
+  end
+
+  @impl true
+  def create_direct_transaction(%{} = _payload), do: {:ok, %{}}
+
+  @impl true
+  def create_direct_transaction_payload(%Order{} = _order, %Payment{} = _payment, _options \\ []),
+    do: %{}
+
+  @impl true
+  def cancel_transaction(id) do
+    get_api_base_url()
+    |> get_http_client()
+    |> Tesla.post("/v2/#{id}/cancel", %{})
+    |> case do
+      {:ok, body} -> {:ok, body}
+      error -> error
+    end
+  end
+
+  @impl true
+  def get_transaction(id) do
+    get_api_base_url()
+    |> get_http_client()
+    |> Tesla.get("/v2/#{id}/status")
+    |> case do
+      {:ok, %{body: %{"transaction_id" => _} = body}} ->
+        payment_type = body["payment_type"]
+        {gross_amount, _} = body["gross_amount"] |> Integer.parse()
+
+        transaction_status = body["transaction_status"]
+        status_code = body["status_code"]
+        fraud_status = body["fraud_status"]
+
+        # paid: if all conditions are met (status, fraud_status, and status_code)
+        status =
+          with true <- transaction_status in ["settlement", "capture"],
+               "200" <- status_code,
+               true <- fraud_status in ["accept", nil] do
+            "paid"
+          else
+            _ -> transaction_status
+          end
+
+        result = %GetTransactionResult{
+          data: body,
+          type: payment_type,
+          id: body["transaction_id"],
+          status: status,
+          fraud_status: fraud_status,
+          status_code: status_code,
+          gross_amount: gross_amount,
+          fee: calculate_fee(gross_amount, payment_type)
+        }
+
+        {:ok, result}
+
+      {:ok, %{body: %{"status_message" => status_message}}} ->
+        {:error, status_message}
+
+      error ->
+        error
+    end
   end
 
   @doc """
@@ -255,7 +265,7 @@ defmodule App.PaymentGateway.Midtrans.Test do
     # "enabled_payments" => ["other_qris"]
   }
 
-  def create_transaction do
-    App.PaymentGateway.Midtrans.create_transaction(@transaction_payload)
+  def create_redirect_transaction do
+    App.PaymentGateway.Midtrans.create_redirect_transaction(@transaction_payload)
   end
 end

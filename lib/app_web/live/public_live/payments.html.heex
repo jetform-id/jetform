@@ -1,0 +1,297 @@
+<div
+  :if={@status == :invalid}
+  class="flex flex-col items-center justify-center h-screen bg-red-100"
+>
+  <.icon name="hero-exclamation-triangle" class="text-red-400 w-40 h-40" />
+  <p class="text-xl text-red-400 font-medium">Link tidak valid.</p>
+</div>
+
+<div
+  :if={@status == :expired}
+  class="flex flex-col items-center justify-center h-screen bg-red-100"
+>
+  <.icon name="hero-exclamation-triangle" class="text-red-400 w-40 h-40" />
+  <p class="text-xl text-red-400 font-medium">Link kadaluarsa.</p>
+</div>
+
+<div :if={@status == :ok} class="p-1 md:p-6">
+  <div class="mx-auto max-w-lg rounded-md overflow-hidden bg-white">
+    <p class="flex justify-between p-3 text-sm text-white bg-primary-600">
+      <.link navigate={~p"/invoices/#{@payment.order_id}?payment_id=#{@payment.id}"}>
+        <.icon name="hero-arrow-long-left" /> Lihat invoice
+      </.link>
+      <span class="text-sm text-primary-300">Ref. ID: <%= @payment_session[:trx_id] %></span>
+    </p>
+    <div class="p-6 space-y-4">
+      <div>
+        <%!-- Ipaymu --%>
+        <div
+          :if={@payment_session[:provider] == "ipaymu"}
+          id="payment-details"
+          phx-update="ignore"
+          phx-hook="InitClipboard"
+        >
+          <%!-- QRIS --%>
+          <div :if={@payment_session[:method] == "qris"}>
+            <div class="sm:flex sm:justify-between items-center text-center px-3">
+              <div class="text-2xl font-semibold text-slate-700">
+                QRIS <%= @payment_session[:name] %>
+              </div>
+              <div class="text-2xl font-semibold text-slate-700">
+                <.price value={@payment_session[:amount]} />
+              </div>
+            </div>
+            <img
+              src={App.gen_qr_code(@payment_session[:number])}
+              alt="QRIS Code"
+              class="w-full my-4 border shadow-md rounded-md"
+            />
+            <img src={~p"/images/qris-app.png"} alt="Supported apps" />
+          </div>
+
+          <%!-- VA --%>
+          <div :if={@payment_session[:method] == "va"} class="space-y-4">
+            <img
+              :if={@payment_channel != nil && @payment_channel.logo_url != nil}
+              src={@payment_channel.logo_url}
+              alt={"Logo bank " <> @payment_channel.name}
+              class="mx-auto max-w-xs"
+            />
+            <p class="p-2 px-6 text-slate-600 text-center">
+              Anda dapat melakukan pembayaran melalui ATM, Mobile Banking atau Internet Banking.
+            </p>
+            <div class="border shadow-md rounded-md p-4 px-6 bg-slate-50">
+              <div class="md:flex md:justify-between text-lg py-2 border-b border-dashed">
+                <div class="text-slate-500">No. Rekening</div>
+                <div
+                  class="clipboard text-slate-700 font-semibold cursor-pointer"
+                  title="Klik untuk meng-copy"
+                  data-clipboard-text={@payment_session[:number]}
+                >
+                  <%= @payment_session[:number] %>
+                  <.icon
+                    name="hero-document-duplicate-solid"
+                    class="hidden md:inline-block ml-2 font-semibold text-slate-400 p-2"
+                  />
+                </div>
+              </div>
+              <div class="md:flex md:justify-between text-lg py-2 border-b border-dashed">
+                <div class="text-slate-500">Jumlah transfer</div>
+                <div
+                  class="clipboard text-slate-700 font-semibold cursor-pointer"
+                  title="Klik untuk meng-copy"
+                  data-clipboard-text={@payment_session[:amount]}
+                >
+                  <.price value={@payment_session[:amount]} />
+                  <.icon
+                    name="hero-document-duplicate-solid"
+                    class="hidden md:inline-block ml-2 font-semibold text-slate-400 p-2"
+                  />
+                </div>
+              </div>
+              <div class="md:flex md:justify-between text-lg py-2">
+                <div class="text-slate-500">Nama</div>
+                <div
+                  class="clipboard text-slate-700 font-semibold cursor-pointer"
+                  title="Klik untuk meng-copy"
+                  data-clipboard-text={@payment_session[:name]}
+                >
+                  <%= @payment_session[:name] %>
+                  <.icon
+                    name="hero-document-duplicate-solid"
+                    class="hidden md:inline-block ml-2 font-semibold text-slate-400 p-2"
+                  />
+                </div>
+              </div>
+              <p
+                :if={@payment_channel != nil && @payment_channel.doc_url != nil}
+                class="text-xs text-slate-400 py-2 border-t border-dashed"
+              >
+                Detail cara pembayaran bisa dilihat <.link
+                  href={@payment_channel.doc_url}
+                  target="_blank"
+                  class="text-primary-400 underline"
+                >di sini</.link>.
+              </p>
+            </div>
+          </div>
+        </div>
+        <%!-- End Ipaymu --%>
+
+        <div class="mt-4 bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-2 rounded  border border-dashed border-yellow-300">
+          <.icon name="hero-hand-raised" /> Harap melakukan pembayaran dalam
+          <span class="font-bold text-red-600"><.seconds_to_time value={@expire_in_secs} /></span>
+        </div>
+      </div>
+      <div :if={@allow_switch_or_cancel} class="space-y-2">
+        <button
+          phx-click="switch_payment_modal"
+          phx-disable-with="Loading..."
+          class="w-full items-center justify-center rounded-md font-normal transition-all duration-200 ease-in-out bg-slate-500 p-3 text-sm text-white focus:shadow hover:bg-slate-600"
+        >
+          Ganti Metode Pembayaran
+        </button>
+        <button
+          phx-click="cancel_payment_modal"
+          phx-disable-with="Loading..."
+          class="w-full flex items-start justify-center text-red-600 text-xs"
+        >
+          Batalkan pembayaran
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <p class="text-center pt-4">
+    <.link
+      navigate={App.payment_provider().info().website}
+      target="_blank"
+      class="mx-auto justify-center items-start text-xs font-normal text-slate-400 rounded-md border border-slate-400 p-1 px-2"
+    >
+      <.icon name="hero-shield-check" class="w-4 h-4" />
+      Secure payment by <%= App.payment_provider().info().name %>
+    </.link>
+  </p>
+</div>
+
+<.modal
+  :if={@show_switch_payment_modal}
+  show
+  on_cancel={JS.push("close_modal")}
+  id="switch-payment-modal"
+  width="max-w-xl"
+>
+  <.async_result :let={channels} assign={@payment_channels}>
+    <:loading>
+      <div class="flex justify-center text-sm text-slate-500 p-4">
+        <.spinner class="w-4 h-4 mr-2" />
+        <span>Memuat metode pembayaran...</span>
+      </div>
+    </:loading>
+
+    <div :if={channels}>
+      <form phx-submit="switch_payment" class="flex flex-col">
+        <%!-- <h3 class="text-lg font-semibold text-gray-900">Metode Pembayaran</h3> --%>
+        <div :for={category <- channels} class="pb-6">
+          <p class="text-sm font-semibold mb-2"><%= category.name %></p>
+          <div class={[
+            "grid gap-3",
+            category.code == "qris" && "grid-cols-1",
+            category.code != "qris" && "grid-cols-2 md:grid-cols-3"
+          ]}>
+            <div
+              :for={channel <- category.channels}
+              class={[
+                "flex items-center justify-center bg-white shadow rounded-md p-2 border"
+              ]}
+            >
+              <label for={channel.code} class="cursor-pointer flex items-center">
+                <input
+                  type="radio"
+                  name="payment_channel"
+                  id={channel.code}
+                  value={category.code <> ":" <> channel.code}
+                  checked={channel.code == @payment_channel.code}
+                  class="flex-none"
+                />
+                <div class="flex-1 p-2">
+                  <img src={channel.logo_url} alt={channel.name} title={channel.name} />
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+        <button
+          type="submit"
+          phx-disable-with="Mengganti..."
+          class="w-full rounded-md font-normal transition-all duration-200 ease-in-out bg-primary-600 p-3 px-6 text-white focus:shadow hover:bg-primary-700"
+        >
+          Ganti Sekarang
+        </button>
+      </form>
+    </div>
+  </.async_result>
+</.modal>
+
+<.modal
+  :if={@show_cancel_payment_modal}
+  show
+  on_cancel={JS.push("close_modal")}
+  id="cancel-payment-modal"
+  width="max-w-xl"
+>
+  <div class="space-y-3">
+    <p class="text-lg text-slate-700 font-semibold">Batalkan Pembayaran?</p>
+    <p class="text-slate-500">
+      Membatalkan pembayaran akan otomatis
+      <span class="font-semibold">
+        membatalkan order beserta penawaran khusus, diskon, atau promo
+      </span>
+      yang terkait pada order Anda.
+    </p>
+
+    <p class="text-slate-600 text-sm border border-yellow-300 p-4 rounded-md shadow-md bg-yellow-100">
+      Mengalami kesulitan dengan metode pembayaran yang Anda pilih? Tenang! Anda bisa menggantinya dengan yang lain, <.link
+        class="text-primary-600 underline"
+        phx-click="switch_payment_modal"
+        phx-disable-with="loading..."
+      >klik di sini</.link>.
+    </p>
+
+    <p class="text-base text-slate-700 font-semibold pt-4">Alasan pembatalan</p>
+
+    <p class="text-slate-500 text-sm">
+      Demi meningkatkan kualitas layanan, mohon berikan alasan pembatalan pembayaran Anda.
+    </p>
+
+    <form phx-submit="cancel_payment" class="flex flex-col space-y-1">
+      <label
+        for="reason-1"
+        class="text-slate-600 block"
+        phx-click={JS.add_class("hidden", to: "#reason-text")}
+      >
+        <input type="radio" name="reason" id="reason-1" value="Gagal saat melakukan pembayaran" />
+        Gagal saat melakukan pembayaran
+      </label>
+      <label
+        for="reason-2"
+        class="text-slate-600 block"
+        phx-click={JS.add_class("hidden", to: "#reason-text")}
+      >
+        <input type="radio" name="reason" id="reason-2" value="Ingin mengubah pesanan" />
+        Ingin mengubah pesanan
+      </label>
+      <label
+        for="reason-3"
+        class="text-slate-600 block"
+        phx-click={JS.add_class("hidden", to: "#reason-text")}
+      >
+        <input type="radio" name="reason" id="reason-3" value="Ingin mengubah data pembeli" />
+        Ingin mengubah data pembeli
+      </label>
+      <label
+        for="reason-4"
+        class="text-slate-600 block"
+        phx-click={JS.remove_class("hidden", to: "#reason-text")}
+      >
+        <input type="radio" name="reason" id="reason-4" value="others" /> Lainnya
+      </label>
+      <textarea
+        id="reason-text"
+        name="reason-text"
+        class="border border-slate-300 rounded-md p-2 hidden"
+        placeholder="Alasan lainnya..."
+      />
+
+      <div class="flex justify-end pt-4 text-sm">
+        <button
+          type="submit"
+          phx-disable-with="Membatalkan..."
+          class="rounded-md font-normal transition-all duration-200 ease-in-out bg-red-600 p-3 px-6 text-white focus:shadow hover:bg-red-700"
+        >
+          Lanjut Batalkan
+        </button>
+      </div>
+    </form>
+  </div>
+</.modal>

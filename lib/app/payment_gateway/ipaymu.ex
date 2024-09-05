@@ -1,9 +1,15 @@
 defmodule App.PaymentGateway.Ipaymu do
   @behaviour App.PaymentGateway.Provider
 
-  alias App.Repo
   alias App.Orders.{Order, Payment}
-  alias App.PaymentGateway.{ProviderInfo, CreateTransactionResult, GetTransactionResult}
+
+  alias App.PaymentGateway.{
+    ProviderInfo,
+    CreateTransactionResult,
+    GetTransactionResult,
+    PaymentChannel,
+    PaymentChannelCategory
+  }
 
   @sandbox_base_url "https://sandbox.ipaymu.com"
   @production_base_url "https://my.ipaymu.com"
@@ -24,6 +30,28 @@ defmodule App.PaymentGateway.Ipaymu do
 
   def config_value(key) when is_binary(key) do
     config_value(String.to_atom(key))
+  end
+
+  @impl true
+  def list_channels() do
+    signature = compute_signature("GET")
+
+    get_http_client(signature)
+    |> Tesla.get("/api/v2/payment-channels")
+    |> case do
+      {:ok,
+       %{
+         status: 200,
+         body: %{"Success" => true, "Data" => data}
+       }} ->
+        clean_channels(data)
+
+      {_, %{status: status, body: body}} ->
+        {:error, %{"status" => status, "body" => body}}
+
+      error ->
+        error
+    end
   end
 
   @doc """
@@ -72,7 +100,7 @@ defmodule App.PaymentGateway.Ipaymu do
     |> Tesla.post("/api/v2/transaction", payload)
     |> case do
       {:ok,
-       %Tesla.Env{
+       %{
          status: 200,
          body: %{"Success" => true, "Data" => %{"Status" => status} = data}
        }} ->
@@ -92,10 +120,10 @@ defmodule App.PaymentGateway.Ipaymu do
           end
 
         result = %GetTransactionResult{
-          payload: Jason.encode!(data),
+          data: data,
           type: data["TypeDesc"],
-          trx_id: data["TransactionId"] |> to_string(),
-          trx_status: trx_status,
+          id: data["TransactionId"] |> to_string(),
+          status: trx_status,
           status_code: to_string(status),
           gross_amount: data["Amount"],
           fee: data["Fee"]
@@ -103,7 +131,7 @@ defmodule App.PaymentGateway.Ipaymu do
 
         {:ok, result}
 
-      {_, %Tesla.Env{status: status, body: body}} ->
+      {_, %{status: status, body: body}} ->
         {:error, %{"status" => status, "body" => body}}
     end
   end
@@ -112,20 +140,20 @@ defmodule App.PaymentGateway.Ipaymu do
   def cancel_transaction(_id), do: {:ok, :noop}
 
   @impl true
-  def create_transaction(%{} = payload) do
+  def create_redirect_transaction(%{} = payload) do
     signature = compute_signature("POST", payload)
 
     get_http_client(signature)
     |> Tesla.post("/api/v2/payment", payload)
     |> case do
       {:ok,
-       %Tesla.Env{
+       %{
          status: 200,
-         body: %{"Success" => true, "Data" => %{"SessionID" => sess_id, "Url" => url}}
+         body: %{"Success" => true, "Data" => %{"SessionID" => sess_id, "Url" => url} = data}
        }} ->
-        {:ok, CreateTransactionResult.new(sess_id, url)}
+        {:ok, CreateTransactionResult.new(sess_id, url, data)}
 
-      {_, %Tesla.Env{status: status, body: body}} ->
+      {_, %{status: status, body: body}} ->
         {:error, %{"status" => status, "body" => body}}
 
       error ->
@@ -134,8 +162,11 @@ defmodule App.PaymentGateway.Ipaymu do
   end
 
   @impl true
-  def create_transaction_payload(%Order{} = order, %Payment{} = payment, _options \\ []) do
-    order = Repo.preload(order, :product)
+  def create_redirect_transaction_payload(%Order{} = order, %Payment{} = payment, options \\ []) do
+    global_payment_channel = config_value(:payment_channel)
+    payment_channel = Keyword.get(options, :payment_channel)
+    # default 2h
+    expired = trunc(Keyword.get(options, :expiry_in_minutes, 120) / 60)
 
     payload = %{
       referenceId: payment.id,
@@ -148,23 +179,90 @@ defmodule App.PaymentGateway.Ipaymu do
       cancelUrl: "#{AppWeb.Utils.base_url()}/api/payment/ipaymu/#{payment.id}/redirect",
       buyerName: order.customer_name,
       buyerPhone: order.customer_phone,
-      buyerEmail: order.customer_email
+      buyerEmail: order.customer_email,
+      expired: expired
     }
 
-    case config_value(:payment_method) do
-      "auto" ->
-        payload
-
-      method ->
+    cond do
+      payment_channel != nil ->
+        # in case payment_channel in "method:channel" format
+        [method | _] = String.split(payment_channel, ":")
         Map.put(payload, "paymentMethod", method)
+
+      global_payment_channel != "auto" ->
+        Map.put(payload, "paymentMethod", global_payment_channel)
+
+      true ->
+        payload
     end
+  end
+
+  @impl true
+  def create_direct_transaction(%{expired: expired_hr} = payload) do
+    signature = compute_signature("POST", payload)
+
+    get_http_client(signature)
+    |> Tesla.post("/api/v2/payment/direct", payload)
+    |> case do
+      {:ok, %{status: 200, body: %{"Success" => true, "Data" => data}}} ->
+        payment_id = data["ReferenceId"]
+        trx_id = data["TransactionId"] |> to_string()
+
+        payload = %{
+          provider: id(),
+          method: data["Via"] |> String.downcase(),
+          channel: data["Channel"] |> String.downcase(),
+          name: data["PaymentName"],
+          number: data["PaymentNo"],
+          qr_url: data["QrImage"],
+          amount: data["Total"],
+          trx_id: trx_id,
+          expired: data["Expired"],
+          token_expired_at: Timex.now() |> Timex.shift(hours: expired_hr)
+        }
+
+        max_age = expired_hr * 60 * 60
+        token = Phoenix.Token.sign(AppWeb.Endpoint, "payment", payload, max_age: max_age)
+        url = "#{AppWeb.Utils.base_url()}/payments/#{payment_id}?token=#{token}"
+        {:ok, CreateTransactionResult.new(trx_id, url, data)}
+
+      {_, %{status: status, body: body}} ->
+        {:error, %{"status" => status, "body" => body}}
+
+      error ->
+        error
+    end
+  end
+
+  @impl true
+  def create_direct_transaction_payload(%Order{} = order, %Payment{} = payment, options \\ []) do
+    [method, channel] =
+      Keyword.get(options, :payment_channel, "qris:mpm") |> String.split(":")
+
+    # default 2h
+    expired = trunc(Keyword.get(options, :expiry_in_minutes, 120) / 60)
+
+    %{
+      name: order.customer_name,
+      phone: order.customer_phone,
+      email: order.customer_email,
+      amount: order.total,
+      notifyUrl: "#{AppWeb.Utils.base_url()}/api/payment/ipaymu/#{payment.id}/notification",
+      comments: App.Orders.product_fullname(order),
+      referenceId: payment.id,
+      expired: expired,
+      paymentMethod: method,
+      paymentChannel: channel,
+      feeDirection: Keyword.get(options, :fee_direction, "MERCHANT"),
+      escrow: Keyword.get(options, :escrow, 0)
+    }
   end
 
   @doc """
   Based on:
   https://storage.googleapis.com/ipaymu-docs/ipaymu-api/iPaymu-signature-documentation-v2.pdf
   """
-  def compute_signature(method, %{} = payload) do
+  def compute_signature(method, %{} = payload \\ %{}) do
     va = config_value(:va)
     api_key = config_value(:api_key)
 
@@ -181,6 +279,73 @@ defmodule App.PaymentGateway.Ipaymu do
     :crypto.mac(:hmac, :sha256, api_key, string_to_sign)
     |> Base.encode16()
     |> String.downcase()
+  end
+
+  def filter_channels([], _options), do: []
+
+  def filter_channels([_ | _] = channels, options) do
+    # - only can be a mix of category and category-channel: ["cc", "qris", "va:bri", "va:bni"]
+    only = Keyword.get(options, :only, [])
+
+    # build the filters
+    {cat_filters, chan_filters} =
+      Enum.reduce(only, {[], %{}}, fn x, {category, channel} ->
+        case String.split(x, ":") do
+          [cat, cha] ->
+            {[cat | category], Map.put(channel, cat, Map.get(channel, cat, []) ++ [cha])}
+
+          [cat] ->
+            {[cat | category], channel}
+        end
+      end)
+
+    filter_cat? = not Enum.empty?(cat_filters)
+
+    channels
+    |> Enum.filter(fn cat ->
+      # filter the categories
+      if filter_cat?, do: Enum.member?(cat_filters, cat.code), else: true
+    end)
+    |> Enum.map(fn cat ->
+      # filter the channels in the category
+      filter_chan? = Map.has_key?(chan_filters, cat.code)
+
+      chans =
+        cat.channels
+        |> Enum.filter(fn chan ->
+          if filter_chan?, do: Enum.member?(chan_filters[cat.code], chan.code), else: true
+        end)
+
+      %{cat | channels: chans}
+    end)
+  end
+
+  defp clean_channels(channels) do
+    channels
+    |> Enum.filter(&Map.has_key?(&1, "Channels"))
+    |> Enum.map(&clean_category/1)
+    |> Enum.reject(fn c -> Enum.empty?(c.channels) end)
+  end
+
+  defp clean_category(%{"Code" => code, "Name" => name, "Channels" => channels}) do
+    channels =
+      channels
+      |> Enum.filter(&(Map.fetch!(&1, "FeatureStatus") == "active"))
+      # |> Enum.filter(&(Map.fetch!(&1, "HealthStatus") == "online"))
+      |> Enum.map(fn %{"TransactionFee" => fee} = channel ->
+        %PaymentChannel{
+          code: channel["Code"],
+          name: channel["Name"],
+          description: channel["Description"],
+          logo_url: if(code == "qris", do: "/images/qris-app.png", else: channel["Logo"]),
+          doc_url: channel["PaymentInstructionsDoc"],
+          trx_fee: fee["ActualFee"],
+          trx_fee_type: fee["ActualFeeType"],
+          additional_fee: fee["AdditionalFee"]
+        }
+      end)
+
+    %PaymentChannelCategory{code: code, name: name, channels: channels}
   end
 
   defp get_http_client(signature) do
@@ -214,7 +379,7 @@ defmodule App.PaymentGateway.Ipaymu do
 end
 
 defmodule App.PaymentGateway.Ipaymu.Test do
-  def create_transaction do
+  def create_redirect_transaction do
     payload = %{
       referenceId: "testRefId",
       product: ["JetForm Test Product"],
@@ -230,7 +395,7 @@ defmodule App.PaymentGateway.Ipaymu.Test do
       # paymentMethod: "qris"
     }
 
-    App.PaymentGateway.Ipaymu.create_transaction(payload)
+    App.PaymentGateway.Ipaymu.create_redirect_transaction(payload)
   end
 
   def get_transaction(id) do

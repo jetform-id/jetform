@@ -1,6 +1,6 @@
 <div class="px-4 py-6">
   <div class="grid w-full grid-cols-1 gap-4 mb-4 md:grid-cols-2 xl:grid-cols-4">
-    <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+    <div class="items-center justify-between p-4 bg-white border border-gray-300 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="w-full">
         <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
           Produk terjual
@@ -17,10 +17,10 @@
           data-popover
           id="popover-sale-month"
           role="tooltip"
-          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
+          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-300 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
         >
           <div class="p-3 space-y-2">
-            <p class="text-sm">
+            <p class="text-sm font-normal">
               Jumlah produk yang terjual dalam 30 hari terakhir.
             </p>
           </div>
@@ -29,12 +29,12 @@
         <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">
           <.delimited_number value={@order_stats[:paid_count]} />
         </span>
-        <p class="flex items-center text-base text-sm font-normal text-gray-400 dark:text-gray-400">
+        <p class="flex items-center text-sm font-normal text-gray-400 dark:text-gray-400">
           30 hari terakhir
         </p>
       </div>
     </div>
-    <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+    <div class="items-center justify-between p-4 bg-white border border-gray-300 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="w-full">
         <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
           Penjualan
@@ -51,10 +51,10 @@
           data-popover
           id="popover-sale-total"
           role="tooltip"
-          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
+          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-300 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
         >
           <div class="p-3 space-y-2">
-            <p class="text-sm">
+            <p class="text-sm font-normal">
               Total penjualan dalam 30 hari terakhir.
             </p>
           </div>
@@ -70,7 +70,7 @@
         </p>
       </div>
     </div>
-    <div class="items-center justify-between p-4 bg-green-50 border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+    <div class="items-center justify-between p-4 bg-green-50 border border-gray-300 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="w-full">
         <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
           Dana cair
@@ -87,11 +87,11 @@
           data-popover
           id="popover-credits-liquid"
           role="tooltip"
-          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
+          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-300 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
         >
           <div class="p-3 space-y-2">
             <h3 class="font-semibold text-gray-900 dark:text-white">Withdrawable fund</h3>
-            <p class="text-sm">
+            <p class="text-sm font-normal">
               Dana yang sudah bisa di withdraw ke rekening bank anda.
             </p>
           </div>
@@ -100,12 +100,12 @@
         <span class="text-2xl font-bold leading-none text-green-500 sm:text-3xl dark:text-white">
           <.price value={@withdrawable_credits} />
         </span>
-        <p class="flex items-center text-base font-normal text-sm text-gray-400 dark:text-gray-400">
+        <p class="flex items-center font-normal text-sm text-gray-400 dark:text-gray-400">
           Siap ditransfer ke bank anda
         </p>
       </div>
     </div>
-    <div class="items-center justify-between p-4 bg-orange-50 border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+    <div class="items-center justify-between p-4 bg-orange-50 border border-gray-300 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
       <div class="w-full">
         <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">
           Dana pending
@@ -122,11 +122,11 @@
           data-popover
           id="popover-credits-pending"
           role="tooltip"
-          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
+          class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-300 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
         >
           <div class="p-3 space-y-2">
             <h3 class="font-semibold text-gray-900 dark:text-white">Pending fund</h3>
-            <p class="text-sm">
+            <p class="text-sm font-normal">
               Dana setiap penjualan perlu waktu paling tidak 3 hari kerja sebelum bisa di withdraw.
             </p>
           </div>
@@ -135,7 +135,7 @@
         <span class="text-2xl font-bold leading-none text-orange-500 sm:text-3xl dark:text-white">
           <.price value={@pending_credits} />
         </span>
-        <p class="flex items-center text-base font-normal text-sm text-gray-400 dark:text-gray-400">
+        <p class="flex items-center font-normal text-sm text-gray-400 dark:text-gray-400">
           Sedang diproses
         </p>
       </div>
@@ -143,7 +143,7 @@
   </div>
 
   <div class="grid w-full grid-cols-1 gap-4 mb-4 md:grid-cols-2 xl:grid-cols-4">
-    <div class="md:col-span-2 xl:col-span-3 p-2 bg-white border border-gray-200 rounded-md shadow-sm sm:flex dark:border-gray-700 dark:bg-gray-800">
+    <div class="md:col-span-2 xl:col-span-3 p-2 bg-white border border-gray-300 rounded-md shadow-sm sm:flex dark:border-gray-700 dark:bg-gray-800">
       <div class="w-full p-2">
         <div
           id="SalesChart"
@@ -156,12 +156,12 @@
       </div>
     </div>
 
-    <div class="md:col-span-2 xl:col-span-1 p-4 bg-white border border-gray-200 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-800">
+    <div class="md:col-span-2 xl:col-span-1 p-4 bg-white border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-800">
       <div class="w-full">
         <h3 class="text-base font-semibold text-gray-600 dark:text-gray-400">
           Top Products
           <div class="text-xs text-gray-400 font-normal">
-            Penjualan/download terbanyak dalam 30 hari terakhir.
+            30 hari terakhir
           </div>
         </h3>
         <div
@@ -206,7 +206,7 @@
     </div>
   </div>
 
-  <div class="p-4 bg-white border border-gray-200 rounded-md shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+  <div class="p-4 bg-white border border-gray-300 rounded-md shadow-sm dark:border-gray-700 sm:p-6 dark:bg-gray-800">
     <!-- Card header -->
     <div class="items-center justify-between lg:flex">
       <div>
@@ -318,8 +318,34 @@
                       N/A
                     </span>
                   </td>
-                  <td class="p-4 whitespace-nowrap">
+                  <td class="p-4">
                     <Commons.order_status_badge status={order.status} />
+                    <button
+                      :if={order.cancellation_reason}
+                      class="ml-1"
+                      data-popover-target={"popover-cancellation-reason-#{order.id}"}
+                      data-popover-placement="bottom-end"
+                      type="button"
+                    >
+                      <.icon name="hero-question-mark-circle text-gray-400 w-3 h-3" />
+                    </button>
+                    <div
+                      :if={order.cancellation_reason}
+                      data-popover
+                      id={"popover-cancellation-reason-#{order.id}"}
+                      role="tooltip"
+                      class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-300 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
+                    >
+                      <div class="p-3 space-y-2">
+                        <h3 class="font-semibold text-gray-900 dark:text-white">
+                          Alasan pembatalan
+                        </h3>
+                        <p class="text-sm font-normal">
+                          <%= order.cancellation_reason %>
+                        </p>
+                      </div>
+                      <div data-popper-arrow></div>
+                    </div>
                   </td>
                   <td class="p-4 text-sm font-normal text-gray-900 whitespace-nowrap dark:text-white">
                     <%= order.customer_name %>
@@ -333,7 +359,7 @@
                       <span>Fee <.price value={App.Orders.total_fee(order)} /></span>
                       <button
                         class="ml-1"
-                        data-popover-target={"popover-#{order.id}"}
+                        data-popover-target={"popover-fees-#{order.id}"}
                         data-popover-placement="bottom-end"
                         type="button"
                       >
@@ -341,9 +367,9 @@
                       </button>
                       <div
                         data-popover
-                        id={"popover-#{order.id}"}
+                        id={"popover-fees-#{order.id}"}
                         role="tooltip"
-                        class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
+                        class="absolute z-10 invisible inline-block text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-300 rounded-md shadow opacity-0 w-72 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400"
                       >
                         <div class="p-3 space-y-2">
                           <div class="flex justify-between text-xs font-semibold">
@@ -366,7 +392,7 @@
                     </p>
                   </td>
                   <td class="p-4 text-sm font-normal text-primary-500 whitespace-nowrap dark:text-gray-400">
-                    <.link href={~p"/invoice/#{order.id}"} target="_blank">
+                    <.link href={~p"/invoices/#{order.id}"} target="_blank">
                       <%= order.invoice_number %>
                     </.link>
                   </td>

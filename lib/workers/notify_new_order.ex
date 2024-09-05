@@ -45,7 +45,7 @@ defmodule Workers.NotifyNewOrder do
     Status: #{order.status} #{status_text}
 
     #{invoice_text}
-    #{base_url}/invoice/#{order.id}
+    #{base_url}/invoices/#{order.id}
 
     #{Utils.email_signature(user)}
     """
