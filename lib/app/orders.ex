@@ -419,8 +419,10 @@ defmodule App.Orders do
     from(
       p in Payment,
       where: p.order_id == ^order.id,
-      where: p.trx_status == "pending"
+      where: p.trx_status == "pending",
+      order_by: [desc: p.inserted_at]
     )
+    |> limit(1)
     |> Repo.one()
   end
 

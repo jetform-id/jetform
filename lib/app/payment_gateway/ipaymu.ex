@@ -324,13 +324,14 @@ defmodule App.PaymentGateway.Ipaymu do
     channels
     |> Enum.filter(&Map.has_key?(&1, "Channels"))
     |> Enum.map(&clean_category/1)
+    |> Enum.reject(fn c -> Enum.empty?(c.channels) end)
   end
 
   defp clean_category(%{"Code" => code, "Name" => name, "Channels" => channels}) do
     channels =
       channels
       |> Enum.filter(&(Map.fetch!(&1, "FeatureStatus") == "active"))
-      |> Enum.filter(&(Map.fetch!(&1, "HealthStatus") == "online"))
+      # |> Enum.filter(&(Map.fetch!(&1, "HealthStatus") == "online"))
       |> Enum.map(fn %{"TransactionFee" => fee} = channel ->
         %PaymentChannel{
           code: channel["Code"],
@@ -401,44 +402,3 @@ defmodule App.PaymentGateway.Ipaymu.Test do
     App.PaymentGateway.Ipaymu.get_transaction(id)
   end
 end
-
-# {:ok,
-#  %{
-#    "Channel" => "MPM",
-#    "Escrow" => 0,
-#    "Expired" => "2024-08-26 18:45:50",
-#    "Fee" => 175,
-#    "FeeDirection" => "MERCHANT",
-#    "NMID" => "ID2020081400173",
-#    "NNSCode" => "93600503",
-#    "Note" => nil,
-#    "PaymentName" => "iPaymu",
-#    "PaymentNo" => "00020101021226670016COM.NOBUBANK.WWW01189360050300000488870214041800000314060303UKE51440014ID.CO.QRIS.WWW0215ID20200814001730303UKE5204549953033605405250005802ID5906iPaymu6008Denpasar61051581162810114082600031287420520202408261645507705550620202408261645507705550703A010804POSP63043355",
-#    "QrImage" => "https://sandbox.ipaymu.com/qr/141759",
-#    "QrString" => "00020101021226670016COM.NOBUBANK.WWW01189360050300000488870214041800000314060303UKE51440014ID.CO.QRIS.WWW0215ID20200814001730303UKE5204549953033605405250005802ID5906iPaymu6008Denpasar61051581162810114082600031287420520202408261645507705550620202408261645507705550703A010804POSP63043355",
-#    "QrTemplate" => "https://sandbox.ipaymu.com/qr/template/141759",
-#    "ReferenceId" => "7e64f44f-4819-436d-94f2-fe1034679ddb",
-#    "SessionId" => "7e64f44f-4819-436d-94f2-fe1034679ddb",
-#    "SubTotal" => 25000,
-#    "Terminal" => "A01",
-#    "Total" => 25000,
-#    "TransactionId" => 141759,
-#    "Via" => "QRIS"
-#  }}
-
-#  %{
-#    "Channel" => "BRI",
-#    "Escrow" => false,
-#    "Expired" => "2024-08-26 18:51:55",
-#    "Fee" => 3500,
-#    "FeeDirection" => "MERCHANT",
-#    "Note" => nil,
-#    "PaymentName" => "iPaymu JetForm",
-#    "PaymentNo" => "578893000189376",
-#    "ReferenceId" => "7e64f44f-4819-436d-94f2-fe1034679ddb",
-#    "SessionId" => "7e64f44f-4819-436d-94f2-fe1034679ddb",
-#    "SubTotal" => 25000,
-#    "Total" => 25000,
-#    "TransactionId" => 141760,
-#    "Via" => "VA"
-#  }

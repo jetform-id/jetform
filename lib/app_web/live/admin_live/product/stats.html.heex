@@ -1,34 +1,43 @@
 <div class="px-4 py-6">
   <div class="pb-4 md:flex md:justify-between items-center">
-      <%!-- <.link navigate={~p"/products"} class="text-primary-500 font-semibold">
+    <%!-- <.link navigate={~p"/products"} class="text-primary-500 font-semibold">
         <span aria-hidden="true">←</span> Semua produk
       </.link> --%>
-      <.simple_form
-        for={@time_filter_form}
-        phx-update="replace"
-        phx-change={JS.push("set_time_filter", page_loading: true)}
+    <.simple_form
+      for={@time_filter_form}
+      phx-update="replace"
+      phx-change={JS.push("set_time_filter", page_loading: true)}
+    >
+      <.input
+        type="select"
+        field={@time_filter_form[:time]}
+        options={@time_filters}
+        class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-md text-sm px-4 py-2.5"
+      />
+    </.simple_form>
+    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+      <%= @product.name %>
+    </h2>
+    <div class="inline-flex rounded-md shadow-sm" role="group">
+      <.link
+        navigate={~p"/products/#{@product.id}/edit"}
+        type="button"
+        class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-s-md hover:bg-gray-100 hover:text-blue-600"
       >
-        <.input
-          type="select"
-          field={@time_filter_form[:time]}
-          options={@time_filters}
-          class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-md text-sm px-4 py-2.5"
-        />
-      </.simple_form>
-      <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
-        <%= @product.name %>
-      </h2>
-      <div class="inline-flex rounded-md shadow-sm" role="group">
-        <.link navigate={~p"/products/#{@product.id}/edit"} type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-s-md hover:bg-gray-100 hover:text-blue-600">
-          <.icon name="hero-pencil-square" class="mr-1"/> Edit
-        </.link>
-        <.link href={@base_url <> "/"<>  @product.user.username <>"/" <> @product.slug} target="_blank" type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-300 rounded-e-md hover:bg-gray-100 hover:text-blue-600">
-          <.icon name="hero-eye" class="mr-1"/> Preview
-        </.link>
-        <%!-- <button type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-blue-600">
+        <.icon name="hero-pencil-square" class="mr-1" /> Edit
+      </.link>
+      <.link
+        href={@base_url <> "/"<>  @product.user.username <>"/" <> @product.slug}
+        target="_blank"
+        type="button"
+        class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-300 rounded-e-md hover:bg-gray-100 hover:text-blue-600"
+      >
+        <.icon name="hero-eye" class="mr-1" /> Preview
+      </.link>
+      <%!-- <button type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-blue-600">
           <.icon name="hero-share" class="mr-1"/> Bagikan
         </button> --%>
-      </div>
+    </div>
   </div>
   <div class="grid w-full grid-cols-1 gap-4 mb-4 md:grid-cols-3">
     <div class="items-center justify-between p-4 bg-white border border-gray-300 rounded-md shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">

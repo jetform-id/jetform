@@ -39,7 +39,9 @@ defmodule AppWeb.AdminLive.Product.Components.NewForm do
           >
             <:help>
               <div class="pt-3 text-xs text-yellow-500 leading-tight">
-              <.icon name="hero-exclamation-circle w-4 h-4" /> Beberapa bank menetapkan nilai minimal transaksi sebesar <.price value={Application.get_env(:app, :minimum_price)} />.
+                <.icon name="hero-exclamation-circle w-4 h-4" />
+                Beberapa bank menetapkan nilai minimal transaksi sebesar
+                <.price value={Application.get_env(:app, :minimum_price)} />.
               </div>
             </:help>
           </.input>
