@@ -184,16 +184,6 @@
         >
           PEMBAYARAN <span aria-hidden="true">→</span>
         </button>
-        <p class="text-center text-xs text-slate-400 mt-1">
-          Secure payment by
-          <.link
-            navigate={App.payment_provider().info().website}
-            class="text-primary-500"
-            target="_blank"
-          >
-            <%= App.payment_provider().info().name %>
-          </.link>
-        </p>
       </div>
     </div>
     <!-- End Card -->
@@ -253,9 +243,9 @@
     </div> --%>
     <!-- End Buttons -->
   </div>
-  <p class="text-center p-3 text-sm text-slate-400">
+  <%!-- <p class="text-center p-3 text-sm text-slate-400">
     <.link href={AppWeb.Utils.marketing_site()} target="_blank">
       Powered by JetForm
     </.link>
-  </p>
+  </p> --%>
 </div>

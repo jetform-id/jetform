@@ -13,4 +13,9 @@ defmodule App do
   def payment_provider do
     Application.get_env(:app, :payment_provider)
   end
+
+  def gen_qr_code(data, options \\ []) when is_binary(data) do
+    b64str = data |> EQRCode.encode() |> EQRCode.png(options) |> Base.encode64()
+    "data:image/png;base64," <> b64str
+  end
 end

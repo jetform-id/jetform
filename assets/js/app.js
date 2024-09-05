@@ -23,7 +23,6 @@ import { LiveSocket } from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 import "flowbite/dist/flowbite.phoenix"
 import Trix from "trix"
-import ClipboardJS from "clipboard/dist/clipboard"
 import Hooks from "./hooks"
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
@@ -50,6 +49,3 @@ window.addEventListener("update-shop-username", (event) => {
 document.addEventListener("trix-change", () => {
     document.getElementById("product_description").dispatchEvent(new Event("input", { bubbles: true }))
 })
-
-// clipboard
-new ClipboardJS('.clipboard')

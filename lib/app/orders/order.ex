@@ -10,7 +10,7 @@ defmodule App.Orders.Order do
 
   @mail_regex ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/
   @required_fields ~w(invoice_number valid_until customer_name customer_email sub_total total)a
-  @optional_fields ~w(customer_phone status discount_name discount_value service_fee payment_type gateway_fee paid_at)a
+  @optional_fields ~w(customer_phone status discount_name discount_value service_fee payment_type gateway_fee paid_at cancellation_reason)a
   @statuses ~w(pending paid expired cancelled free)a
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -32,6 +32,7 @@ defmodule App.Orders.Order do
     field :paid_at, :utc_datetime
     field :service_fee, :integer
     field :gateway_fee, :integer
+    field :cancellation_reason, :string
 
     belongs_to :user, App.Users.User
     belongs_to :product, App.Products.Product

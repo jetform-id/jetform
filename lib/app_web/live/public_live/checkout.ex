@@ -65,19 +65,24 @@ defmodule AppWeb.PublicLive.Checkout do
   end
 
   @impl true
-  def handle_info({:new_order, order}, socket) do
+  def handle_info(%{new_order: order, new_payment: nil}, socket) do
     socket =
       case order.status in [:free, :paid] do
         true ->
-          socket |> redirect(to: ~p"/invoice/#{order.id}/thanks")
+          socket |> redirect(to: ~p"/invoices/#{order.id}/thanks")
 
         _ ->
           socket
           |> put_flash(:info, "Pesanan telah dibuat! silahkan lanjutkan dengan pembayaran.")
-          |> redirect(to: ~p"/invoice/#{order.id}")
+          |> redirect(to: ~p"/invoices/#{order.id}")
       end
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(%{new_order: _order, new_payment: payment}, socket) do
+    {:noreply, redirect(socket, external: payment.redirect_url)}
   end
 
   defp return_product(socket, product) do

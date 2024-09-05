@@ -70,8 +70,7 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
           >
             <:help>
               <div class="pt-3 text-xs text-yellow-500 leading-tight">
-                <.icon name="hero-exclamation-circle w-4 h-4" /> <span class="font-bold">Beberapa bank menetapkan nilai minimal transaksi</span>, dan nilai tersebut biasanya
-                <.price value={Application.get_env(:app, :minimum_price)} />. Oleh karena itu, harga harus lebih besar atau sama dengan nilai tersebut.
+                <.icon name="hero-exclamation-circle w-4 h-4" /> Beberapa bank menetapkan nilai minimal transaksi sebesar <.price value={Application.get_env(:app, :minimum_price)} />.
               </div>
             </:help>
           </.input>
@@ -194,7 +193,7 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
             phx-disable-with="Menyimpan..."
             class="px-8 py-3 text-base font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-600 dark:focus:ring-primary-800"
           >
-            Simpan <span aria-hidden="true">→</span>
+            Simpan
           </.button>
         </div>
       </:actions>

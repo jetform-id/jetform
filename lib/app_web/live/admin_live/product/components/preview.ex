@@ -58,16 +58,18 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         changeset={@order_changeset}
         checkout={@checkout}
         payment_channels={@payment_channels}
-        submit_event={if @preview, do: "preview_order", else: "create_order"}
+        selected_payment_channel={@selected_payment_channel}
+        change_event="validate_order"
+        submit_event={if @preview, do: "simulate_order", else: "create_order"}
         submit_target={@myself}
         enable_captcha={@enable_captcha}
       />
 
-      <p class="text-center p-3 text-sm text-gray-400">
+      <%!-- <p class="text-center p-3 text-sm text-gray-400">
         <.link href={AppWeb.Utils.marketing_site()} target="_blank">
           Powered by JetForm
         </.link>
-      </p>
+      </p> --%>
     </div>
     <%!-- end preview --%>
     """
@@ -235,15 +237,26 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
   attr :product, :map, required: true
   attr :changeset, :map, required: true
   attr :checkout, :map, required: true
+  attr :change_event, :string, required: true
   attr :submit_event, :string, required: true
   attr :submit_target, :any, required: true
   attr :payment_channels, :map, required: true
+  attr :selected_payment_channel, :string, default: nil
   attr :enable_captcha, :boolean, default: true
   attr :error, :string, default: nil
 
   def checkout_form(assigns) do
-    total_price = Checkout.total(assigns.checkout)
-    assigns = Map.put(assigns, :total_price, total_price)
+    checkout = assigns.checkout
+    total_price = Checkout.total(checkout)
+
+    allow_submit =
+      checkout.price_type == :free or
+        (total_price > 0 and not is_nil(assigns.selected_payment_channel))
+
+    assigns =
+      assigns
+      |> Map.put(:total_price, total_price)
+      |> Map.put(:allow_submit, allow_submit)
 
     ~H"""
     <div class="mx-auto max-w-lg rounded-md bg-white shadow-md overflow-hidden">
@@ -254,6 +267,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           for={@changeset}
           as={:order}
           phx-update="replace"
+          phx-change={@change_event}
           phx-submit={@submit_event}
           phx-target={@submit_target}
         >
@@ -270,7 +284,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           <p :if={@total_price > 0} class="py-3 px-6 text-sm font-semibold bg-slate-100 border-b">
             Data pembeli
           </p>
-          <div class="space-y-2 p-6 bg-white">
+          <div class="space-y-2 p-6 bg-white" id="customer-info-fields" phx-update="ignore">
             <.input field={f[:customer_name]} type="text" label="Nama *" required />
             <.input
               field={f[:customer_email]}
@@ -312,10 +326,26 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
                 <%!-- <h3 class="text-lg font-semibold text-gray-900">Metode Pembayaran</h3> --%>
                 <div :for={category <- channels} class="pb-6">
                   <p class="text-sm font-semibold mb-2"><%= category.name %></p>
-                  <div class="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                  <div class={[
+                    "grid gap-3",
+                    category.code == "qris" && "grid-cols-1",
+                    category.code != "qris" && "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                  ]}>
                     <div
                       :for={channel <- category.channels}
-                      class="flex items-center justify-center bg-white shadow-md rounded-md p-2 cursor-pointer border border-2 border-white hover:border hover:border-2 hover:border-primary-500"
+                      phx-click={
+                        JS.push("select_payment_channel",
+                          value: %{"id" => category.code <> ":" <> channel.code},
+                          target: @submit_target
+                        )
+                      }
+                      class={[
+                        "flex items-center justify-center bg-white shadow rounded-md p-2 cursor-pointer border",
+                        !payment_channel_selected?(@selected_payment_channel, category, channel) &&
+                          "hover:border-primary-500",
+                        payment_channel_selected?(@selected_payment_channel, category, channel) &&
+                          "border-primary-500"
+                      ]}
                     >
                       <img src={channel.logo_url} alt={channel.name} title={channel.name} />
                     </div>
@@ -352,8 +382,15 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           <:actions>
             <div class="px-6 pb-8">
               <button
+                phx-disable-with="Loading..."
+                disabled={not @allow_submit}
                 type="submit"
-                class="mt-6 w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-700"
+                class={[
+                  "mt-6 w-full items-center justify-center rounded-md font-semibold transition-all duration-200 ease-in-out",
+                  @allow_submit &&
+                    "bg-primary-600 p-4 text-lg  text-white focus:shadow hover:bg-primary-700",
+                  !@allow_submit && "bg-slate-200 text-slate-400 p-4 cursor-not-allowed"
+                ]}
               >
                 <span :if={@total_price == 0}>Kirim akses via Email</span>
                 <span :if={@total_price > 0}>Bayar <.price value={@total_price} /></span>
@@ -385,6 +422,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         nil ->
           product = assigns.product
           variants = App.Products.list_variants_by_product(product, true)
+          has_variants = not Enum.empty?(variants)
           images = App.Products.list_images(product)
 
           socket
@@ -392,7 +430,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           |> assign(:product, product)
           |> assign(:preview, false)
           |> assign(:enable_captcha, false)
-          |> assign(:has_variants, Products.has_variants?(product, true))
+          |> assign(:has_variants, has_variants)
           |> assign(:product_variants, variants)
           |> assign(:images, images)
           |> maybe_select_default_variant(variants)
@@ -400,13 +438,14 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         changeset ->
           product = Ecto.Changeset.apply_changes(changeset)
           variants = App.Products.list_variants_by_product(product, true)
+          has_variants = not Enum.empty?(variants)
           images = App.Products.list_images(product)
 
           socket
           |> assign(:product, product)
           |> assign(:preview, true)
           |> assign(:enable_captcha, false)
-          |> assign(:has_variants, Products.has_variants?(product, true))
+          |> assign(:has_variants, has_variants)
           |> assign(:product_variants, variants)
           |> assign(:images, images)
           |> maybe_select_default_variant(variants)
@@ -416,6 +455,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
       |> assign_async(:payment_channels, fn ->
         {:ok, %{payment_channels: Orders.list_payment_channels()}}
       end)
+      |> assign(:selected_payment_channel, nil)
       |> assign(:step, "details")
 
     {:ok, socket}
@@ -424,6 +464,11 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
   @impl true
   def handle_event("select_variant", %{"id" => id}, socket) do
     {:noreply, select_variant(socket, id)}
+  end
+
+  @impl true
+  def handle_event("select_payment_channel", %{"id" => id}, socket) do
+    {:noreply, assign(socket, :selected_payment_channel, id)}
   end
 
   @impl true
@@ -501,8 +546,16 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
   end
 
   @impl true
+  def handle_event("validate_order", %{"order" => order_params}, socket) do
+    params = prepare_order_params(socket, order_params)
+    changeset = Order.create_changeset(%Order{}, params)
+
+    {:noreply, assign(socket, :order_changeset, changeset)}
+  end
+
+  @impl true
   def handle_event(
-        "preview_order",
+        "simulate_order",
         %{"order" => order_params},
         socket
       ) do
@@ -511,6 +564,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
 
     case Ecto.Changeset.apply_action(changeset, :insert) do
       {:ok, order} ->
+        :timer.sleep(500)
         send(self(), {:new_order, order})
         {:noreply, assign(socket, :order_changeset, changeset)}
 
@@ -540,14 +594,32 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
     end
 
     params = prepare_order_params(socket, order_params)
+    payment_channel = socket.assigns.selected_payment_channel
 
-    case Orders.create_order(params) do
-      {:ok, order} ->
-        send(self(), {:new_order, order})
-        {:noreply, assign(socket, :order_changeset, Orders.change_order(order, %{}))}
+    {:ok, draft_order} = Orders.draft_order(params)
 
-      {:error, changeset} ->
-        {:noreply, assign(socket, :order_changeset, changeset)}
+    with {:ok, payment} <- Orders.create_payment(draft_order, payment_channel: payment_channel),
+         {:ok, order} <- Orders.commit_order(draft_order) do
+      send(self(), %{new_order: order, new_payment: payment})
+      {:noreply, socket}
+    else
+      {:error, :provider_error} ->
+        send(
+          self(),
+          {:flash, :error, "Maaf, metode pembayaran yang Anda pilih sedang mengalami gangguan."}
+        )
+
+        Orders.delete_order(draft_order)
+        {:noreply, socket}
+
+      _ ->
+        send(
+          self(),
+          {:flash, :error, "Gagal membuat pesanan, silahkan coba beberapa saat lagi."}
+        )
+
+        Orders.delete_order(draft_order)
+        {:noreply, socket}
     end
   end
 
@@ -585,5 +657,9 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
       true ->
         select_variant(socket, Enum.at(variants, 0).id)
     end
+  end
+
+  defp payment_channel_selected?(selected, category, channel) do
+    selected == category.code <> ":" <> channel.code
   end
 end

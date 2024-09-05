@@ -67,7 +67,8 @@ defmodule App.MixProject do
       {:html_sanitize_ex, "~> 1.4"},
       {:redix, "~> 1.3.0"},
       {:cachex, "~> 3.6"},
-      {:open_api_spex, "~> 3.18"}
+      {:open_api_spex, "~> 3.18"},
+      {:eqrcode, "~> 0.1.10"}
     ]
   end
 

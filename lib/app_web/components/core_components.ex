@@ -356,6 +356,7 @@ defmodule AppWeb.CoreComponents do
   attr :id, :string, required: true
   attr :show, :boolean, default: false
   attr :on_cancel, JS, default: %JS{}
+  attr :width, :string, default: "max-w-3xl"
   slot :inner_block, required: true
 
   def modal(assigns) do
@@ -365,7 +366,7 @@ defmodule AppWeb.CoreComponents do
       phx-mounted={@show && show_modal(@id)}
       phx-remove={hide_modal(@id)}
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
-      class="relative z-50 hidden"
+      class="relative z-40 hidden"
     >
       <div
         id={"#{@id}-bg"}
@@ -381,13 +382,13 @@ defmodule AppWeb.CoreComponents do
         tabindex="0"
       >
         <div class="flex min-h-full items-center justify-center">
-          <div class="w-full max-w-3xl p-4 sm:p-6 lg:py-8">
+          <div class={["w-full p-4 sm:p-6 lg:py-8", @width]}>
             <.focus_wrap
               id={"#{@id}-container"}
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="shadow-zinc-700/10 ring-zinc-700/10 relative hidden rounded-2xl bg-white p-14 shadow-lg ring-1 transition"
+              class="shadow-zinc-700/10 ring-zinc-700/10 relative hidden rounded-md bg-white p-12 shadow-lg ring-1 transition"
             >
               <div class="absolute top-6 right-5">
                 <button

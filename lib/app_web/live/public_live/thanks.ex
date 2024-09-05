@@ -15,7 +15,7 @@ defmodule AppWeb.PublicLive.Thanks do
           |> assign(:order, order)
 
         _ ->
-          redirect(socket, to: ~p"/invoice/#{order.id}")
+          redirect(socket, to: ~p"/invoices/#{order.id}")
       end
 
     {:ok, socket}

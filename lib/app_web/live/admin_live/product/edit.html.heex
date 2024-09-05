@@ -1,19 +1,28 @@
 <div class="px-4 pt-6">
   <div class="pb-4 md:flex md:justify-between">
-    <div>
       <%!-- <.link navigate={~p"/products"} class="text-primary-500 font-semibold">
         <span aria-hidden="true">←</span> Semua produk
       </.link> --%>
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
         <%= Map.get(@changeset.changes, :name, @changeset.data.name) %>
       </h2>
-    </div>
+      <div class="inline-flex rounded-md shadow-sm" role="group">
+        <.link navigate={~p"/products/#{@product.id}/stats"} type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-s-md hover:bg-gray-100 hover:text-blue-600">
+          <.icon name="hero-chart-bar-square" class="mr-1"/> Stats
+        </.link>
+        <.link href={@base_url <> "/"<>  @product.user.username <>"/" <> @product.slug} target="_blank" type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-300 rounded-e-md hover:bg-gray-100 hover:text-blue-600">
+          <.icon name="hero-eye" class="mr-1"/> Preview
+        </.link>
+        <%!-- <button type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-blue-600">
+          <.icon name="hero-share" class="mr-1"/> Bagikan
+        </button> --%>
+      </div>
   </div>
 
   <div class="grid gap-4 xl:grid-cols-2">
-    <div class="bg-white border border-gray-200 rounded-md shadow-sm dark:bg-gray-800 dark:border-gray-700">
+    <div class="bg-white border border-gray-300 rounded-md shadow-sm dark:bg-gray-800 dark:border-gray-700">
       <ul
-        class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 rounded-t-md bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800"
+        class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-300 rounded-t-md bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800"
         role="tablist"
       >
         <li>
@@ -99,22 +108,7 @@
       </div>
     </div>
 
-    <div class="border rounded-md shadow-sm bg-slate-300 dark:bg-gray-800 dark:border-gray-700">
-      <ul
-        class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 rounded-t-md bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800"
-        role="tablist"
-      >
-        <li class="me-2">
-          <button
-            type="button"
-            role="tab"
-            aria-selected="true"
-            class="inline-block p-4 rounded-ss-lg dark:bg-gray-800 dark:text-primary-500"
-          >
-            <.icon name="hero-eye" /> Preview
-          </button>
-        </li>
-      </ul>
+    <div class="border border-gray-300 rounded-md shadow-sm bg-slate-400">
       <div>
         <.live_component
           module={Preview}

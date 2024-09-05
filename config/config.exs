@@ -21,9 +21,9 @@ config :app,
   payment_provider: App.PaymentGateway.Ipaymu
 
 config :app, :midtrans,
-  enabled_payments: ["permata_va", "bca_va", "bni_va", "bri_va", "cimb_va", "other_qris"]
+  payment_channels: ["permata_va", "bca_va", "bni_va", "bri_va", "cimb_va", "other_qris"]
 
-config :app, :ipaymu, payment_method: "auto"
+config :app, :ipaymu, payment_channel: "auto"
 
 config :app,
   ecto_repos: [App.Repo],

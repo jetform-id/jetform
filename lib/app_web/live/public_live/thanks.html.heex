@@ -28,7 +28,7 @@
 
   <.link
     :if={@order.total > 0}
-    navigate={~p"/invoice/#{@order.id}"}
+    navigate={~p"/invoices/#{@order.id}"}
     class="mt-10 text-sm text-primary-400 text-center items-center flex hover:underline"
   >
     INVOICE NO. #<%= @order.invoice_number %>

@@ -1,38 +1,39 @@
 defmodule App.PaymentGateway.CreateTransactionResult do
-  @enforce_keys [:token, :redirect_url]
+  @enforce_keys [:id, :redirect_url, :data]
 
   @type t :: %__MODULE__{
-          token: String.t(),
-          redirect_url: String.t()
+          id: String.t(),
+          redirect_url: String.t(),
+          data: map()
         }
-  defstruct [:token, :redirect_url]
+  defstruct [:id, :redirect_url, :data]
 
-  def new(token, redirect_url) do
-    %__MODULE__{token: token, redirect_url: redirect_url}
+  def new(id, redirect_url, data) do
+    %__MODULE__{id: id, redirect_url: redirect_url, data: data}
   end
 end
 
 defmodule App.PaymentGateway.GetTransactionResult do
   @enforce_keys [
-    :payload,
-    :trx_id,
-    :trx_status
+    :data,
+    :id,
+    :status
   ]
 
   @type t :: %__MODULE__{
-          payload: String.t(),
+          data: map(),
           type: String.t(),
-          trx_id: String.t(),
-          trx_status: String.t(),
+          id: String.t(),
+          status: String.t(),
           status_code: String.t(),
           gross_amount: integer(),
           fee: integer()
         }
   defstruct [
-    :payload,
+    :data,
     :type,
-    :trx_id,
-    :trx_status,
+    :id,
+    :status,
     :fraud_status,
     :status_code,
     :gross_amount,
@@ -87,14 +88,21 @@ defmodule App.PaymentGateway.Provider do
   @callback info() :: App.PaymentGateway.ProviderInfo.t()
 
   @callback config_value(key :: atom()) :: any()
-  @callback list_payment_channels() ::
+  @callback list_channels() ::
               {:ok, list(App.PaymentGateway.PaymentChannelCategory.t())} | {:error, any()}
-  @callback create_transaction(payload :: map()) ::
+  @callback create_redirect_transaction(payload :: map()) ::
+              {:ok, App.PaymentGateway.CreateTransactionResult.t()} | {:error, any()}
+  @callback create_direct_transaction(payload :: map()) ::
               {:ok, App.PaymentGateway.CreateTransactionResult.t()} | {:error, any()}
   @callback cancel_transaction(id :: String.t()) :: {:ok, any()} | {:error, any()}
   @callback get_transaction(id :: String.t()) ::
               {:ok, App.PaymentGateway.GetTransactionResult.t()} | {:error, any()}
-  @callback create_transaction_payload(
+  @callback create_redirect_transaction_payload(
+              order :: map(),
+              payment :: map(),
+              options :: keyword()
+            ) :: map()
+  @callback create_direct_transaction_payload(
               order :: map(),
               payment :: map(),
               options :: keyword()
