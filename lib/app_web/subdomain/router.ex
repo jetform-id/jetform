@@ -1,4 +1,4 @@
-defmodule AppWeb.SubdomainRouter do
+defmodule AppWeb.Subdomain.Router do
   use AppWeb, :router
 
   pipeline :browser do

@@ -3,7 +3,7 @@ defmodule AppWeb.Plugs.Subdomain do
 
   def init(_opts) do
     %{
-      router: AppWeb.SubdomainRouter,
+      router: AppWeb.Subdomain.Router,
       root_host: Application.get_env(:app, AppWeb.Endpoint)[:url][:host]
     }
   end
