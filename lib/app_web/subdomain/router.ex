@@ -15,7 +15,12 @@ defmodule AppWeb.Subdomain.Router do
   scope "/", AppWeb.Subdomain do
     pipe_through :browser
 
-    get "/:slug", PageController, :show
+    live_session :public,
+      on_mount: {AppWeb.Subdomain.LiveContext, :default},
+      layout: {AppWeb.Layouts, :checkout} do
+      live "/:slug", Live.Checkout
+    end
+
     get "/", PageController, :index
   end
 end

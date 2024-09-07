@@ -1,7 +1,6 @@
 defmodule AppWeb.AdminLive.Product.Components.EditForm do
   use AppWeb, :html
   alias App.Products
-  alias AppWeb.Utils
 
   @doc """
   Renders basic product editor form
@@ -32,14 +31,8 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
           <.input field={f[:slug]} type="text" label="URL" required>
             <:help>
               <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                <.link
-                  href={Utils.base_url() <> "/" <> @product.user.username <> "/" <> Map.get(@changeset.changes, :slug, @changeset.data.slug)}
-                  target="_blank"
-                >
-                  <%= Utils.base_url() %>/<%= @product.user.username %>/<span
-                    id="shop-username"
-                    class="font-bold"
-                  ><%= Map.get(@changeset.changes, :slug, @changeset.data.slug) %></span>
+                <.link href={AppWeb.Utils.product_url(@product, preview: true)} target="_blank">
+                  <%= AppWeb.Utils.product_url(@product) %>
                   <.icon
                     name="hero-arrow-top-right-on-square"
                     class="w-4 h-4 inline-block text-primary-500"

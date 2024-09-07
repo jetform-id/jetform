@@ -31,7 +31,7 @@ defmodule Workers.NotifyNewOrder do
   defp send_email(order) do
     user = order.user
 
-    base_url = AppWeb.Utils.base_url()
+    base_url = AppWeb.Utils.dashboard_url()
     status_text = "(Menunggu Pembayaran)"
     invoice_text = "Detail order dan cara pembayaran bisa anda lihat di link berikut:"
 

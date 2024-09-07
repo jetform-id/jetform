@@ -10,22 +10,37 @@ defmodule AppWeb.PublicLive.Checkout do
   end
 
   @impl true
-  def handle_params(%{"slug" => slug, "username" => username}, _uri, socket) do
+  def handle_params(%{"slug" => slug, "username" => username} = params, _uri, socket) do
+    params = Map.drop(params, ["slug", "username"])
+
     seller = Users.get_by_username!(username)
 
-    case socket.assigns.current_user do
-      nil ->
-        # non logged in user: only live products are accessible
-        return_product(socket, Products.get_live_product_by_user_and_slug!(seller, slug))
+    socket =
+      case params["preview_token"] do
+        nil ->
+          # no preview token: check if product is live
+          return_product(
+            socket,
+            Products.get_live_product_by_user_and_slug!(seller, slug),
+            params
+          )
 
-      user ->
-        # logged in user: product is accessible if it's live or user is the owner
-        product = Products.get_product_by_user_and_slug!(seller, slug)
+        token ->
+          # preview token: check if it's valid
+          case Phoenix.Token.verify(socket, "preview_token", token) do
+            {:ok, product_id} ->
+              product = Products.get_product_by_user_and_slug!(seller, slug)
 
-        if product.is_live || product.user_id == user.id,
-          do: return_product(socket, product),
-          else: raise(Ecto.NoResultsError, queryable: Products.Product)
-    end
+              if product.id == product_id,
+                do: return_product(socket, product, params),
+                else: raise(Ecto.NoResultsError, queryable: Products.Product)
+
+            _ ->
+              raise(Ecto.NoResultsError, queryable: Products.Product)
+          end
+      end
+
+    {:noreply, socket}
   end
 
   @doc """
@@ -34,10 +49,9 @@ defmodule AppWeb.PublicLive.Checkout do
   @impl true
   def handle_params(%{"slug" => slug} = params, _uri, socket) do
     params = Map.drop(params, ["slug"])
+    product = Products.get_product_by_slug!(slug)
 
-    product = Products.get_product_by_slug!(slug) |> App.Repo.preload(:user)
-    user = product.user
-    {:noreply, redirect(socket, to: ~p"/#{user.username}/#{slug}?#{params}")}
+    {:noreply, redirect(socket, external: AppWeb.Utils.product_url(product, params: params))}
   end
 
   @impl true
@@ -85,15 +99,16 @@ defmodule AppWeb.PublicLive.Checkout do
     {:noreply, redirect(socket, external: payment.redirect_url)}
   end
 
-  defp return_product(socket, product) do
-    socket =
+  defp return_product(socket, product, params) do
+    if Application.get_env(:app, :enable_subdomains) do
+      redirect(socket, external: AppWeb.Utils.product_url(product, params: params))
+    else
       socket
       |> assign(:enable_tracking, product.is_live)
       |> assign(:body_class, "bg-slate-300")
       |> assign(:page_title, product.name)
       |> assign(:page_info, AppWeb.PageInfo.new(product))
       |> assign(:product, App.Repo.preload(product, :variants))
-
-    {:noreply, socket}
+    end
   end
 end

@@ -37,7 +37,7 @@ defmodule Workers.NotifyNewAccess do
       |> Timex.to_datetime("Asia/Jakarta")
       |> Timex.format!("%d %B %Y %H:%M WIB", :strftime)
 
-    base_url = AppWeb.Utils.base_url()
+    base_url = AppWeb.Utils.dashboard_url()
 
     order_detail_text =
       case order.status do

@@ -103,11 +103,8 @@
                   </.link>
                 </div>
                 <div class="text-sm font-normal text-gray-400 dark:text-gray-400">
-                  <%= @base_url %>/<%= product.user.username %>/<%= product.slug %>
-                  <.link
-                    href={@base_url <> "/"<>  product.user.username <>"/" <> product.slug}
-                    target="_blank"
-                  >
+                  <%= AppWeb.Utils.product_url(product) %>
+                  <.link href={AppWeb.Utils.product_url(product, preview: true)} target="_blank">
                     <.icon
                       name="hero-arrow-top-right-on-square"
                       class="w-4 h-4 inline-block text-primary-500"
@@ -153,7 +150,6 @@
     module={AppWeb.AdminLive.Product.Components.NewForm}
     id={:new_product}
     changeset={@changeset}
-    base_url={@base_url}
     current_user={@current_user}
   />
 </.modal>

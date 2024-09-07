@@ -13,7 +13,8 @@ kill_signal = "SIGTERM"
   release_command = "/app/bin/migrate"
 
 [env]
-  PHX_HOST = "app.jetform.me"
+  ENABLE_SUBDOMAINS = "true"
+  PHX_HOST = "jetform.me" # need to be root domain because we enable subdomains
   PORT = "8080"
   MIDTRANS_MODE = "production"
   IPAYMU_MODE = "production"

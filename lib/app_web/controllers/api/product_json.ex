@@ -57,7 +57,7 @@ defmodule AppWeb.API.ProductJSON do
     |> Map.put(:description_plain, HtmlSanitizeEx.strip_tags(product.description || ""))
     |> Map.put(:cover, cover)
     |> Map.put(:price_display, App.Products.price_display(product))
-    |> Map.put(:checkout_url, AppWeb.Utils.base_url() <> ~p"/p/#{product.slug}")
+    |> Map.put(:url, AppWeb.Utils.product_url(product))
   end
 
   defp transform_variant(%Products.Variant{} = variant) do

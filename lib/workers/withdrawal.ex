@@ -77,7 +77,7 @@ defmodule Workers.Withdrawal do
   defp send_confirmation_email(withdrawal) do
     withdrawal = App.Repo.preload(withdrawal, :user)
     user = withdrawal.user
-    base_url = AppWeb.Utils.base_url()
+    base_url = AppWeb.Utils.dashboard_url()
     token = Credits.create_withdrawal_confirmation_token(withdrawal)
 
     text = """
@@ -153,7 +153,7 @@ defmodule Workers.Withdrawal do
   defp send_cancellation_email(withdrawal) do
     withdrawal = App.Repo.preload(withdrawal, :user)
     user = withdrawal.user
-    base_url = AppWeb.Utils.base_url()
+    base_url = AppWeb.Utils.dashboard_url()
 
     text = """
     Halo #{user.email},

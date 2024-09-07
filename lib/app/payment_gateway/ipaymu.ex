@@ -167,6 +167,7 @@ defmodule App.PaymentGateway.Ipaymu do
     payment_channel = Keyword.get(options, :payment_channel)
     # default 2h
     expired = trunc(Keyword.get(options, :expiry_in_minutes, 120) / 60)
+    signature = Phoenix.Token.sign(AppWeb.Endpoint, "payment_id", payment.id)
 
     payload = %{
       referenceId: payment.id,
@@ -174,9 +175,10 @@ defmodule App.PaymentGateway.Ipaymu do
       description: [order.product_variant_name],
       qty: [1],
       price: [order.total],
-      returnUrl: "#{AppWeb.Utils.base_url()}/api/payment/ipaymu/#{payment.id}/redirect",
-      notifyUrl: "#{AppWeb.Utils.base_url()}/api/payment/ipaymu/#{payment.id}/notification",
-      cancelUrl: "#{AppWeb.Utils.base_url()}/api/payment/ipaymu/#{payment.id}/redirect",
+      returnUrl: "#{AppWeb.Utils.dashboard_url()}/api/payment/ipaymu/#{payment.id}/redirect",
+      notifyUrl:
+        "#{AppWeb.Utils.dashboard_url()}/api/payment/ipaymu/#{payment.id}/notification?signature=#{signature}",
+      cancelUrl: "#{AppWeb.Utils.dashboard_url()}/api/payment/ipaymu/#{payment.id}/redirect",
       buyerName: order.customer_name,
       buyerPhone: order.customer_phone,
       buyerEmail: order.customer_email,
@@ -223,7 +225,7 @@ defmodule App.PaymentGateway.Ipaymu do
 
         max_age = expired_hr * 60 * 60
         token = Phoenix.Token.sign(AppWeb.Endpoint, "payment", payload, max_age: max_age)
-        url = "#{AppWeb.Utils.base_url()}/payments/#{payment_id}?token=#{token}"
+        url = "#{AppWeb.Utils.dashboard_url()}/payments/#{payment_id}?token=#{token}"
         {:ok, CreateTransactionResult.new(trx_id, url, data)}
 
       {_, %{status: status, body: body}} ->
@@ -241,13 +243,15 @@ defmodule App.PaymentGateway.Ipaymu do
 
     # default 2h
     expired = trunc(Keyword.get(options, :expiry_in_minutes, 120) / 60)
+    signature = Phoenix.Token.sign(AppWeb.Endpoint, "payment_id", payment.id)
 
     %{
       name: order.customer_name,
       phone: order.customer_phone,
       email: order.customer_email,
       amount: order.total,
-      notifyUrl: "#{AppWeb.Utils.base_url()}/api/payment/ipaymu/#{payment.id}/notification",
+      notifyUrl:
+        "#{AppWeb.Utils.dashboard_url()}/api/payment/ipaymu/#{payment.id}/notification?signature=#{signature}",
       comments: App.Orders.product_fullname(order),
       referenceId: payment.id,
       expired: expired,

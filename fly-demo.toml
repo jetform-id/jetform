@@ -13,6 +13,7 @@ kill_signal = 'SIGTERM'
   release_command = '/app/bin/migrate'
 
 [env]
+  ENABLE_SUBDOMAINS = "false"
   PHX_HOST = 'demo.jetform.me'
   PORT = '8080'
   MIDTRANS_MODE = "sandbox"

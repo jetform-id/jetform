@@ -278,7 +278,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
                 JS.push("step", value: %{step: "details"}, target: @submit_target, page_loading: true)
               }
             >
-              <.icon name="hero-arrow-long-left" /> Kembali ke detail produk
+              <.icon name="hero-arrow-long-left" /> Detail produk
             </.link>
           </p>
           <p :if={@total_price > 0} class="py-3 px-6 text-sm font-semibold bg-slate-100 border-b">
