@@ -119,9 +119,9 @@ defmodule AppWeb.API.Schemas do
           type: :string,
           description: "Product price display"
         },
-        checkout_url: %Schema{
+        url: %Schema{
           type: :string,
-          description: "Product checkout page URL"
+          description: "Product URL"
         },
         inserted_at: %Schema{
           type: :string,

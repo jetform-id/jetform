@@ -71,11 +71,7 @@
             >
               <:help>
                 <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                  URL anda: <%= @base_url %>/<span
-                    id="shop-username"
-                    data-domain="jetform.me"
-                    class="font-semibold"
-                  ><%= Map.get(@user_changeset.changes, :username, @user_changeset.data.username) %></span>
+                  URL anda <span class="font-semibold"><%= AppWeb.Utils.user_url(@user) %></span>
                 </div>
               </:help>
             </.input>

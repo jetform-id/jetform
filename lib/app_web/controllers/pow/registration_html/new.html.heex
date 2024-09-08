@@ -54,7 +54,7 @@
       >
         <:help>
           <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-            URL anda: <%= @base_url %>/<span id="shop-username" class="font-bold"><%= Map.get(@changeset.changes, :username, "username") %></span>
+            <%= AppWeb.Utils.user_url("username") %>
           </div>
         </:help>
       </.input>

@@ -30,7 +30,7 @@ defmodule Workers.NotifyPaidOrder do
 
   defp send_email(order) do
     user = order.user
-    base_url = AppWeb.Utils.base_url()
+    base_url = AppWeb.Utils.dashboard_url()
 
     buyer_text = """
     Halo #{order.customer_name},

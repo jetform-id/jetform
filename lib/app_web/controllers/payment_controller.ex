@@ -24,19 +24,21 @@ defmodule AppWeb.PaymentController do
   - get transaction status from Ipaymu
   - pass to downstream handler
   """
-  def ipaymu_notification(conn, %{"payment_id" => payment_id, "trx_id" => trx_id} = payload) do
-    payment = Orders.get_payment!(payment_id)
-
-    # payment notification logger
-    payment_notification = Orders.change_payment_notification(conn, payment)
-
-    with {:ok, _} <- Orders.create_payment_notification(payment_notification),
+  def ipaymu_notification(
+        conn,
+        %{"payment_id" => payment_id, "trx_id" => trx_id, "signature" => signature} = payload
+      ) do
+    with {:ok, id} <- Phoenix.Token.verify(conn, "payment_id", signature),
+         true <- payment_id == id,
+         %{} = payment <- Orders.get_payment(payment_id),
+         {:ok, _} <-
+           Orders.create_payment_notification(Orders.change_payment_notification(conn, payment)),
          {:ok, result} <- Ipaymu.get_transaction(trx_id),
          attrs <- Orders.to_payment_attrs(result) |> Map.put("notification_payload", payload),
          {:ok, _payment} <- Orders.update_payment(payment, attrs) do
       send_resp(conn, 200, "ok")
     else
-      {:error, err} ->
+      err ->
         Logger.error("#{__MODULE__}.ipaymu_notification/2 error: #{inspect(err)}")
         send_resp(conn, 500, "error")
     end

@@ -22,7 +22,7 @@ defmodule AppWeb.PageInfo do
       title: product.name,
       description: cleaned_desc <> "...",
       image: Products.cover_url(product, :standard),
-      url: AppWeb.Utils.base_url() <> ~p"/p/#{product.slug}"
+      url: AppWeb.Utils.product_url(product)
     }
   end
 end

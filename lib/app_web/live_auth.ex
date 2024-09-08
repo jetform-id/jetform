@@ -11,7 +11,6 @@ defmodule AppWeb.LiveAuth do
   def on_mount(:admin, _params, session, socket) do
     socket =
       socket
-      |> assign(:base_url, Utils.base_url())
       |> assign(:admin_menus, Utils.admin_menus())
       |> assign_new(:current_user, fn -> user_from_session(session) end)
 
@@ -33,7 +32,6 @@ defmodule AppWeb.LiveAuth do
   def on_mount(:default, _params, session, socket) do
     socket =
       socket
-      |> assign(:base_url, Utils.base_url())
       |> assign_new(:current_user, fn -> user_from_session(session) end)
 
     {:cont, socket}

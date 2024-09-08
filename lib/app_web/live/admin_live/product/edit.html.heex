@@ -15,7 +15,7 @@
         <.icon name="hero-chart-bar-square" class="mr-1" /> Stats
       </.link>
       <.link
-        href={@base_url <> "/"<>  @product.user.username <>"/" <> @product.slug}
+        href={AppWeb.Utils.product_url(@product, preview: true)}
         target="_blank"
         type="button"
         class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-300 rounded-e-md hover:bg-gray-100 hover:text-blue-600"
