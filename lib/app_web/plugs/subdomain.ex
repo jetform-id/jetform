@@ -2,17 +2,15 @@ defmodule AppWeb.Plugs.Subdomain do
   import Plug.Conn
 
   def init(_opts) do
-    %{
-      router: AppWeb.Subdomain.Router,
-      root_host: Application.get_env(:app, AppWeb.Endpoint)[:url][:host]
-    }
+    %{router: AppWeb.Subdomain.Router}
   end
 
-  def call(%{host: host} = conn, %{root_host: root_host, router: router} = _opts) do
-    enabled = Application.get_env(:app, :enable_subdomains, false)
-    dashboard_subdomain = Application.get_env(:app, :dashboard_subdomain, "app")
+  def call(%{host: host} = conn, %{router: router} = _opts) do
+    enabled = Application.get_env(:app, :enable_subdomains)
+    dashboard_subdomain = Application.get_env(:app, :dashboard_subdomain)
 
     if enabled do
+      root_host = AppWeb.Endpoint.host()
       case extract_subdomain(host, root_host) do
         subdomain when byte_size(subdomain) > 0 ->
           # if accessing the dashboard subdomain, do nothing

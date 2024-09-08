@@ -33,9 +33,9 @@ config :app,
 
 # Configures the endpoint
 config :app, AppWeb.Endpoint,
-  # url: [host: "localhost"],
-  url: [host: "jetform.local"],
+  url: [host: "localhost"],
   # url: [host: "676e-180-254-227-118.ngrok-free.app", port: 443, scheme: "https"],
+  check_origin: ["//*.localhost", "//*.ngrok-free.app"],
   adapter: Phoenix.Endpoint.Cowboy2Adapter,
   render_errors: [
     formats: [html: AppWeb.ErrorHTML, json: AppWeb.ErrorJSON],
