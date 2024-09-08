@@ -2,21 +2,11 @@
 
 ![screenshot](https://github.com/jetform-dev/jetform/assets/1094221/15ab7f06-378f-4a11-b92e-cccb55e63b1b)
 
-> 🚧 Under heavy development... 🚧
-
-JetForm dibuat dari nol dengan fokus membantu anda penjual/creator produk digital seperti ebook, desain, source code dll. **Anda fokus membuat produk berkualitas, sisanya biar JetForm yang menangani**.
-
-JetForm bukan ide baru, namun terinspirasi dari beberapa platform yang sudah ada di pasaran namun dengan keunggulan tersendiri, platform tersebut misalnya:
-
-- **gumroad.com**, inspirasi utama dari JetForm adalah Gumroad, tetapi Gumroad tidak mendukung sistem pembayaran lokal yang kadang menyulitkan content creator yang mentargetkan pasar lokal.
-- **orderonline.id**, inspirasi berikutnya, tetapi platform ini *overkill* dan *relatif mahal* bagi mereka yang hanya menjual produk digital dengan penjualan yang tidak pasti setiap bulannya.
-- **karyakarsa.com**, lebih ke media sosial buat kreator meskipun bisa jualan karya.
-- **trakteer.id**, lebih ke media sosial buat kreator meskipun bisa jualan karya.
-- **lynk.id**, fitur terlalu minim buat mereka yang fokus jualan produk digital, berorientasi ke pengguna mobile.
+JetForm dibangun dari nol dengan fokus membantu penjual/creator produk digital seperti ebook, desain, source code, form registrasi dll. **Anda fokus membuat produk berkualitas, sisanya JetForm yang menangani**.
 
 ## Kenapa JetForm?
 
-**Untuk penjual**: JetForm fokus memberikan pengalaman (User Experience) yang sederhana namun memiliki semua fitur penting yang dibutuhkan penjual. Kreator fokus membuat produk dan memasaekan, JetForm akan menjadi partner bisnis yang mengurusi penjualan dan distribusi produk.
+**Untuk penjual**: JetForm memberikan pengalaman (User Experience) yang sederhana namun memiliki semua fitur penting yang dibutuhkan penjual. Kreator fokus membuat produk dan memasarkan, JetForm akan menjadi partner bisnis yang mengurusi penjualan dan distribusi produk.
 
 **Untuk pembeli**: Akses ke produk yang dibeli langsung didapatkan begitu pembayaran selesai. Tidak perlu menunggu lama, karena semua serba otomatis.
 
@@ -33,14 +23,14 @@ Dan berikut detailnya:
 
 - [x] **Open source (kode sumber terbuka)**. JetForm mengedepankan transparansi, keterbukaan (openess) dan keadilan (fairness). Dikembangkan menggunakan tools open source serta berkontribusi balik ke komunitas open source. JetForm ❤️ open source.
 - [x] **Built-in digital product distribution system**. Produk dijual dan didistribusikan langsung ke pembeli dengan aman tanpa perlu integrasi dengan sistem pihak ketiga.
-- [x] **Fast and secure checkout page**. Pembeli membeli produk yang mereka inginkan dengan proses yang cepat, mudah dan aman.
-- [x] **Simple and flexible pricing!** Anda bisa daftar dan langsung jualan tanpa iuran bulanan dengan sistem Pay As You Go (komisi) atau pilih paket Bulanan kalau penjualan Anda sudah mulai meningkat.
-- [x] **No limits**. Tidak ada batasan dalam jumlah produk ataupun jumlah transaksi.
+- [x] **Fast and secure checkout page**. Pembeli mendapatkan produk yang mereka inginkan dengan proses yang cepat, mudah dan aman.
+- [x] **Simple and flexible pricing!** Anda bisa daftar dan langsung jualan tanpa iuran bulanan dengan sistem Pay As You Go (komisi) atau pilih paket Bulanan apabila penjualan Anda sudah mulai meningkat.
+- [x] **No limits**. Tidak ada batasan dalam jumlah produk ataupun jumlah transaksi (tergantung paket).
 - [x] **Product Variants**. Buat produk dengan varian berbeda dengan harga berbeda. Bisa juga untuk produk gratis (Lead Magnet).
 - [x] **Withdraw anytime**. Withdraw hasil penjualan anda kapan saja.
-- [x] **Local payment methods**. Pembayaran aman dengan metode pembayaran kekinian (Virtual Account, QRIS, dll.). Payment processor JetForm adalah Midtrans.
+- [x] **Local payment methods**. Pembayaran aman dengan metode pembayaran kekinian (Virtual Account, QRIS, dll.).
 - [ ] **Create great offers!** Berbagai modul untuk membuat penawaran anda lebih menarik, seperti: Scarcity (stok terbatas), Urgency (waktu terbatas), Bonus (bonus melimpah) atau kode voucher.
-- [ ] **Integrasi dengan platform lain.** JetForm bisa dihubungkan dengan platform lain menggunakan layanan dari _Zapier_.
+- [x] **Integrasi dengan platform lain.** JetForm bisa dihubungkan dengan platform lain menggunakan layanan dari _Zapier_.
 - [ ] **Advance analytics**. Lihat siapa yang mengakses halaman produk anda, siapa yang membeli, lewat apa (mobile atau web), kampanye iklan yang mana, dll.
 - [ ] **Your product, your data**. Export data produk, penjualan dan pembeli untuk keperluan analisis anda.
 
@@ -48,7 +38,7 @@ Anda punya ide menarik? [lets talk](https://github.com/jetform-dev/jetform/discu
 
 ## Detail Teknis
 
-JetForm dibuat dengan [Phoenix framework](https://www.phoenixframework.org/) dengan bahasa [Elixir](https://elixir-lang.org/). Adalah web-framework untuk membuat aplikasi dengan produktif, di-backing dengan bahasa Elixir (berjalan diatas Erlang VM) yang terkenal dengan kemampuannya untuk membangun aplikasi yang highly-concurrent + fault tolerant (dipakai Discord, WhatsApp, Pinterest, dll.) dan merupakan bahasa functional.
+JetForm dibuat dengan [Phoenix framework](https://www.phoenixframework.org/). Web framework full-stack untuk membuat aplikasi yang interaktif dan juga _scalable_, di-backing dengan bahasa [Elixir](https://elixir-lang.org/) (berjalan diatas Erlang VM) yang terkenal dengan kemampuannya untuk membangun aplikasi yang _highly-concurrent_, _fault-tolerant_ (dipakai Discord, WhatsApp, Pinterest, dll.), dan merupakan bahasa fungsional.
 
 ## Development
 
