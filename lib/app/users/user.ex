@@ -116,12 +116,17 @@ defmodule App.Users.User do
   end
 
   defp validate_reserved_words(changeset, field) do
-    validate_change(changeset, field, fn _, value ->
-      if ReservedWords.is_reserved?(value) do
-        [{field, "has already been taken"}]
-      else
-        []
-      end
-    end)
+    # admin can bypass reserved words validation.
+    if get_field(changeset, :role) == :admin do
+      changeset
+    else
+      validate_change(changeset, field, fn _, value ->
+        if ReservedWords.is_reserved?(value) do
+          [{field, "has already been taken"}]
+        else
+          []
+        end
+      end)
+    end
   end
 end
