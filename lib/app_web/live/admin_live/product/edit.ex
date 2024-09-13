@@ -132,11 +132,6 @@ defmodule AppWeb.AdminLive.Product.Edit do
     {:noreply, update_preview(socket)}
   end
 
-  @impl true
-  def handle_info({:new_order, _order}, socket) do
-    {:noreply, put_flash(socket, :info, "Anda dalam mode preview.")}
-  end
-
   defp update_preview(socket) do
     product = socket.assigns.product
     send_update(Preview, id: product.id, product: product)

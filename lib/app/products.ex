@@ -68,11 +68,6 @@ defmodule App.Products do
     Repo.delete(product)
   end
 
-  def public_path(product) do
-    product = App.Repo.preload(product, :user)
-    "/#{product.user.username}/#{product.slug}"
-  end
-
   def cover_url(product, version, opts \\ []) do
     product = Repo.preload(product, :images)
 

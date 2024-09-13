@@ -69,6 +69,9 @@ defmodule AppWeb.Router do
   scope "/api", AppWeb do
     pipe_through :api
 
+    # umami
+    post "/umami/events", UmamiController, :index
+
     # midtrans
     get "/payment/midtrans/redirect", PaymentController, :midtrans_redirect
     post "/payment/midtrans/notification", PaymentController, :midtrans_notification

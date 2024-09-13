@@ -31,7 +31,10 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
           <.input field={f[:slug]} type="text" label="URL" required>
             <:help>
               <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                <.link href={AppWeb.Utils.product_url(@product, preview: true)} target="_blank">
+                <.link
+                  href={AppWeb.Utils.product_url(@product, preview: !@product.is_live)}
+                  target="_blank"
+                >
                   <%= AppWeb.Utils.product_url(@product) %>
                   <.icon
                     name="hero-arrow-top-right-on-square"

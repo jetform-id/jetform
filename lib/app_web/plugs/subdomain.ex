@@ -11,6 +11,7 @@ defmodule AppWeb.Plugs.Subdomain do
 
     if enabled do
       root_host = AppWeb.Endpoint.host()
+
       case extract_subdomain(host, root_host) do
         subdomain when byte_size(subdomain) > 0 ->
           # if accessing the dashboard subdomain, do nothing

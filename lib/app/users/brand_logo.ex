@@ -29,7 +29,7 @@ defmodule App.Users.BrandLogo do
   end
 
   def default_url(:thumb, _scope) do
-    "https://via.placeholder.com/256x256"
+    "https://placehold.co/256x256"
   end
 
   # Specify custom headers for s3 objects

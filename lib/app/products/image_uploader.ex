@@ -54,11 +54,11 @@ defmodule App.Products.ImageUploader do
 
   # Provide a default URL if there hasn't been a file uploaded
   def default_url(:standard, _scope) do
-    "https://via.placeholder.com/640x360"
+    "https://placehold.co/640x360"
   end
 
   def default_url(:thumb, _scope) do
-    "https://via.placeholder.com/256x144"
+    "https://placehold.co/256x144"
   end
 
   # Specify custom headers for s3 objects

@@ -20,7 +20,7 @@ defmodule AppWeb.Subdomain.Live.Checkout do
               product = Products.get_product_by_user_and_slug!(tenant, slug)
 
               if product.id == product_id,
-                do: assign_product(socket, product),
+                do: assign_product(socket, product, true),
                 else: raise(Ecto.NoResultsError, queryable: Products.Product)
 
             _ ->
@@ -39,6 +39,7 @@ defmodule AppWeb.Subdomain.Live.Checkout do
       module={AppWeb.AdminLive.Product.Components.Preview}
       id={@product.id}
       product={@product}
+      preview={@preview}
     />
     """
   end
@@ -77,9 +78,9 @@ defmodule AppWeb.Subdomain.Live.Checkout do
     {:noreply, redirect(socket, external: payment.redirect_url)}
   end
 
-  defp assign_product(socket, product) do
+  defp assign_product(socket, product, is_preview \\ false) do
     socket
-    |> assign(:enable_tracking, product.is_live)
+    |> assign(:preview, is_preview)
     |> assign(:body_class, "bg-slate-300")
     |> assign(:page_title, product.name)
     |> assign(:page_info, AppWeb.PageInfo.new(product))

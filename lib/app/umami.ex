@@ -1,4 +1,16 @@
 defmodule App.Umami do
+  require Logger
+
+  @moduledoc false
+  defmodule URL do
+    alias App.Users.User
+    alias App.Products.Product
+
+    def for(%User{} = user), do: "/users/#{user.id}"
+    def for(%Product{} = product), do: "/products/#{product.id}"
+    def for(_), do: raise("Unknown type")
+  end
+
   defmodule Params do
     @enforce_keys [:url, :startAt, :endAt, :unit]
     defstruct [:url, :startAt, :endAt, :unit, :type]
@@ -21,6 +33,12 @@ defmodule App.Umami do
   def url, do: Application.get_env(:app, :umami)[:url]
   def token, do: Application.get_env(:app, :umami)[:token]
 
+  def send(payload, headers) do
+    get_http_client(headers)
+    |> Tesla.post("/api/send", payload)
+    |> handle_response()
+  end
+
   def stats(%Params{} = params) do
     get("stats", website_id(), params)
   end
@@ -41,12 +59,7 @@ defmodule App.Umami do
     |> handle_response()
   end
 
-  defp get_http_client() do
-    headers = [
-      {"accept", "application/json"},
-      {"authorization", "Bearer #{token()}"}
-    ]
-
+  defp get_http_client(headers) do
     middlewares = [
       {Tesla.Middleware.BaseUrl, url()},
       Tesla.Middleware.JSON,
@@ -56,13 +69,26 @@ defmodule App.Umami do
     Tesla.client(middlewares)
   end
 
+  defp get_http_client() do
+    headers = [
+      {"accept", "application/json"},
+      {"authorization", "Bearer #{token()}"}
+    ]
+
+    get_http_client(headers)
+  end
+
   defp handle_response({:ok, %Tesla.Env{status: 200, body: body}}) do
     {:ok, body}
   end
 
   defp handle_response({:ok, %Tesla.Env{status: _, body: body}}) do
+    Logger.error("App.Umami error: #{inspect(body)}")
     {:error, body}
   end
 
-  defp handle_response(error), do: error
+  defp handle_response(error) do
+    Logger.error("App.Umami error: #{inspect(error)}")
+    {:error, inspect(error)}
+  end
 end

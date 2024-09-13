@@ -15,12 +15,12 @@
         <.icon name="hero-chart-bar-square" class="mr-1" /> Stats
       </.link>
       <.link
-        href={AppWeb.Utils.product_url(@product, preview: true)}
+        href={AppWeb.Utils.product_url(@product, preview: !@product.is_live)}
         target="_blank"
         type="button"
         class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-300 rounded-e-md hover:bg-gray-100 hover:text-blue-600"
       >
-        <.icon name="hero-eye" class="mr-1" /> Preview
+        <.icon name="hero-eye" class="mr-1" /> Lihat
       </.link>
       <%!-- <button type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-blue-600">
           <.icon name="hero-share" class="mr-1"/> Bagikan

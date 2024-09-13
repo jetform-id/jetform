@@ -37,9 +37,21 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
 
   @impl true
   def render(assigns) do
+    assigns =
+      cond do
+        !assigns.preview and assigns.product.is_live -> Map.put(assigns, :tracking, "true")
+        true -> Map.put(assigns, :tracking, "false")
+      end
+
     ~H"""
     <%!-- preview --%>
-    <div class="p-1 md:p-6">
+    <div
+      class="p-1 md:p-6"
+      id={"product-" <> @product.id}
+      phx-hook="UmamiView"
+      data-if={@tracking}
+      data-url={App.Umami.URL.for(@product)}
+    >
       <.product_detail
         :if={@step == "details"}
         product={@product}
@@ -50,6 +62,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         selected_variant_id={@selected_variant_id}
         submit_event="checkout"
         submit_target={@myself}
+        tracking={@tracking}
       />
 
       <.checkout_form
@@ -63,6 +76,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         submit_event={if @preview, do: "simulate_order", else: "create_order"}
         submit_target={@myself}
         enable_captcha={@enable_captcha}
+        tracking={@tracking}
       />
 
       <%!-- <p class="text-center p-3 text-sm text-gray-400">
@@ -83,6 +97,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
   attr :product_variants, :list, default: []
   attr :has_variants, :boolean, default: false
   attr :selected_variant_id, :string, default: nil
+  attr :tracking, :string, required: true
 
   def product_detail(assigns) do
     ~H"""
@@ -217,6 +232,11 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           <:actions>
             <div class="">
               <button
+                id="cta-submit"
+                phx-hook="UmamiClick"
+                data-if={@tracking}
+                data-event="cta-submit"
+                data-url={App.Umami.URL.for(@product)}
                 type="submit"
                 class="mt-5 w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-700"
               >
@@ -243,7 +263,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
   attr :payment_channels, :map, required: true
   attr :selected_payment_channel, :string, default: nil
   attr :enable_captcha, :boolean, default: true
-  attr :error, :string, default: nil
+  attr :tracking, :string, required: true
 
   def checkout_form(assigns) do
     checkout = assigns.checkout
@@ -382,6 +402,11 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           <:actions>
             <div class="px-6 pb-8">
               <button
+                id="order-submit"
+                phx-hook="UmamiClick"
+                data-if={@tracking}
+                data-event="order-submit"
+                data-url={App.Umami.URL.for(@product)}
                 phx-disable-with="Loading..."
                 disabled={not @allow_submit}
                 type="submit"
@@ -428,7 +453,6 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           socket
           |> assign(assigns)
           |> assign(:product, product)
-          |> assign(:preview, false)
           |> assign(:enable_captcha, false)
           |> assign(:has_variants, has_variants)
           |> assign(:product_variants, variants)
@@ -563,9 +587,14 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
     changeset = Order.create_changeset(%Order{}, params)
 
     case Ecto.Changeset.apply_action(changeset, :insert) do
-      {:ok, order} ->
+      {:ok, _order} ->
         :timer.sleep(500)
-        send(self(), {:new_order, order})
+
+        send(
+          self(),
+          {:flash, :warning, "Produk belum aktif atau Anda sedang dalam mode preview."}
+        )
+
         {:noreply, assign(socket, :order_changeset, changeset)}
 
       {:error, changeset} ->

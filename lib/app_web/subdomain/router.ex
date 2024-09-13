@@ -12,6 +12,16 @@ defmodule AppWeb.Subdomain.Router do
     plug AppWeb.Plugs.PutTenant
   end
 
+  pipeline :api do
+    plug :accepts, ["json"]
+  end
+
+  scope "/api", AppWeb do
+    pipe_through :api
+
+    post "/umami/events", UmamiController, :index
+  end
+
   scope "/", AppWeb.Subdomain do
     pipe_through :browser
 

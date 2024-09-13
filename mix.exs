@@ -53,6 +53,7 @@ defmodule App.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:pow, "~> 1.0.34"},
       {:number, "~> 1.0"},
+      {:cors_plug, "~> 3.0"},
       # waffle
       {:waffle, "~> 1.1"},
       {:waffle_ecto, "~> 0.0"},

@@ -19,7 +19,7 @@ defmodule AppWeb.PublicLive.Checkout do
       case params["preview_token"] do
         nil ->
           # no preview token: check if product is live
-          return_product(
+          assign_product(
             socket,
             Products.get_live_product_by_user_and_slug!(seller, slug),
             params
@@ -32,7 +32,7 @@ defmodule AppWeb.PublicLive.Checkout do
               product = Products.get_product_by_user_and_slug!(seller, slug)
 
               if product.id == product_id,
-                do: return_product(socket, product, params),
+                do: assign_product(socket, product, params, true),
                 else: raise(Ecto.NoResultsError, queryable: Products.Product)
 
             _ ->
@@ -62,6 +62,7 @@ defmodule AppWeb.PublicLive.Checkout do
       module={AppWeb.AdminLive.Product.Components.Preview}
       id={@product.id}
       product={@product}
+      preview={@preview}
     />
     """
   end
@@ -99,12 +100,12 @@ defmodule AppWeb.PublicLive.Checkout do
     {:noreply, redirect(socket, external: payment.redirect_url)}
   end
 
-  defp return_product(socket, product, params) do
+  defp assign_product(socket, product, params, is_preview \\ false) do
     if Application.get_env(:app, :enable_subdomains) do
       redirect(socket, external: AppWeb.Utils.product_url(product, params: params))
     else
       socket
-      |> assign(:enable_tracking, product.is_live)
+      |> assign(:preview, is_preview)
       |> assign(:body_class, "bg-slate-300")
       |> assign(:page_title, product.name)
       |> assign(:page_info, AppWeb.PageInfo.new(product))

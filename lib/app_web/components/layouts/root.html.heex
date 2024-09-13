@@ -15,12 +15,15 @@
   <body class={assigns[:body_class] || "bg-slate-200"}>
     <%= @inner_content %>
   </body>
+  <%!-- <script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit">
+  </script> --%>
+  <script
+    defer
+    src={App.Umami.url() <> "/script.js"}
+    data-website-id={App.Umami.website_id()}
+    data-auto-track="false"
+  >
+  </script>
   <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
   </script>
-  <%= if assigns[:enable_tracking] do %>
-    <script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit">
-    </script>
-    <script defer src={App.Umami.url() <> "/script.js"} data-website-id={App.Umami.website_id()}>
-    </script>
-  <% end %>
 </html>

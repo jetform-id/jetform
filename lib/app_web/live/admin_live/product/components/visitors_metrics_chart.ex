@@ -37,7 +37,7 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsMetricsChart do
             type="button"
             role="tab"
             class={[
-              "inline-block w-full p-3 rounded-tl-lg hover:bg-gray-100 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600",
+              "inline-block w-full p-3 rounded-tr-lg hover:bg-gray-100 focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600",
               if(@tab == "query", do: "bg-white", else: "bg-gray-50")
             ]}
           >
@@ -108,8 +108,8 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsMetricsChart do
   defp fetch_metrics(product, {start_time, end_time}, type) do
     # get date from start_time to be use for the cache key
     date = Timex.format!(start_time, "%Y-%m-%d", :strftime)
-    url = App.Products.public_path(product)
-    cache_key = "products:#{product.id}:metrics:#{url}:#{type}:#{date}"
+    url = App.Umami.URL.for(product)
+    cache_key = "umami:metrics:#{type}:#{date}:#{url}"
 
     Cachex.fetch(
       :cache,

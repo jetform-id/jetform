@@ -49,5 +49,6 @@ defmodule AppWeb.Endpoint do
   plug Plug.Session, @session_options
   plug Pow.Plug.Session, otp_app: :app
   plug AppWeb.Plugs.Subdomain
+  plug CORSPlug
   plug AppWeb.Router
 end

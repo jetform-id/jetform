@@ -73,8 +73,8 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsSalesChart do
   end
 
   defp cached_pageviews_buckets(product) do
-    url = App.Products.public_path(product)
-    cache_key = "products:#{product.id}:pageviews:#{url}"
+    url = App.Umami.URL.for(product)
+    cache_key = "umami:pageviews:#{url}"
 
     # always pull pageviews from the last 30 days so we can cache it and avoid calling the API too often.
     end_time = Timex.now()

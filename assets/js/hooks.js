@@ -4,21 +4,37 @@ import ApexCharts from 'apexcharts'
 
 let Hooks = {}
 
-// Hooks.TrixEditor = {
-//     updated() {
-//         var trixEditor = document.querySelector("trix-editor")
-//         if (null != trixEditor) {
-//             trixEditor.editor.loadHTML(this.el.value);
-//         }
-//     }
-// }
+Hooks.UmamiView = {
+    mounted() {
+        let send = this.el.dataset.if === undefined || this.el.dataset.if === "true"
+        if(!send) return
+        
+        const {href, search} = window.location
+        let url = this.el.dataset.url + search
+        umami.track(props => ({...props, url: url || href, data: {href: href}}))
+    }
+}
+
+Hooks.UmamiClick = {
+    mounted() {
+        let send = this.el.dataset.if === undefined || this.el.dataset.if === "true"
+        if(!send) return
+
+        const {href, search} = window.location
+        let url = this.el.dataset.url + search
+        let eventName = this.el.dataset.event
+        this.el.addEventListener("click", () => {
+            umami.track(props => ({...props, name: eventName, url: url || href, data: {...this.el.dataset, href: href}}))
+        })
+    }
+}
 
 Hooks.InitClipboard = {
     init() {
         const clipboard = new ClipboardJS('.clipboard')
         clipboard.on('success', function(e) {
-            alert("Data disalin ke clipboard");
-        });
+            alert("Data disalin ke clipboard")
+        })
     },
     mounted() {
         this.init()
@@ -37,7 +53,7 @@ Hooks.InitGlide = {
         if (this.el.dataset.autostart == "true") {
             config.autoplay = 5000
         }
-        new Glide('.glide', config).mount();
+        new Glide('.glide', config).mount()
     },
     mounted() {
         this.init()
@@ -51,7 +67,7 @@ Hooks.RenderCaptcha = {
     render() {
         turnstile.render('#cf-turnstile', {
             sitekey: document.querySelector("meta[name='captcha-sitekey']").getAttribute("content")
-        });
+        })
     },
     mounted() {
         this.render()
@@ -129,10 +145,10 @@ Hooks.SalesChart = {
                 position: 'top',
                 horizontalAlign: 'right'
             }
-        };
+        }
 
-        var chart = new ApexCharts(document.querySelector("#SalesChart"), options);
-        chart.render();
+        var chart = new ApexCharts(document.querySelector("#SalesChart"), options)
+        chart.render()
     },
     mounted() {
         this.render()
@@ -214,10 +230,10 @@ Hooks.VisitorsSalesChart = {
                 position: 'top',
                 horizontalAlign: 'right'
             }
-        };
+        }
 
-        var chart = new ApexCharts(document.querySelector("#VisitorsSalesChart"), options);
-        chart.render();
+        var chart = new ApexCharts(document.querySelector("#VisitorsSalesChart"), options)
+        chart.render()
     },
     mounted() {
         this.render()
@@ -256,8 +272,8 @@ Hooks.DownloadsChart = {
             }
         }
 
-        var chart = new ApexCharts(document.querySelector("#DownloadsChart"), options);
-        chart.render();
+        var chart = new ApexCharts(document.querySelector("#DownloadsChart"), options)
+        chart.render()
     },
     mounted() {
         this.render()
