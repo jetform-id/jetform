@@ -4,14 +4,54 @@ import ApexCharts from 'apexcharts'
 
 let Hooks = {}
 
+Hooks.Embed = {
+    mounted() {
+        // send message to parent window to close the embed
+        let closeBtn = document.getElementById("close-embed")
+        if(closeBtn !== null) {
+            closeBtn.addEventListener("click", () => {
+                window.parent.postMessage({close: true}, "*");
+            })
+        }
+
+        // open all external links in new tab
+        document.querySelectorAll('.trix-content a').forEach((el) => {
+            el.onclick = (e) => {
+                e.preventDefault()
+                window.open(el.getAttribute("href"), "_blank")
+            }
+        })
+    }
+}
+
+function getUrlAndReferrer(trackingUrl) {
+    windowUrl = new URL(window.location.href)
+    var referrer = document.referrer
+    if (windowUrl.searchParams.has("referrer")) {
+        referrer = decodeURIComponent(windowUrl.searchParams.get("referrer"))
+        windowUrl.searchParams.delete("referrer")
+    }
+    if (windowUrl.searchParams.has("mode")) {
+        windowUrl.searchParams.delete("mode")
+    }
+    let searchParamsStr = windowUrl.searchParams.toString()
+    return {
+        url: trackingUrl + (searchParamsStr !== "" ? "?" + searchParamsStr : ""),
+        referrer: referrer
+    }
+}
+
 Hooks.UmamiView = {
     mounted() {
         let send = this.el.dataset.if === undefined || this.el.dataset.if === "true"
         if(!send) return
         
-        const {href, search} = window.location
-        let url = this.el.dataset.url + search
-        umami.track(props => ({...props, url: url || href, data: {href: href}}))
+        let url_and_referrer = getUrlAndReferrer(this.el.dataset.url)
+        umami.track(props => ({
+            ...props,
+            ...url_and_referrer,
+            data: {href: window.location.href}
+        }))
     }
 }
 
@@ -20,11 +60,16 @@ Hooks.UmamiClick = {
         let send = this.el.dataset.if === undefined || this.el.dataset.if === "true"
         if(!send) return
 
-        const {href, search} = window.location
-        let url = this.el.dataset.url + search
+        let url_and_referrer = getUrlAndReferrer(this.el.dataset.url)
         let eventName = this.el.dataset.event
+        
         this.el.addEventListener("click", () => {
-            umami.track(props => ({...props, name: eventName, url: url || href, data: {...this.el.dataset, href: href}}))
+            umami.track(props => ({
+                ...props, 
+                ...url_and_referrer,
+                name: eventName, 
+                data: {...this.el.dataset, href: window.location.href}
+            }))
         })
     }
 }

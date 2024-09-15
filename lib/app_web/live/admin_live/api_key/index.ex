@@ -11,7 +11,7 @@ defmodule AppWeb.AdminLive.APIKey.Index do
     socket =
       socket
       |> assign(:show_modal, false)
-      |> assign(:page_title, "API Keys")
+      |> assign(:page_title, "Integrasi")
       |> stream(:api_keys, api_keys)
 
     {:ok, socket}
