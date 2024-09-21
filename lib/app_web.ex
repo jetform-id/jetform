@@ -17,7 +17,7 @@ defmodule AppWeb do
   those modules here.
   """
 
-  def static_paths, do: ~w(assets fonts images uploads favicon.ico robots.txt widgets.js)
+  def static_paths, do: ~w(assets fonts images uploads favicon.ico robots.txt widget.js)
 
   def router do
     quote do

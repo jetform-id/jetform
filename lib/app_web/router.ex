@@ -22,7 +22,7 @@ defmodule AppWeb.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, html: {AppWeb.Layouts, :embed_root}
+    plug :put_root_layout, html: {AppWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug AppWeb.Plugs.AllowIframe
@@ -129,9 +129,6 @@ defmodule AppWeb.Router do
     put "/account", AccountController, :update
     post "/account", AccountController, :update
 
-    # widgets
-    get "/widgets", WidgetController, :index
-
     live_session :admin,
       on_mount: {AppWeb.LiveAuth, :admin},
       layout: {AppWeb.Layouts, :admin} do
@@ -147,6 +144,7 @@ defmodule AppWeb.Router do
 
       # integrations
       live "/integrations", AdminLive.APIKey.Index
+      live "/widgets", AdminLive.Widgets.Index
 
       # dashboard
       live "/", AdminLive.Dashboard.Index
@@ -156,7 +154,7 @@ defmodule AppWeb.Router do
   scope "/embed", AppWeb do
     pipe_through :embed
 
-    live_session :embed, layout: {AppWeb.Layouts, :embed_layout} do
+    live_session :embed do
       live "/:id", PublicLive.Embed
     end
   end
@@ -183,14 +181,12 @@ defmodule AppWeb.Router do
 
     # public pages
     get "/access/:id", AccessController, :index
+    get "/invoices/:id/thanks", PageController, :thanks
 
     # public live-pages
     live_session :public,
-      on_mount: {AppWeb.LiveAuth, :default},
-      layout: {AppWeb.Layouts, :checkout} do
-
+      on_mount: {AppWeb.LiveAuth, :default} do
       live "/invoices/:id", PublicLive.Invoices
-      live "/invoices/:id/thanks", PublicLive.Thanks
       live "/payments/:id", PublicLive.Payments
       live "/p/:slug", PublicLive.Checkout
       live "/:username/:slug", PublicLive.Checkout

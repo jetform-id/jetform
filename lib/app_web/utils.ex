@@ -64,6 +64,14 @@ defmodule AppWeb.Utils do
     end
   end
 
+  def product_embed_url(%{} = product) do
+    product_embed_url(product.id)
+  end
+
+  def product_embed_url(product_id) when is_binary(product_id) do
+    dashboard_url() <> "/embed/#{product_id}"
+  end
+
   def marketing_site, do: Application.fetch_env!(:app, :marketing_site)
 
   def admin_menus do

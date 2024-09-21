@@ -1,8 +1,16 @@
 import ClipboardJS from "clipboard/dist/clipboard"
 import Glide from '@glidejs/glide'
 import ApexCharts from 'apexcharts'
+import Prism from 'prismjs';
 
 let Hooks = {}
+
+Hooks.InitJetformWidget = {
+    updated() {
+        Prism.highlightAll();
+        window.JetformWidget.init();
+    }
+}
 
 Hooks.Embed = {
     mounted() {
@@ -10,9 +18,12 @@ Hooks.Embed = {
         let closeBtn = document.getElementById("close-embed")
         if(closeBtn !== null) {
             closeBtn.addEventListener("click", () => {
-                window.parent.postMessage({close: true}, "*");
+                window.parent.postMessage({action: "jf:closepopup"}, "*");
             })
         }
+        window.addEventListener("phx:openurl", (e) => {
+            window.parent.postMessage({action: "jf:openurl", url: e.detail.url}, "*");
+        })
 
         // open all external links in new tab
         document.querySelectorAll('.trix-content a').forEach((el) => {
@@ -46,10 +57,10 @@ Hooks.UmamiView = {
         let send = this.el.dataset.if === undefined || this.el.dataset.if === "true"
         if(!send) return
         
-        let url_and_referrer = getUrlAndReferrer(this.el.dataset.url)
+        let urlAndReferrer = getUrlAndReferrer(this.el.dataset.url)
         umami.track(props => ({
             ...props,
-            ...url_and_referrer,
+            ...urlAndReferrer,
             data: {href: window.location.href}
         }))
     }
@@ -60,13 +71,13 @@ Hooks.UmamiClick = {
         let send = this.el.dataset.if === undefined || this.el.dataset.if === "true"
         if(!send) return
 
-        let url_and_referrer = getUrlAndReferrer(this.el.dataset.url)
+        let urlAndReferrer = getUrlAndReferrer(this.el.dataset.url)
         let eventName = this.el.dataset.event
         
         this.el.addEventListener("click", () => {
             umami.track(props => ({
                 ...props, 
-                ...url_and_referrer,
+                ...urlAndReferrer,
                 name: eventName, 
                 data: {...this.el.dataset, href: window.location.href}
             }))

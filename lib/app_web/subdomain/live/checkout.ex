@@ -81,7 +81,6 @@ defmodule AppWeb.Subdomain.Live.Checkout do
   defp assign_product(socket, product, is_preview \\ false) do
     socket
     |> assign(:preview, is_preview)
-    |> assign(:body_class, "bg-slate-300")
     |> assign(:page_title, product.name)
     |> assign(:page_info, AppWeb.PageInfo.new(product))
     |> assign(:product, App.Repo.preload(product, :variants))

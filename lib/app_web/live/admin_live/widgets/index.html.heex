@@ -1,0 +1,32 @@
+<div class="px-4 py-6 space-y-4" id="widgets" phx-hook="InitJetformWidget">
+  <div class="gap-16 justify-between p-10 bg-white border border-gray-300 rounded-md shadow-sm">
+    <div class="space-y-6">
+      <h1 class="text-2xl font-semibold text-slate-600 mb-4 flex items-center">
+        Widgets
+      </h1>
+      <p class="text-base text-slate-500 text-md">
+        Manfaatkan widget untuk menampilkan produk secara langsung di website Anda tanpa perlu mengarahkan pengunjung ke halaman JetForm. Calon pembeli kini bisa melihat detail produk bahkan melakukan pembelian langsung dari halaman web Anda.
+      </p>
+      <p class="text-sm text-slate-400 text-md border-l-4 border-grey-700 pl-2">
+        <span class="font-semibold">Cara kerja widget</span>: Anda perlu menambahkan snipet kode di bawah ke website Anda. Produk akan muncul ketika tombol yang telah Anda tentukan di-klik. Pembeli bisa melihat detail produk dan melakukan pembelian langsung dari website Anda, hanya tahap pembayaran yang akan dilakukan di halaman Jetform.
+      </p>
+      <p class="text-base text-slate-500 text-md">
+        <.simple_form for={nil} phx-change="select_product">
+          <.input name="product" type="select" options={@products} value="" label="Pilih produk yang ingin Anda tampilkan:"/>
+        </.simple_form>
+      </p>
+      <div :if={@selected_product_id}>
+        <p class="text-base text-slate-500 text-md">Copy dan tambahkan kode di bawah ke website Anda.</p>
+        <pre class="rounded-md text-sm"><code class="language-html">&lt;script type="text/javascript" src="<%= AppWeb.Utils.dashboard_url() %>/widget.js" id="jetform-widget-js" defer&gt;&lt;/script&gt;
+&lt;a class="jetform-button" href="<%= AppWeb.Utils.product_embed_url(@selected_product_id) %>"&gt;Beli Sekarang&lt;/a&gt;</code></pre>
+
+        <p class="text-base text-slate-500 text-md mt-4">Berikut adalah tampilan link pembelian dengan kode di atas (klik untuk mencobanya): <a class="jetform-button text-primary-500" href={AppWeb.Utils.product_embed_url(@selected_product_id)}>Beli Sekarang</a></p>
+        <p class="text-base text-slate-500 text-md mt-4">Dan berikut ketika link tersebut sudah diubah tampilannya: <a class="jetform-button text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2" href={AppWeb.Utils.product_embed_url(@selected_product_id)}>Beli Sekarang</a></p>
+        
+        <p class="text-sm text-yellow-400 text-md border-l-4 border-grey-700 pl-2 mt-8">
+          Anda bebas mengubah tampilan link tersebut sesuai keinginan, yang terpenting adalah class <code class="font-semibold">jetform-button</code> dan atribut <code class="font-semibold">href</code> tidak diubah atau dihapus.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

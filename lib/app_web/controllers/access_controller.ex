@@ -2,8 +2,6 @@ defmodule AppWeb.AccessController do
   use AppWeb, :controller
   alias App.{Repo, Orders, Contents}
 
-  plug :put_layout, html: {AppWeb.Layouts, :checkout}
-
   def index(conn, %{"id" => id}) do
     with %{} = access <- Contents.get_access(id),
          true <- Contents.access_is_valid?(access) do

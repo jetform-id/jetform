@@ -20,8 +20,7 @@ defmodule AppWeb.Subdomain.Router do
     pipe_through :browser
 
     live_session :public,
-      on_mount: {AppWeb.Subdomain.LiveContext, :default},
-      layout: {AppWeb.Layouts, :checkout} do
+      on_mount: {AppWeb.Subdomain.LiveContext, :default} do
       live "/:slug", Live.Checkout
     end
 

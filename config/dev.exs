@@ -25,7 +25,8 @@ config :app, AppWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "/0v7DKJ0fkE+DTenLcoBJ15W8AS/6/mTpUSDpFiBOzMlqby9z+ZA/GN1YvKx1sCT",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
+    esbuild_default: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
+    esbuild_widget: {Esbuild, :install_and_run, [:widget, ~w(--watch)]},
     tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
 
