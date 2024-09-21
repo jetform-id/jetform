@@ -41,7 +41,7 @@ defmodule AppWeb.AdminLive.Product.Components.VisitorsMetricsChart do
               if(@tab == "query", do: "bg-white", else: "bg-gray-50")
             ]}
           >
-            UTM Params
+            Query
           </button>
         </li>
       </ul>

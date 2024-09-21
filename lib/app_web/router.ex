@@ -16,6 +16,18 @@ defmodule AppWeb.Router do
     plug AppWeb.Plugs.Globals
   end
 
+  # Similar to default `:browser` pipeline, but with one more plug
+  # `:allow_iframe` to securely allow embedding in an iframe.
+  pipeline :embed do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {AppWeb.Layouts, :root}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+    plug AppWeb.Plugs.AllowIframe
+  end
+
   pipeline :auth_area do
     plug :put_layout, html: {AppWeb.Layouts, :auth}
   end
@@ -69,9 +81,6 @@ defmodule AppWeb.Router do
   scope "/api", AppWeb do
     pipe_through :api
 
-    # umami
-    post "/umami/events", UmamiController, :index
-
     # midtrans
     get "/payment/midtrans/redirect", PaymentController, :midtrans_redirect
     post "/payment/midtrans/notification", PaymentController, :midtrans_notification
@@ -120,7 +129,10 @@ defmodule AppWeb.Router do
     put "/account", AccountController, :update
     post "/account", AccountController, :update
 
-    live_session :admin, on_mount: {AppWeb.LiveAuth, :admin}, layout: {AppWeb.Layouts, :admin} do
+    live_session :admin,
+      on_mount: {AppWeb.LiveAuth, :admin},
+      layout: {AppWeb.Layouts, :admin} do
+
       # products
       live "/products", AdminLive.Product.Index
       live "/products/:id/edit", AdminLive.Product.Edit
@@ -132,9 +144,18 @@ defmodule AppWeb.Router do
 
       # integrations
       live "/integrations", AdminLive.APIKey.Index
+      live "/widgets", AdminLive.Widgets.Index
 
       # dashboard
       live "/", AdminLive.Dashboard.Index
+    end
+  end
+
+  scope "/embed", AppWeb do
+    pipe_through :embed
+
+    live_session :embed do
+      live "/:id", PublicLive.Embed
     end
   end
 
@@ -160,13 +181,12 @@ defmodule AppWeb.Router do
 
     # public pages
     get "/access/:id", AccessController, :index
+    get "/invoices/:id/thanks", PageController, :thanks
 
     # public live-pages
     live_session :public,
-      on_mount: {AppWeb.LiveAuth, :default},
-      layout: {AppWeb.Layouts, :checkout} do
+      on_mount: {AppWeb.LiveAuth, :default} do
       live "/invoices/:id", PublicLive.Invoices
-      live "/invoices/:id/thanks", PublicLive.Thanks
       live "/payments/:id", PublicLive.Payments
       live "/p/:slug", PublicLive.Checkout
       live "/:username/:slug", PublicLive.Checkout

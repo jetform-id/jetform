@@ -79,11 +79,15 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
         tracking={@tracking}
       />
 
-      <%!-- <p class="text-center p-3 text-sm text-gray-400">
-        <.link href={AppWeb.Utils.marketing_site()} target="_blank">
-          Powered by JetForm
+      <p class="text-center pt-4">
+        <.link
+          navigate={AppWeb.Utils.marketing_site()}
+          target="_blank"
+          class="mx-auto justify-center items-start text-xs font-normal text-slate-400/50 rounded-md border border-slate-400/50 p-1 px-2"
+        >
+        Powered by JetForm
         </.link>
-      </p> --%>
+      </p>
     </div>
     <%!-- end preview --%>
     """
@@ -101,7 +105,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
 
   def product_detail(assigns) do
     ~H"""
-    <div class="mx-auto max-w-lg rounded-md bg-white shadow-md overflow-hidden">
+    <div class="mx-auto max-w-lg rounded-md bg-white shadow-lg overflow-hidden border">
       <%= if not Enum.empty?(@images) do %>
         <div id={"glide-" <> @product.id} class="glide" phx-hook="InitGlide">
           <div class="glide__track" data-glide-el="track">
@@ -279,7 +283,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
       |> Map.put(:allow_submit, allow_submit)
 
     ~H"""
-    <div class="mx-auto max-w-lg rounded-md bg-white shadow-md overflow-hidden">
+    <div class="mx-auto max-w-lg rounded-md bg-white shadow-lg border overflow-hidden">
       <%!--  FORM --%>
       <div class="space-y-4">
         <.simple_form

@@ -26,7 +26,8 @@ import Trix from "trix"
 import Hooks from "./hooks"
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, { params: { _csrf_token: csrfToken }, hooks: Hooks })
+let socketPath = window.location.pathname.startsWith("/embed/") ? "/embed/live" : "/live"
+let liveSocket = new LiveSocket(socketPath, Socket, { params: { _csrf_token: csrfToken, longPollFallbackMs: 2500 }, hooks: Hooks })
 
 // Show progress bar on live navigation and form submits
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" })

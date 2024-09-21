@@ -1,14 +1,12 @@
-<div id={"invoice-" <> @order.id} class="max-w-2xl mx-auto my-0 md:my-6">
+<div class="flex items-center justify-center h-screen">
+<div id={"invoice-" <> @order.id}>
   <div>
     <!-- Card -->
-    <div class="flex flex-col p-4 sm:p-10 bg-white shadow-md rounded-xl">
+    <div class="flex flex-col p-4 sm:p-10 bg-white shadow-lg rounded-md border min-w-[600px]">
       <!-- Grid -->
       <div class="flex justify-between">
         <div :if={!@brand_info}>
           <img src={~p"/images/logo.png"} class="h-8" />
-          <%!-- <h1 class="text-lg md:text-xl font-semibold text-blue-600">
-            JetForm
-          </h1> --%>
           <address class="not-italic text-slate-500">
             support@jetform.me<br />
           </address>
@@ -61,13 +59,7 @@
                 Dibuat pada:
               </dt>
               <dd class="col-span-2 text-slate-800 font-semibold">
-                <.indo_datetime
-                  :if={@current_user}
-                  value={@order.inserted_at}
-                  tz={@current_user.timezone}
-                  show_label={true}
-                />
-                <.indo_datetime :if={!@current_user} value={@order.inserted_at} show_label={true} />
+                <.indo_datetime value={@order.inserted_at} show_label={true} />
               </dd>
             </dl>
             <dl :if={!(@order.status in [:free, :paid])} class="gap-x-3">
@@ -75,13 +67,7 @@
                 Berlaku hingga:
               </dt>
               <dd class="col-span-2 text-slate-800 font-semibold">
-                <.indo_datetime
-                  :if={@current_user}
-                  value={@order.valid_until}
-                  tz={@current_user.timezone}
-                  show_label={true}
-                />
-                <.indo_datetime :if={!@current_user} value={@order.valid_until} show_label={true} />
+                <.indo_datetime value={@order.valid_until} show_label={true} />
               </dd>
             </dl>
 
@@ -90,13 +76,7 @@
                 Dibayar pada:
               </dt>
               <dd class="col-span-2 text-slate-800 font-semibold">
-                <.indo_datetime
-                  :if={@current_user}
-                  value={@order.paid_at}
-                  tz={@current_user.timezone}
-                  show_label={true}
-                />
-                <.indo_datetime :if={!@current_user} value={@order.paid_at} show_label={true} />
+                <.indo_datetime value={@order.paid_at} show_label={true} />
               </dd>
             </dl>
           </div>
@@ -243,9 +223,14 @@
     </div> --%>
     <!-- End Buttons -->
   </div>
-  <%!-- <p class="text-center p-3 text-sm text-slate-400">
-    <.link href={AppWeb.Utils.marketing_site()} target="_blank">
+    <p class="text-center pt-4">
+      <.link
+        navigate={AppWeb.Utils.marketing_site()}
+        target="_blank"
+        class="mx-auto justify-center items-start text-xs font-normal text-slate-400/50 rounded-md border border-slate-400/50 p-1 px-2"
+      >
       Powered by JetForm
-    </.link>
-  </p> --%>
+      </.link>
+    </p>
+</div>
 </div>

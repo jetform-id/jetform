@@ -37,6 +37,7 @@ npm-debug.log
 
 # Ignore dev uploaded files
 /priv/static/uploads/
+/priv/static/widget.js
 .env
 
 /Mnesia.*

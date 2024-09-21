@@ -16,7 +16,6 @@ defmodule AppWeb.PublicLive.Payments do
           Phoenix.PubSub.subscribe(App.PubSub, "payment:#{payment.id}")
 
           socket
-          |> assign(:body_class, "bg-slate-300")
           |> assign(:token, token)
           |> assign(:payment, payment)
           |> assign(:payment_session, data)

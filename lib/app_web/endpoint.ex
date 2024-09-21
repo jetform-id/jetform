@@ -13,6 +13,11 @@ defmodule AppWeb.Endpoint do
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
+  # Add new socket specifically for embedded pages. This socket will not
+  # Have access to session info, in particular won't be able to read information
+  # stored in session cookies such as CSRF token and logged in user token.
+  socket "/embed/live", Phoenix.LiveView.Socket, websocket: true, longpoll: true
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phx.digest
@@ -48,7 +53,7 @@ defmodule AppWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug Pow.Plug.Session, otp_app: :app
-  plug AppWeb.Plugs.Subdomain
   plug CORSPlug
+  plug AppWeb.Plugs.Subdomain
   plug AppWeb.Router
 end

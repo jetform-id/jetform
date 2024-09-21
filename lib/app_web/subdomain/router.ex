@@ -16,18 +16,11 @@ defmodule AppWeb.Subdomain.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", AppWeb do
-    pipe_through :api
-
-    post "/umami/events", UmamiController, :index
-  end
-
   scope "/", AppWeb.Subdomain do
     pipe_through :browser
 
     live_session :public,
-      on_mount: {AppWeb.Subdomain.LiveContext, :default},
-      layout: {AppWeb.Layouts, :checkout} do
+      on_mount: {AppWeb.Subdomain.LiveContext, :default} do
       live "/:slug", Live.Checkout
     end
 

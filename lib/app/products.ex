@@ -36,6 +36,10 @@ defmodule App.Products do
     |> Repo.get!(id)
   end
 
+  def get_live_product!(id) do
+    Repo.get_by!(Product, id: id, is_live: true)
+  end
+
   def get_product_by_slug!(slug) do
     Repo.get_by!(Product, slug: slug)
   end
