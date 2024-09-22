@@ -14,6 +14,7 @@ defmodule AppWeb.API.UserJSON do
     Map.take(user, [
       :id,
       :email,
+      :username,
       :role,
       :timezone,
       :plan,
