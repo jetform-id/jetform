@@ -2,4 +2,4 @@
 
 cd $(dirname $0)/..
 
-docker-compose -f docker-compose.yml run -it --rm --service-ports app "${*:-mix phx.server}"
+docker compose -f docker-compose.yml run -it --rm --service-ports app "${*:-mix phx.server}"
