@@ -5,11 +5,12 @@ defmodule AppWeb.PublicLive.Embed do
   @impl true
   def mount(%{"id" => id, "mode" => mode}, _session, socket) do
     product = Products.get_live_product!(id)
+
     {:ok,
-    socket
-    |> assign(:body_class, "")
-    |> assign(:mode, mode)
-    |> assign_product(product, false)}
+     socket
+     |> assign(:body_class, "")
+     |> assign(:mode, mode)
+     |> assign_product(product, false)}
   end
 
   @impl true
@@ -48,12 +49,16 @@ defmodule AppWeb.PublicLive.Embed do
     socket =
       case order.status in [:free, :paid] do
         true ->
-          push_event(socket, "openurl", %{"url" => "#{AppWeb.Utils.dashboard_url()}/invoices/#{order.id}/thanks"})
+          push_event(socket, "openurl", %{
+            "url" => "#{AppWeb.Utils.dashboard_url()}/invoices/#{order.id}/thanks"
+          })
 
         _ ->
           socket
           |> put_flash(:info, "Pesanan telah dibuat! silahkan lanjutkan dengan pembayaran.")
-          |> push_event("openurl", %{"url" =>  "#{AppWeb.Utils.dashboard_url()}/invoices/#{order.id}"})
+          |> push_event("openurl", %{
+            "url" => "#{AppWeb.Utils.dashboard_url()}/invoices/#{order.id}"
+          })
       end
 
     {:noreply, socket}

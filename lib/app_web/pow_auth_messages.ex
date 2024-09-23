@@ -17,7 +17,7 @@ defmodule AppWeb.PowAuthMessages do
 
   # overrides email confirmation messages
   def pow_email_confirmation_email_has_been_confirmed(_conn),
-    do: "Email telah dikonfirmasi. Sekarang anda bisa login."
+    do: "Email telah dikonfirmasi."
 
   def pow_email_confirmation_email_confirmation_failed(_conn),
     do: "Email gagal dikonfirmasi. Silakan coba lagi."
@@ -27,11 +27,11 @@ defmodule AppWeb.PowAuthMessages do
 
   def pow_email_confirmation_email_confirmation_required(_conn),
     do:
-      "Anda perlu mengkonfirmasi email sebelum bisa login. Link konfirmasi email telah dikirimkan ke email Anda."
+      "Anda perlu mengkonfirmasi email sebelum bisa login. Link konfirmasi telah dikirimkan ke email Anda."
 
   def pow_email_confirmation_email_confirmation_required_for_update(_conn),
     do:
-      "Anda perlu mengkonfirmasi email yang baru sebelum bisa digunakan. Link konfirmasi email telah dikirimkan ke email Anda."
+      "Anda perlu mengkonfirmasi email yang baru sebelum bisa digunakan. Link konfirmasi telah dikirimkan ke email Anda yang baru."
 
   # overrides reset password messages
   def pow_reset_password_maybe_email_has_been_sent(_conn),

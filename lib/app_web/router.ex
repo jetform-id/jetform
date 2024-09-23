@@ -132,7 +132,6 @@ defmodule AppWeb.Router do
     live_session :admin,
       on_mount: {AppWeb.LiveAuth, :admin},
       layout: {AppWeb.Layouts, :admin} do
-
       # products
       live "/products", AdminLive.Product.Index
       live "/products/:id/edit", AdminLive.Product.Edit

@@ -85,7 +85,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           target="_blank"
           class="mx-auto justify-center items-start text-xs font-normal text-slate-400/50 rounded-md border border-slate-400/50 p-1 px-2"
         >
-        Powered by JetForm
+          Powered by JetForm
         </.link>
       </p>
     </div>
@@ -334,7 +334,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
           </div>
 
           <%!-- payment channels --%>
-          <div :if={@product.price_type != :free and @total_price > 0}>
+          <div :if={@checkout.price_type != :free and @total_price > 0}>
             <p class="py-3 px-6 text-sm font-semibold bg-slate-100 border-y">
               Metode pembayaran
             </p>

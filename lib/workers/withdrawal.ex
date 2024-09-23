@@ -96,9 +96,7 @@ defmodule Workers.Withdrawal do
     Oleh karena itu mohon pastikan data di atas sudah benar dan segera batalkan penarikan dana apabila ada kesalahan.
 
     --
-    JetForm
-    Bisnis produk digital praktis & otomatis!
-    https://www.jetform.me
+    support@jetform.id
     """
 
     %{
@@ -132,9 +130,7 @@ defmodule Workers.Withdrawal do
     - Apabila dalam 3 hari kerja dana belum juga masuk ke rekening Anda, silahkan hubungi kami dengan membalas email ini.
 
     --
-    JetForm
-    Bisnis produk digital praktis & otomatis!
-    https://www.jetform.me
+    support@jetform.id
     """
 
     %{
@@ -167,9 +163,7 @@ defmodule Workers.Withdrawal do
     #{base_url}/withdrawals
 
     --
-    JetForm
-    Bisnis produk digital praktis & otomatis!
-    https://www.jetform.me
+    support@jetform.id
     """
 
     %{
@@ -203,9 +197,7 @@ defmodule Workers.Withdrawal do
     Apabila ada yang kurang jelas, silahkan hubungi kami dengan membalas email ini.
 
     --
-    JetForm
-    Bisnis produk digital praktis & otomatis!
-    https://www.jetform.me
+    support@jetform.id
     """
 
     %{
@@ -238,9 +230,7 @@ defmodule Workers.Withdrawal do
     Kami tidak bertanggung jawab atas kesalahan transfer dana yang disebabkan oleh kesalahan nomor rekening, nama rekening, atau nama bank penerima.
 
     --
-    JetForm
-    Bisnis produk digital praktis & otomatis!
-    https://www.jetform.me
+    support@jetform.id
     """
 
     %{

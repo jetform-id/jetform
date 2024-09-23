@@ -37,11 +37,11 @@
         >
           <div class="mt-8 space-y-6">
             <.error :if={
-              Pow.Plug.extension_enabled?(@conn, PowResetPassword) &&
+              Pow.Plug.extension_enabled?(@conn, PowEmailConfirmation) &&
                 @user_changeset.data.unconfirmed_email
             }>
               <span>
-                Click the link in the confirmation email to change your email to <span class="font-semibold"><%= @user_changeset.data.unconfirmed_email %></span>.
+                Konfirmasi perubahan email Anda dengan meng-klik link yang telah kami kirimkan ke <span class="font-semibold"><%= @user_changeset.data.unconfirmed_email %></span>.
               </span>
             </.error>
             <.error :if={@user_changeset.action}>

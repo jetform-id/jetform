@@ -14,7 +14,7 @@ kill_signal = 'SIGTERM'
 
 [env]
   ENABLE_SUBDOMAINS = "false"
-  PHX_HOST = 'demo.jetform.me'
+  PHX_HOST = 'demo.jetform.id'
   PORT = '8080'
   MIDTRANS_MODE = "sandbox"
   IPAYMU_MODE = "sandbox"
@@ -22,13 +22,13 @@ kill_signal = 'SIGTERM'
   WAFFLE_AWS_S3_BUCKET = "jetform-demo-static"
   WAFFLE_ASSET_HOST = "https://is3.cloudhost.id/jetform-demo-static"
   AWS_S3_HOST = "is3.cloudhost.id"
-  MAILER_FROM_EMAIL = "support@jetform.me"
-  ADMIN_EMAIL = "support@jetform.me"
-  MARKETING_SITE = "https://www.jetform.me"
+  MAILER_FROM_EMAIL = "support@jetform.id"
+  ADMIN_EMAIL = "support@jetform.id"
+  MARKETING_SITE = "https://jetform.id"
   POOL_SIZE = "10"
   ECTO_IPV6 = "true"
   REDIS_IPV6 = "true"
-  MAILGUN_DOMAIN = "mg.jetform.me"
+  MAILGUN_DOMAIN = "mg.jetform.id"
   DNS_CLUSTER_QUERY = "jetform-demo-app.internal"
   UMAMI_WEBSITE_ID = "de773577-1c4e-4588-a3e9-ef84e92607bc"
 

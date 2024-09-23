@@ -1,175 +1,175 @@
 <div class="flex items-center justify-center h-screen">
-<div id={"invoice-" <> @order.id}>
-  <div>
-    <!-- Card -->
-    <div class="flex flex-col p-4 sm:p-10 bg-white shadow-lg rounded-md border min-w-[600px]">
-      <!-- Grid -->
-      <div class="flex justify-between">
-        <div :if={!@brand_info}>
-          <img src={~p"/images/logo.png"} class="h-8" />
-          <address class="not-italic text-slate-500">
-            support@jetform.me<br />
-          </address>
+  <div id={"invoice-" <> @order.id}>
+    <div>
+      <!-- Card -->
+      <div class="flex flex-col p-4 sm:p-10 bg-white shadow-lg rounded-md border min-w-[600px]">
+        <!-- Grid -->
+        <div class="flex justify-between">
+          <div :if={!@brand_info}>
+            <img src={~p"/images/logo.png"} class="h-8" />
+            <address class="not-italic text-slate-500">
+              support@jetform.id<br />
+            </address>
+          </div>
+          <div :if={@brand_info}>
+            <img :if={@brand_info.logo} src={@brand_info.logo} class="h-20 rounded-full" />
+            <h1 class="text-lg md:text-xl font-semibold text-slate-800">
+              <%= @brand_info.name %>
+            </h1>
+            <address class="not-italic text-slate-500">
+              <div :if={@brand_info.email}><%= @brand_info.email %></div>
+              <div :if={@brand_info.phone}><%= @brand_info.phone %></div>
+              <div :if={@brand_info.website}>
+                <a href={@brand_info.website} target="_blank" class="text-primary-600">
+                  <%= @brand_info.website %>
+                </a>
+              </div>
+            </address>
+          </div>
+          <!-- Col -->
+          <div class="text-end">
+            <h2 class="text-2xl md:text-3xl font-semibold text-slate-800">
+              #<%= @order.invoice_number %>
+            </h2>
+            <span class="mt-1 block text-slate-500">
+              <Commons.order_status_badge status={@order.status} />
+            </span>
+          </div>
+          <!-- Col -->
         </div>
-        <div :if={@brand_info}>
-          <img :if={@brand_info.logo} src={@brand_info.logo} class="h-20 rounded-full" />
-          <h1 class="text-lg md:text-xl font-semibold text-slate-800">
-            <%= @brand_info.name %>
-          </h1>
-          <address class="not-italic text-slate-500">
-            <div :if={@brand_info.email}><%= @brand_info.email %></div>
-            <div :if={@brand_info.phone}><%= @brand_info.phone %></div>
-            <div :if={@brand_info.website}>
-              <a href={@brand_info.website} target="_blank" class="text-primary-600">
-                <%= @brand_info.website %>
-              </a>
-            </div>
-          </address>
-        </div>
-        <!-- Col -->
-        <div class="text-end">
-          <h2 class="text-2xl md:text-3xl font-semibold text-slate-800">
-            #<%= @order.invoice_number %>
-          </h2>
-          <span class="mt-1 block text-slate-500">
-            <Commons.order_status_badge status={@order.status} />
-          </span>
-        </div>
-        <!-- Col -->
-      </div>
-      <!-- End Grid -->
+        <!-- End Grid -->
 
         <!-- Grid -->
-      <div class="mt-8 grid gap-2">
-        <div>
-          <div class="text-slate-500">Kepada:</div>
-          <h3 class="text-lg font-semibold text-slate-800">
-            <%= @order.customer_name %>
-          </h3>
-          <address class="not-italic text-slate-800">
-            <%= @order.customer_email %><br /> <%= @order.customer_phone %><br />
-          </address>
-        </div>
-        <!-- Col -->
-        <div class="space-y-2 mt-4">
-          <!-- Grid -->
-          <div class="grid grid-cols-2 gap-3 sm:gap-2">
-            <dl class="gap-x-3">
-              <dt class="col-span-3 text-slate-500">
-                Dibuat pada:
-              </dt>
-              <dd class="col-span-2 text-slate-800 font-semibold">
-                <.indo_datetime value={@order.inserted_at} show_label={true} />
-              </dd>
-            </dl>
-            <dl :if={!(@order.status in [:free, :paid])} class="gap-x-3">
-              <dt class="col-span-3 text-slate-500">
-                Berlaku hingga:
-              </dt>
-              <dd class="col-span-2 text-slate-800 font-semibold">
-                <.indo_datetime value={@order.valid_until} show_label={true} />
-              </dd>
-            </dl>
-
-            <dl :if={@order.status == :paid} class="gap-x-3">
-              <dt class="col-span-3 text-slate-500">
-                Dibayar pada:
-              </dt>
-              <dd class="col-span-2 text-slate-800 font-semibold">
-                <.indo_datetime value={@order.paid_at} show_label={true} />
-              </dd>
-            </dl>
+        <div class="mt-8 grid gap-2">
+          <div>
+            <div class="text-slate-500">Kepada:</div>
+            <h3 class="text-lg font-semibold text-slate-800">
+              <%= @order.customer_name %>
+            </h3>
+            <address class="not-italic text-slate-800">
+              <%= @order.customer_email %><br /> <%= @order.customer_phone %><br />
+            </address>
           </div>
-          <!-- End Grid -->
-        </div>
-        <!-- Col -->
-      </div>
-      <!-- End Grid -->
-      <span
-        :if={@order.status == :pending}
-        class="mt-4 bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-2 rounded  border border-dashed border-yellow-300"
-      >
-        <.icon name="hero-hand-raised" />
-        Harap melakukan pembayaran sebelum order kadaluarsa dalam
-        <span class="font-bold text-red-600"><.seconds_to_time value={@expire_in_secs} /></span>
-      </span>
-      <!-- Table -->
-      <div class="mt-6">
-        <div class="border border-slate-300 p-4 rounded-md space-y-4">
-          <div class="hidden sm:grid sm:grid-cols-4">
-            <div class="col-span-2 text-xs font-medium text-slate-500 uppercase">Produk</div>
-            <div class="text-start text-xs font-medium text-slate-500 uppercase">Varian</div>
-            <div class="text-end text-xs font-medium text-slate-500 uppercase">Harga</div>
-          </div>
+          <!-- Col -->
+          <div class="space-y-2 mt-4">
+            <!-- Grid -->
+            <div class="grid grid-cols-2 gap-3 sm:gap-2">
+              <dl class="gap-x-3">
+                <dt class="col-span-3 text-slate-500">
+                  Dibuat pada:
+                </dt>
+                <dd class="col-span-2 text-slate-800 font-semibold">
+                  <.indo_datetime value={@order.inserted_at} show_label={true} />
+                </dd>
+              </dl>
+              <dl :if={!(@order.status in [:free, :paid])} class="gap-x-3">
+                <dt class="col-span-3 text-slate-500">
+                  Berlaku hingga:
+                </dt>
+                <dd class="col-span-2 text-slate-800 font-semibold">
+                  <.indo_datetime value={@order.valid_until} show_label={true} />
+                </dd>
+              </dl>
 
-          <div class="hidden sm:block border-b border-slate-200"></div>
+              <dl :if={@order.status == :paid} class="gap-x-3">
+                <dt class="col-span-3 text-slate-500">
+                  Dibayar pada:
+                </dt>
+                <dd class="col-span-2 text-slate-800 font-semibold">
+                  <.indo_datetime value={@order.paid_at} show_label={true} />
+                </dd>
+              </dl>
+            </div>
+            <!-- End Grid -->
+          </div>
+          <!-- Col -->
+        </div>
+        <!-- End Grid -->
+        <span
+          :if={@order.status == :pending}
+          class="mt-4 bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-2 rounded  border border-dashed border-yellow-300"
+        >
+          <.icon name="hero-hand-raised" />
+          Harap melakukan pembayaran sebelum order kadaluarsa dalam
+          <span class="font-bold text-red-600"><.seconds_to_time value={@expire_in_secs} /></span>
+        </span>
+        <!-- Table -->
+        <div class="mt-6">
+          <div class="border border-slate-300 p-4 rounded-md space-y-4">
+            <div class="hidden sm:grid sm:grid-cols-4">
+              <div class="col-span-2 text-xs font-medium text-slate-500 uppercase">Produk</div>
+              <div class="text-start text-xs font-medium text-slate-500 uppercase">Varian</div>
+              <div class="text-end text-xs font-medium text-slate-500 uppercase">Harga</div>
+            </div>
 
-          <div class="grid grid-cols-4 gap-2">
-            <div class="col-span-2">
-              <h5 class="sm:hidden text-xs font-medium text-slate-500 uppercase">Produk</h5>
-              <p class="font-medium text-slate-800">
-                <%= @order.product_name %>
-              </p>
-            </div>
-            <div>
-              <h5 class="sm:hidden text-xs font-medium text-slate-500 uppercase">Varian</h5>
-              <p class="text-slate-800">
-                <%= @order.product_variant_name || "-" %>
-              </p>
-            </div>
-            <div>
-              <h5 class="sm:hidden text-xs font-medium text-slate-500 uppercase">Harga</h5>
-              <p class="sm:text-end text-slate-800">
-                <.price value={@order.sub_total} />
-              </p>
+            <div class="hidden sm:block border-b border-slate-200"></div>
+
+            <div class="grid grid-cols-4 gap-2">
+              <div class="col-span-2">
+                <h5 class="sm:hidden text-xs font-medium text-slate-500 uppercase">Produk</h5>
+                <p class="font-medium text-slate-800">
+                  <%= @order.product_name %>
+                </p>
+              </div>
+              <div>
+                <h5 class="sm:hidden text-xs font-medium text-slate-500 uppercase">Varian</h5>
+                <p class="text-slate-800">
+                  <%= @order.product_variant_name || "-" %>
+                </p>
+              </div>
+              <div>
+                <h5 class="sm:hidden text-xs font-medium text-slate-500 uppercase">Harga</h5>
+                <p class="sm:text-end text-slate-800">
+                  <.price value={@order.sub_total} />
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <!-- End Table -->
+        <!-- End Table -->
 
         <!-- Flex -->
-      <div class="mt-8 flex sm:justify-end">
-        <div class="w-full max-w-2xl sm:text-end space-y-2">
-          <!-- Grid -->
-          <div class="grid grid-cols-2 sm:grid-cols-1 gap-3 sm:gap-2">
-            <dl :if={@order.discount_name} class="grid sm:grid-cols-5 gap-x-3">
-              <dt class="col-span-3 font-semibold text-slate-800">Subtotal:</dt>
-              <dd class="col-span-2 text-slate-500"><.price value={@order.sub_total} /></dd>
-            </dl>
+        <div class="mt-8 flex sm:justify-end">
+          <div class="w-full max-w-2xl sm:text-end space-y-2">
+            <!-- Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-1 gap-3 sm:gap-2">
+              <dl :if={@order.discount_name} class="grid sm:grid-cols-5 gap-x-3">
+                <dt class="col-span-3 font-semibold text-slate-800">Subtotal:</dt>
+                <dd class="col-span-2 text-slate-500"><.price value={@order.sub_total} /></dd>
+              </dl>
 
-            <dl :if={@order.discount_name} class="grid sm:grid-cols-5 gap-x-3">
-              <dt class="col-span-3 font-semibold text-slate-800">Diskon:</dt>
-              <dd class="col-span-2 text-slate-500">
-                <.price value={@order.discount_value} />
-              </dd>
-            </dl>
+              <dl :if={@order.discount_name} class="grid sm:grid-cols-5 gap-x-3">
+                <dt class="col-span-3 font-semibold text-slate-800">Diskon:</dt>
+                <dd class="col-span-2 text-slate-500">
+                  <.price value={@order.discount_value} />
+                </dd>
+              </dl>
 
-            <dl class="grid sm:grid-cols-5 gap-x-3">
-              <dt class="col-span-3 font-semibold text-slate-800">Total:</dt>
-              <dd class="col-span-2 text-slate-900 font-bold">
-                <.price value={@order.total} />
-              </dd>
-            </dl>
+              <dl class="grid sm:grid-cols-5 gap-x-3">
+                <dt class="col-span-3 font-semibold text-slate-800">Total:</dt>
+                <dd class="col-span-2 text-slate-900 font-bold">
+                  <.price value={@order.total} />
+                </dd>
+              </dl>
+            </div>
+            <!-- End Grid -->
           </div>
-          <!-- End Grid -->
+        </div>
+        <!-- End Flex -->
+        <div :if={@order.status == :pending} class="mt-8 sm:mt-12">
+          <button
+            phx-click={JS.push("create_payment", value: %{}, page_loading: true)}
+            type="submit"
+            class="phx-click-loading:opacity-75 w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-700"
+          >
+            PEMBAYARAN <span aria-hidden="true">→</span>
+          </button>
         </div>
       </div>
-      <!-- End Flex -->
-      <div :if={@order.status == :pending} class="mt-8 sm:mt-12">
-        <button
-          phx-click={JS.push("create_payment", value: %{}, page_loading: true)}
-          type="submit"
-          class="phx-click-loading:opacity-75 w-full items-center justify-center rounded-md bg-primary-600 p-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-primary-700"
-        >
-          PEMBAYARAN <span aria-hidden="true">→</span>
-        </button>
-      </div>
-    </div>
-    <!-- End Card -->
+      <!-- End Card -->
 
       <!-- Buttons -->
-    <%!-- <div class="mt-6 flex justify-end gap-x-3">
+      <%!-- <div class="mt-6 flex justify-end gap-x-3">
       <a
         class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-slate-700 shadow-sm align-middle hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:hover:bg-slate-800 dark:text-slate-400 dark:hover:text-white dark:focus:ring-offset-slate-800"
         href="#"
@@ -221,16 +221,16 @@
         Print
       </a>
     </div> --%>
-    <!-- End Buttons -->
-  </div>
+      <!-- End Buttons -->
+    </div>
     <p class="text-center pt-4">
       <.link
         navigate={AppWeb.Utils.marketing_site()}
         target="_blank"
         class="mx-auto justify-center items-start text-xs font-normal text-slate-400/50 rounded-md border border-slate-400/50 p-1 px-2"
       >
-      Powered by JetForm
+        Powered by JetForm
       </.link>
     </p>
-</div>
+  </div>
 </div>

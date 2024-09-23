@@ -63,8 +63,7 @@ config :esbuild,
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ],
   widget: [
-    args:
-      ~w(js/widget.js --bundle --target=es2017 --outdir=../priv/static),
+    args: ~w(js/widget.js --bundle --target=es2017 --outdir=../priv/static),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]

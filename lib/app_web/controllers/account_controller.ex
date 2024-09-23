@@ -17,12 +17,26 @@ defmodule AppWeb.AccountController do
     )
   end
 
+  @doc """
+  Because we manually handle user update, we also need to make sure that the email confirmation is handled properly.
+  """
   def update(conn, %{"user" => user_params}) do
     case Pow.Plug.update_user(conn, user_params) do
-      {:ok, _user, conn} ->
-        conn
-        |> put_flash(:info, "Data akun anda telah diperbarui.")
-        |> redirect(to: ~p"/account")
+      {:ok, user, conn} ->
+        case PowEmailConfirmation.Phoenix.ControllerCallbacks.before_respond(
+               Pow.Phoenix.RegistrationController,
+               :update,
+               {:ok, user, conn},
+               %{}
+             ) do
+          {:ok, _user, conn} ->
+            conn
+            |> put_flash(:info, "Perubahan detail akun berhasil disimpan.")
+            |> redirect(to: ~p"/account")
+
+          {:halt, conn} ->
+            halt(conn)
+        end
 
       {:error, changeset, conn} ->
         user = conn.assigns.current_user |> App.Repo.preload(:bank_account)

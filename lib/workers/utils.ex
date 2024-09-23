@@ -9,9 +9,7 @@ defmodule Workers.Utils do
       true ->
         """
         ---
-        JetForm
-        Form order produk digital!
-        https://www.jetform.me
+        support@jetform.id
         """
 
       false ->

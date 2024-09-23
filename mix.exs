@@ -51,7 +51,7 @@ defmodule App.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:plug_cowboy, "~> 2.5"},
-      {:pow, "~> 1.0.34"},
+      {:pow, "~> 1.0.38"},
       {:number, "~> 1.0"},
       {:cors_plug, "~> 3.0"},
       # waffle
@@ -87,7 +87,12 @@ defmodule App.MixProject do
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind default", "esbuild default", "esbuild widget"],
-      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "esbuild widget --minify", "phx.digest"],
+      "assets.deploy": [
+        "tailwind default --minify",
+        "esbuild default --minify",
+        "esbuild widget --minify",
+        "phx.digest"
+      ],
       start: ["phx.server"]
     ]
   end

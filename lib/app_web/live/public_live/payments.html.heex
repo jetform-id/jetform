@@ -4,8 +4,8 @@
     class="mx-auto max-w-lg rounded-md overflow-hidden shadow-lg border bg-red-100"
   >
     <div class="flex flex-col justify-center min-w-[360px] min-h-[360px] text-center">
-    <.icon name="hero-exclamation-triangle" class="text-red-400 w-40 h-40 mx-auto" />
-    <p class="text-xl text-red-400 font-medium">Pembayaran tidak valid.</p>
+      <.icon name="hero-exclamation-triangle" class="text-red-400 w-40 h-40 mx-auto" />
+      <p class="text-xl text-red-400 font-medium">Pembayaran tidak valid.</p>
     </div>
   </div>
 
@@ -14,8 +14,8 @@
     class="mx-auto max-w-lg rounded-md overflow-hidden shadow-lg border bg-red-100"
   >
     <div class="flex flex-col justify-center min-w-[360px] min-h-[360px] text-center">
-    <.icon name="hero-exclamation-triangle" class="text-red-400 w-40 h-40 mx-auto" />
-    <p class="text-xl text-red-400 font-medium">Pembayaran kadaluarsa.</p>
+      <.icon name="hero-exclamation-triangle" class="text-red-400 w-40 h-40 mx-auto" />
+      <p class="text-xl text-red-400 font-medium">Pembayaran kadaluarsa.</p>
     </div>
   </div>
 
@@ -125,7 +125,9 @@
 
           <div class="mt-4 bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-2 rounded  border border-dashed border-yellow-300">
             <.icon name="hero-hand-raised" /> Harap melakukan pembayaran dalam
-            <span class="font-bold text-red-600"><.seconds_to_time value={@expire_in_secs} /></span>
+            <span class="font-bold text-red-600">
+              <.seconds_to_time value={@expire_in_secs} />
+            </span>
           </div>
         </div>
         <div :if={@allow_switch_or_cancel} class="space-y-2">

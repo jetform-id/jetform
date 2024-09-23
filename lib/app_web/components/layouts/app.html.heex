@@ -3,10 +3,11 @@
   <button
     :if={assigns[:mode] == "popup"}
     phx-hook="Embed"
-    id="close-embed" 
-    class="fixed top-2 right-2 px-2 py-2 text-white/80 hover:text-white transition-all" 
-    title="Tutup">
-    <.icon name="hero-x-circle-solid" class="w-10 h-10"/>
+    id="close-embed"
+    class="fixed top-2 right-2 px-2 py-2 text-white/80 hover:text-white transition-all"
+    title="Tutup"
+  >
+    <.icon name="hero-x-circle-solid" class="w-10 h-10" />
   </button>
 
   <%= @inner_content %>

@@ -12,19 +12,46 @@
       </p>
       <p class="text-base text-slate-500 text-md">
         <.simple_form for={nil} phx-change="select_product">
-          <.input name="product" type="select" options={@products} value="" label="Pilih produk yang ingin Anda tampilkan:"/>
+          <.input
+            name="product"
+            type="select"
+            options={@products}
+            value=""
+            label="Pilih produk yang ingin Anda tampilkan:"
+          />
         </.simple_form>
       </p>
       <div :if={@selected_product_id}>
-        <p class="text-base text-slate-500 text-md">Copy dan tambahkan kode di bawah ke website Anda.</p>
+        <p class="text-base text-slate-500 text-md">
+          Copy dan tambahkan kode di bawah ke website Anda.
+        </p>
         <pre class="rounded-md text-sm"><code class="language-html">&lt;script type="text/javascript" src="<%= AppWeb.Utils.dashboard_url() %>/widget.js" id="jetform-widget-js" defer&gt;&lt;/script&gt;
 &lt;a class="jetform-button" href="<%= AppWeb.Utils.product_embed_url(@selected_product_id) %>"&gt;Beli Sekarang&lt;/a&gt;</code></pre>
 
-        <p class="text-base text-slate-500 text-md mt-4">Berikut adalah tampilan link pembelian dengan kode di atas (klik untuk mencobanya): <a class="jetform-button text-primary-500" href={AppWeb.Utils.product_embed_url(@selected_product_id)}>Beli Sekarang</a></p>
-        <p class="text-base text-slate-500 text-md mt-4">Dan berikut ketika link tersebut sudah diubah tampilannya: <a class="jetform-button text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2" href={AppWeb.Utils.product_embed_url(@selected_product_id)}>Beli Sekarang</a></p>
-        
+        <p class="text-base text-slate-500 text-md mt-4">
+          Berikut adalah tampilan link pembelian dengan kode di atas (klik untuk mencobanya):
+          <a
+            class="jetform-button text-primary-500"
+            href={AppWeb.Utils.product_embed_url(@selected_product_id)}
+          >
+            Beli Sekarang
+          </a>
+        </p>
+        <p class="text-base text-slate-500 text-md mt-4">
+          Dan berikut ketika link tersebut sudah diubah tampilannya:
+          <a
+            class="jetform-button text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+            href={AppWeb.Utils.product_embed_url(@selected_product_id)}
+          >
+            Beli Sekarang
+          </a>
+        </p>
+
         <p class="text-sm text-yellow-400 text-md border-l-4 border-grey-700 pl-2 mt-8">
-          Anda bebas mengubah tampilan link tersebut sesuai keinginan, yang terpenting adalah class <code class="font-semibold">jetform-button</code> dan atribut <code class="font-semibold">href</code> tidak diubah atau dihapus.
+          Anda bebas mengubah tampilan link tersebut sesuai keinginan, yang terpenting adalah class
+          <code class="font-semibold">jetform-button</code>
+          dan atribut <code class="font-semibold">href</code>
+          tidak diubah atau dihapus.
         </p>
       </div>
     </div>

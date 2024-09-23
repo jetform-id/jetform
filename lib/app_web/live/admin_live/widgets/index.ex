@@ -25,7 +25,7 @@ defmodule AppWeb.AdminLive.Widgets.Index do
 
   @impl true
   def handle_event("select_product", %{"product" => product_id}, socket) do
-     case product_id do
+    case product_id do
       "" ->
         {:noreply, socket |> assign(:selected_product_id, nil)}
 

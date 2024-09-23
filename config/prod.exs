@@ -6,7 +6,7 @@ import Config
 # which you should run after static files are built and
 # before starting your production server.
 config :app, AppWeb.Endpoint,
-  check_origin: ["//*.jetform.me"],
+  check_origin: ["//*.jetform.id"],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Configures Swoosh API Client

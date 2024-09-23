@@ -1,0 +1,52 @@
+<div class="w-full sm:max-w-md p-6 sm:p-8 bg-white rounded-lg shadow dark:bg-gray-800">
+  <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+    Edit Account
+    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
+      <.link navigate={~p"/"} class="text-primary-700 hover:underline dark:text-primary-500">
+        <span aria-hidden="true">←</span> Back to dashboard
+      </.link>
+    </div>
+  </h2>
+
+  <.simple_form :let={f} for={@changeset} as={:user} action={@action} phx-update="ignore">
+    <div class="mt-8 space-y-6">
+      <.error :if={
+        Pow.Plug.extension_enabled?(@conn, PowResetPassword) && @changeset.data.unconfirmed_email
+      }>
+        <span>
+          Click the link in the confirmation email to change your email to <span class="font-semibold"><%= @changeset.data.unconfirmed_email %></span>.
+        </span>
+      </.error>
+      <.error :if={@changeset.action}>
+        Oops, something went wrong! Please check the errors below.
+      </.error>
+      <.input
+        field={f[Pow.Ecto.Schema.user_id_field(@changeset)]}
+        type={(Pow.Ecto.Schema.user_id_field(@changeset) == :email && "email") || "text"}
+        label={Phoenix.Naming.humanize(Pow.Ecto.Schema.user_id_field(@changeset))}
+        required
+      />
+      <.input field={f[:password]} type="password" label="New password" />
+      <.input field={f[:password_confirmation]} type="password" label="Confirm new password" />
+      <hr />
+      <.input
+        field={f[:current_password]}
+        type="password"
+        label="Current password"
+        value={nil}
+        required
+      />
+    </div>
+
+    <:actions>
+      <div class="mt-8">
+        <.button
+          phx-disable-with="Updating..."
+          class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+        >
+          Update <span aria-hidden="true">→</span>
+        </.button>
+      </div>
+    </:actions>
+  </.simple_form>
+</div>
