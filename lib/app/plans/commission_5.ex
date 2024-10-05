@@ -3,7 +3,7 @@ defmodule App.Plans.Commission5 do
 
   @id "plan-comm-5"
   @name "Starter"
-  @description "Fee per transaksi = komisi 5% + fee payment gateway"
+  @description "Fee per transaksi = komisi 5% + payment gateway fee"
   @commission_percent 5
 
   def id(), do: @id

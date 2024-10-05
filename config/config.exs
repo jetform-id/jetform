@@ -17,7 +17,7 @@ config :app,
   access_validity_days: 7,
   minimum_price: 10_000,
   withdrawal_fee: 5_000,
-  default_plan: App.Plans.Commission5,
+  default_plan: App.Plans.EarlyAccessProgram,
   payment_provider: App.PaymentGateway.Ipaymu,
   enable_subdomains: false,
   dashboard_subdomain: "app"
