@@ -1,9 +1,19 @@
 import ClipboardJS from "clipboard/dist/clipboard"
 import Glide from '@glidejs/glide'
 import ApexCharts from 'apexcharts'
-import Prism from 'prismjs';
+import Prism from 'prismjs'
+import Trix from "trix"
 
 let Hooks = {}
+
+Hooks.InitTrix = {
+    mounted() {
+        const target = this.el
+        document.addEventListener("trix-change", () => {
+            target.dispatchEvent(new Event("input", { bubbles: true }))
+        })
+    }
+}
 
 Hooks.InitJetformWidget = {
     updated() {

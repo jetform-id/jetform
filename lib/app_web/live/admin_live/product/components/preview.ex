@@ -662,6 +662,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
     user = product.user
     user_plan = App.Plans.get(user.plan)
     total = Checkout.total(checkout)
+    thanks_page_config = App.Products.ThanksPageConfig.get_or_default(product)
 
     order_params
     |> Map.put("user", user)
@@ -676,6 +677,7 @@ defmodule AppWeb.AdminLive.Product.Components.Preview do
       "valid_until",
       Orders.valid_until_hours(Application.fetch_env!(:app, :order_validity_hours))
     )
+    |> Map.put("thanks_page_config", Map.from_struct(thanks_page_config))
   end
 
   defp select_variant(socket, id) do

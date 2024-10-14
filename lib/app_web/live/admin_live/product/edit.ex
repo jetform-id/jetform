@@ -7,11 +7,26 @@ defmodule AppWeb.AdminLive.Product.Edit do
   def mount(%{"id" => id}, _session, socket) do
     product = Products.get_product!(id) |> App.Repo.preload(:user)
 
+    # data for thanks page preview
+    dummy_order = %App.Orders.Order{
+      id: Pow.UUID.generate(),
+      customer_name: "John Doe",
+      customer_email: "john@example.com",
+      customer_phone: "08123456789",
+      status: :free,
+      invoice_number: "INV-123",
+    }
+    thanks_config = Products.ThanksPageConfig.get_or_default(product)
+    brand_info = App.Users.get_brand_info(product.user)
+
     socket =
       socket
       |> assign(:page_title, "Edit: #{product.name}")
       |> assign(:product, product)
       |> assign(:changeset, Products.change_product(product, %{}))
+      |> assign(:dummy_order, dummy_order)
+      |> assign(:thanks_config, thanks_config)
+      |> assign(:brand_info, brand_info)
 
     {:ok, socket}
   end
@@ -131,6 +146,12 @@ defmodule AppWeb.AdminLive.Product.Edit do
   def handle_info(:variants_updated, socket) do
     {:noreply, update_preview(socket)}
   end
+
+  @impl true
+  def handle_info({:thanks_config_updated, config}, socket) do
+    {:noreply, assign(socket, :thanks_config, config)}
+  end
+
 
   defp update_preview(socket) do
     product = socket.assigns.product

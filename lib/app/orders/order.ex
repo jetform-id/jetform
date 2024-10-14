@@ -45,6 +45,8 @@ defmodule App.Orders.Order do
       join_through: App.Orders.OrderContent,
       on_replace: :delete
 
+    embeds_one :thanks_page_config, App.Products.ThanksPageConfig, on_replace: :delete
+
     timestamps(type: :utc_datetime)
   end
 
@@ -67,6 +69,7 @@ defmodule App.Orders.Order do
     order
     |> changeset(attrs)
     |> validate_format(:customer_email, @mail_regex)
+    |> cast_embed(:thanks_page_config)
     |> put_user(attrs)
     |> put_product(attrs)
     |> put_product_variant(attrs)

@@ -1,10 +1,10 @@
 defmodule App.Products do
   import Ecto.Query
   alias App.Repo
-  alias App.Products.{Product, Variant, Image, ImageUploader}
+  alias App.Products.{Product, Variant, Image, ImageUploader, ThanksPageConfig}
 
   # --------------- PRODUCT ---------------
-  defdelegate price_type_options, to: Product, as: :price_type_options
+  defdelegate price_type_options, to: Product
   defdelegate cta_options, to: Product
   defdelegate cta_text(cta), to: Product
   defdelegate cta_custom?(cta), to: Product
@@ -272,5 +272,12 @@ defmodule App.Products do
   def image_size_kb(image) do
     size = image.attachment_size_byte || 0
     "#{Float.round(size / 1000, 2)} KB"
+  end
+
+  # --------------- THANKS PAGE CONFIG ---------------
+  defdelegate thanks_page_type_options, to: ThanksPageConfig, as: :type_options
+
+  def change_thanks_page_config(config, attrs) do
+    ThanksPageConfig.changeset(config, attrs)
   end
 end

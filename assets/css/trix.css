@@ -50,9 +50,9 @@
 }
 
 .trix-content {
-    @apply border border-gray-300 rounded p-4;
+    @apply border border-gray-300 rounded p-4 text-sm;
 }
 
 .trix-content.preview {
-    @apply border-none p-0;
+    @apply border-none p-0 text-base;
 }

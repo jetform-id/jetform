@@ -105,8 +105,8 @@ defmodule AppWeb.AdminLive.Product.Components.EditForm do
             </p>
           </div>
 
-          <div id="trix-editor" phx-update="ignore">
-            <.input field={f[:description]} type="hidden" />
+          <div id="trix-editor-product-description" phx-update="ignore">
+            <.input field={f[:description]} type="hidden" phx-hook="InitTrix" />
             <trix-editor input="product_description" class="trix-content"></trix-editor>
           </div>
 

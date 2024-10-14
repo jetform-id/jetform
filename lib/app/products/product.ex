@@ -55,6 +55,8 @@ defmodule App.Products.Product do
     has_many :orders, App.Orders.Order
     has_many :contents, App.Contents.Content
 
+    embeds_one :thanks_page_config, App.Products.ThanksPageConfig, on_replace: :delete
+
     timestamps(type: :utc_datetime)
   end
 
@@ -79,6 +81,7 @@ defmodule App.Products.Product do
   def changeset(product, attrs) do
     product
     |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast_embed(:thanks_page_config)
     |> validate_length(:name, max: 50, message: "maksimum %{count} karakter")
     |> cast_attachments(attrs, [:cover], allow_paths: true)
     |> validate_required(@required_fields)

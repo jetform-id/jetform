@@ -29,16 +29,16 @@
   </div>
 
   <div class="grid gap-4 xl:grid-cols-2">
-    <div class="bg-white border border-gray-300 rounded-md shadow-sm dark:bg-gray-800 dark:border-gray-700">
+    <div class="bg-white border border-gray-300 rounded-md shadow-sm">
       <ul
-        class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-300 rounded-t-md bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800"
+        class="flex flex-wrap text-sm font-medium text-center text-slate-500 border-b border-slate-300 rounded-t-md bg-gray-50"
         role="tablist"
       >
         <li>
           <.link
             patch="?tab=details"
             class={[
-              "inline-block p-4 px-6 rounded-ss-lg hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-500",
+              "inline-block p-4 px-6 rounded-ss-lg hover:bg-gray-100",
               @tab == "details" && "text-primary-500 bg-gray-100"
             ]}
           >
@@ -49,7 +49,7 @@
           <.link
             patch="?tab=images"
             class={[
-              "inline-block p-4 px-6 hover:text-primary-500 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300",
+              "inline-block p-4 px-6 hover:text-primary-500 hover:bg-gray-100",
               @tab == "images" && "text-primary-500 bg-gray-100"
             ]}
           >
@@ -60,7 +60,7 @@
           <.link
             patch="?tab=variants"
             class={[
-              "inline-block p-4 px-6 hover:text-primary-500 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300",
+              "inline-block p-4 px-6 hover:text-primary-500 hover:bg-gray-100",
               @tab == "variants" && "text-primary-500 bg-gray-100"
             ]}
           >
@@ -71,11 +71,22 @@
           <.link
             patch="?tab=content"
             class={[
-              "inline-block p-4 px-6 hover:text-primary-500 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-gray-300",
+              "inline-block p-4 px-6 hover:text-primary-500 hover:bg-gray-100",
               @tab == "content" && "text-primary-500 bg-gray-100"
             ]}
           >
             Konten
+          </.link>
+        </li>
+        <li>
+          <.link
+            patch="?tab=settings"
+            class={[
+              "inline-block p-4 px-6 hover:text-primary-500 hover:bg-gray-100",
+              @tab == "settings" && "text-primary-500 bg-gray-100"
+            ]}
+          >
+            Pengaturan
           </.link>
         </li>
       </ul>
@@ -113,17 +124,33 @@
             id={@product.id}
             product={@product}
           />
+          <.live_component
+            :if={@tab == "settings"}
+            module={AppWeb.AdminLive.Product.Components.Settings}
+            id={@product.id}
+          />
         </div>
       </div>
     </div>
 
-    <div class="border border-gray-300 rounded-md shadow-sm bg-white">
+    <div class="border border-gray-300 rounded-md shadow-sm bg-slate-100 overflow-hidden">
+    <div class="bg-gray-50 border-b border-gray-300 p-4 text-sm font-medium text-center text-slate-500">
+    <%= if @tab == "settings", do: "Setelah Pembayaran", else: "Preview Produk" %>
+    </div>
       <div>
         <.live_component
+          :if={@tab != "settings"}
           module={Preview}
           id={@product.id}
           product={@product}
           changeset={@changeset}
+        />
+
+        <.thanks_message
+          :if={@tab == "settings"} 
+          config={@thanks_config} 
+          order={@dummy_order} 
+          brand_info={@brand_info}
         />
       </div>
     </div>

@@ -69,7 +69,8 @@ defmodule App.MixProject do
       {:redix, "~> 1.3.0"},
       {:cachex, "~> 3.6"},
       {:open_api_spex, "~> 3.18"},
-      {:eqrcode, "~> 0.1.10"}
+      {:eqrcode, "~> 0.1.10"},
+      {:mustache, "~> 0.5.0"}
     ]
   end
 

@@ -4,3 +4,11 @@
 @import "@glidejs/glide/dist/css/glide.core";
 @import "prismjs/themes/prism.css";
 @import "./trix.css";
+
+#thanks-page .message {
+    @apply text-lg leading-snug;
+}
+
+#thanks-page .message a{
+    @apply text-primary-500;
+}
